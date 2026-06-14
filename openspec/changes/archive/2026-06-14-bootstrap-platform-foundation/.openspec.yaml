@@ -1,0 +1,6 @@
+kind: change
+apiVersion: "1"
+metadata:
+  name: bootstrap-platform-foundation
+spec:
+  schema: spec-driven-with-adr
