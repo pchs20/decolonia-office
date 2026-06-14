@@ -71,6 +71,7 @@ Manual checks:
 
 - API health: `http://localhost:3001/health`
 - API connectivity: `http://localhost:3001/health/connectivity`
+- Swagger UI (API documentation): `http://localhost:3001/api/docs`
 - Web app: `http://localhost:3000`
 
 Stop infrastructure:
