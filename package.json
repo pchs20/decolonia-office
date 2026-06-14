@@ -1,0 +1,19 @@
+{
+  "name": "decolonia-office",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "setup": "pnpm install",
+    "dev": "pnpm dev:infra && pnpm dev:apps",
+    "dev:infra": "docker compose up -d postgres minio createbuckets",
+    "stop:infra": "docker compose down",
+    "dev:apps": "turbo run dev --parallel --filter=@decolonia/api --filter=@decolonia/web",
+    "build": "turbo run build",
+    "check": "turbo run check",
+    "verify:connectivity": "pnpm --filter @decolonia/api connectivity:check && pnpm --filter @decolonia/web health:check"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.14"
+  }
+}
