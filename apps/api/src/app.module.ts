@@ -12,8 +12,8 @@ import { ClientsModule } from "./clients/clients.module";
       username: process.env.DATABASE_USER || "decolonia",
       password: process.env.DATABASE_PASSWORD || "decolonia",
       database: process.env.DATABASE_NAME || "decolonia_office",
-      entities: [__dirname + "/**/*.entity.ts"],
-      migrations: [__dirname + "/migrations/*.ts"],
+      entities: [__dirname + "/**/*.entity{.ts,.js}"],
+      migrations: [__dirname + "/migrations/*{.ts,.js}"],
       migrationsRun: true,
       synchronize: false,
       logging: process.env.DATABASE_LOGGING === "true"

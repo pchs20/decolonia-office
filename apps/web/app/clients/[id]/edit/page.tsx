@@ -8,5 +8,5 @@ interface EditClientPageProps {
 
 export default async function EditClientPage({ params }: EditClientPageProps) {
   const { id } = await params;
-  return <ClientDetailPage clientId={id} />;
+  return <ClientDetailPage clientId={id} startInEditMode />;
 }

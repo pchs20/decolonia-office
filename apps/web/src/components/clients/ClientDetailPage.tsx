@@ -2,17 +2,20 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Client } from "@/types/client";
 import { ClientService } from "@/services/client.service";
 import { ClientForm } from "./ClientForm";
 
 interface ClientDetailPageProps {
   clientId: string;
+  startInEditMode?: boolean;
 }
 
-export function ClientDetailPage({ clientId }: ClientDetailPageProps) {
+export function ClientDetailPage({ clientId, startInEditMode = false }: ClientDetailPageProps) {
+  const router = useRouter();
   const [client, setClient] = useState<Client | null>(null);
-  const [editing, setEditing] = useState(false);
+  const [editing, setEditing] = useState(startInEditMode);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -76,7 +79,13 @@ export function ClientDetailPage({ clientId }: ClientDetailPageProps) {
         <ClientForm
           client={client}
           onSuccess={handleSuccess}
-          onCancel={() => setEditing(false)}
+          onCancel={() => {
+            if (startInEditMode) {
+              router.push(`/clients/${clientId}`);
+              return;
+            }
+            setEditing(false);
+          }}
         />
       </div>
     );

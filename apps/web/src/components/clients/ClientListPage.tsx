@@ -163,8 +163,13 @@ export function ClientListPage() {
 
       {deleteConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg">
-            <h3 className="text-lg font-semibold mb-4">Confirm Delete</h3>
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="confirm-delete-title"
+            className="bg-white p-6 rounded-lg"
+          >
+            <h3 id="confirm-delete-title" className="text-lg font-semibold mb-4">Confirm Delete</h3>
             <p className="mb-6">Are you sure you want to delete this client?</p>
             <div className="flex gap-2 justify-end">
               <button

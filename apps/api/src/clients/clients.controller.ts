@@ -8,6 +8,8 @@ import {
   Body,
   Param,
   Query,
+  ParseIntPipe,
+  DefaultValuePipe,
   HttpCode,
   HttpStatus
 } from "@nestjs/common";
@@ -58,8 +60,8 @@ export class ClientsController {
     description: "List of clients retrieved successfully"
   })
   async findAll(
-    @Query("page") page: number = 1,
-    @Query("limit") limit: number = 10,
+    @Query("page", new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query("limit", new DefaultValuePipe(10), ParseIntPipe) limit: number,
     @Query("search") search?: string
   ): Promise<{
     clients: ClientResponseDto[];

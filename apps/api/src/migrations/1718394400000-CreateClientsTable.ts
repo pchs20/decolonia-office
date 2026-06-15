@@ -2,6 +2,8 @@ import { MigrationInterface, QueryRunner, Table } from "typeorm";
 
 export class CreateClientsTable1718394400000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query('CREATE EXTENSION IF NOT EXISTS "pgcrypto"');
+
     await queryRunner.createTable(
       new Table({
         name: "clients",
@@ -77,6 +79,10 @@ export class CreateClientsTable1718394400000 implements MigrationInterface {
         ]
       }),
       true
+    );
+
+    await queryRunner.query(
+      "ALTER TABLE clients ADD CONSTRAINT chk_clients_type CHECK (type IN ('individual', 'company'))"
     );
   }
 

@@ -15,6 +15,7 @@ export class ClientsService {
 
     const client = this.clientRepository.create({
       ...createClientDto,
+      billingAddress: createClientDto.billingAddress?.trim() || createClientDto.address,
       isActive: true
     });
 
@@ -66,18 +67,22 @@ export class ClientsService {
       this.validateType(updateClientDto.type);
     }
 
-    const updated = { ...client, ...updateClientDto };
+    const updated = this.clientRepository.merge(client, updateClientDto);
+
+    if (updated.address && !updated.billingAddress?.trim()) {
+      updated.billingAddress = updated.address;
+    }
+
     this.validateClient(updated);
 
-    await this.clientRepository.update(id, updateClientDto);
-    return this.findById(id);
+    return this.clientRepository.save(updated);
   }
 
   /**
    * Soft delete (mark as inactive)
    */
   async delete(id: string): Promise<void> {
-    const client = await this.findById(id);
+    await this.findById(id);
     await this.clientRepository.softDeleteClient(id);
   }
 

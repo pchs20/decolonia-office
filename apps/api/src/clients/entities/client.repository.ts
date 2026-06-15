@@ -72,6 +72,6 @@ export class ClientRepository extends Repository<Client> {
    * Soft delete: mark client as inactive
    */
   async softDeleteClient(id: string): Promise<UpdateResult> {
-    return this.update({ id } as any, { isActive: false });
+    return this.update({ id }, { isActive: false });
   }
 }
