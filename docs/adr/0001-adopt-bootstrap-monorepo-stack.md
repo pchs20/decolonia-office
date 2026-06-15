@@ -9,7 +9,7 @@ The first iteration needs a very small but durable technical base: one repositor
 
 ## Decision
 
-Use a TypeScript monorepo with pnpm workspaces and turbo as task orchestrator. Implement a Next.js web app and a NestJS API app. Use PostgreSQL for relational data and S3-compatible object storage for file workflows, with Docker Compose for local infrastructure dependencies.
+Use a TypeScript monorepo with pnpm workspaces and turbo as task orchestrator. Implement a Next.js web app with serverless route handlers for API endpoints. Use PostgreSQL for relational data, with Docker Compose for local infrastructure dependencies.
 
 ## Consequences
 

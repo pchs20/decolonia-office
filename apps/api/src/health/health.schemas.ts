@@ -24,13 +24,6 @@ export const ConnectivityResponseSchema = {
             ok: { type: "boolean" },
             detail: { type: "string" }
           }
-        },
-        objectStorage: {
-          type: "object",
-          properties: {
-            ok: { type: "boolean" },
-            detail: { type: "string" }
-          }
         }
       }
     }

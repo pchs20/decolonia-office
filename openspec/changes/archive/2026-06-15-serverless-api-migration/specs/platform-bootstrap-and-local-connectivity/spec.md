@@ -1,17 +1,4 @@
-# Platform Bootstrap and Local Connectivity
-
-## Purpose
-
-Establish foundational monorepo structure, local development infrastructure, and end-to-end connectivity verification to enable efficient local development and testing workflows.
-
-## Requirements
-
-### Requirement: Bootstrap repository structure
-The project SHALL define a monorepo structure that separates web app, API app, shared packages, and infrastructure configuration.
-
-#### Scenario: Developer inspects repository layout
-- **WHEN** a developer clones the repository
-- **THEN** they can identify dedicated folders for frontend, backend, shared code, and local infrastructure
+## MODIFIED Requirements
 
 ### Requirement: Local stack orchestration
 The project SHALL provide a local orchestration setup that starts required services for development in the serverless-oriented architecture.

@@ -28,7 +28,7 @@ export class HealthController {
   @Get("health/connectivity")
   @ApiOperation({
     summary: "Infrastructure Connectivity Check",
-    description: "Verifies connectivity to all required dependencies (PostgreSQL, Object Storage)"
+    description: "Verifies connectivity to required dependencies (PostgreSQL)"
   })
   @ApiResponse({
     status: 200,
