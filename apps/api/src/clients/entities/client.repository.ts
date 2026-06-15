@@ -1,10 +1,10 @@
-import { DataSource, Repository, Like, UpdateResult } from "typeorm";
+import { DataSource, Repository, ILike, UpdateResult } from "typeorm";
 import { Injectable } from "@nestjs/common";
 import { Client } from "./client.entity";
 
 @Injectable()
 export class ClientRepository extends Repository<Client> {
-  constructor(private dataSource: DataSource) {
+  constructor(dataSource: DataSource) {
     super(Client, dataSource.createEntityManager());
   }
 
@@ -39,7 +39,7 @@ export class ClientRepository extends Repository<Client> {
     const [clients, total] = await this.findAndCount({
       where: {
         isActive: true,
-        name: Like(`%${name}%`)
+        name: ILike(`%${name}%`)
       },
       order: { createdAt: "DESC" },
       skip,

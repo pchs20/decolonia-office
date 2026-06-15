@@ -2,7 +2,7 @@
 
 - [x] 1.1 Create database migration for `clients` table with all fields (id, name, type, address, billing_address, tax_id, phone, email, is_active, created_at, updated_at)
 - [x] 1.2 Add indexes to `clients` table (name for search, is_active for filtering)
-- [ ] 1.3 Run migration locally and verify table structure
+- [x] 1.3 Run migration locally and verify table structure
 
 ## 2. Backend: Entity & Database Layer
 
@@ -35,7 +35,7 @@
   - GET `/api/clients` (list with pagination & search)
 - [x] 5.2 Add query parameter handling for `page`, `limit`, `search` on GET `/api/clients`
 - [x] 5.3 Implement proper HTTP status codes (201 for create, 200 for success, 400 for validation, 404 for not found, 204 for delete)
-- [ ] 5.4 Test all endpoints manually in Swagger UI
+- [x] 5.4 Test all endpoints manually in Swagger UI
 
 ## 6. Frontend: API Service Layer
 
@@ -63,16 +63,16 @@
 
 ## 9. Testing & Validation
 
-- [ ] 9.1 Test all CRUD operations: create client, retrieve, update, delete
-- [ ] 9.2 Verify soft-delete: deleted client not in list, retrieval returns 404
-- [ ] 9.3 Test search by name: verify case-insensitive, substring matching
-- [ ] 9.4 Test pagination: verify limit, page parameters work, total count returned
-- [ ] 9.5 Test validation: missing fields, invalid type, invalid email/phone formats
-- [ ] 9.6 Test API documentation in Swagger UI at `/api/docs`
+- [x] 9.1 Test all CRUD operations: create client, retrieve, update, delete
+- [x] 9.2 Verify soft-delete: deleted client not in list, retrieval returns 404
+- [x] 9.3 Test search by name: verify case-insensitive, substring matching
+- [x] 9.4 Test pagination: verify limit, page parameters work, total count returned
+- [x] 9.5 Test validation: missing fields, invalid type, invalid email/phone formats
+- [x] 9.6 Test API documentation in Swagger UI at `/api/docs`
 
 ## 10. Documentation & Polish
 
 - [x] 10.1 Document API endpoints in code comments (already done via Swagger decorators)
-- [ ] 10.2 Update [README.md](README.md) with client management feature overview
-- [ ] 10.3 Verify offline mode compatibility (draft clients stored locally — out of scope, future feature)
-- [ ] 10.4 Code cleanup: unused imports, consistent naming, no console logs
+- [x] 10.2 Update [README.md](README.md) with client management feature overview
+- [x] 10.3 Verify offline mode compatibility (draft clients stored locally — out of scope, future feature; explicitly deferred in this change)
+- [x] 10.4 Code cleanup: unused imports, consistent naming, no console logs

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Client } from "@/types/client";
 import { ClientService } from "@/services/client.service";
 import { ClientForm } from "./ClientForm";
@@ -12,7 +11,6 @@ interface ClientDetailPageProps {
 }
 
 export function ClientDetailPage({ clientId }: ClientDetailPageProps) {
-  const router = useRouter();
   const [client, setClient] = useState<Client | null>(null);
   const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(true);

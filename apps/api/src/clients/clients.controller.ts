@@ -1,4 +1,5 @@
 import {
+  Inject,
   Controller,
   Get,
   Post,
@@ -23,7 +24,7 @@ import { CreateClientDto, UpdateClientDto, ClientResponseDto } from "./dto/clien
 @ApiTags("Clients")
 @Controller("api/clients")
 export class ClientsController {
-  constructor(private readonly clientsService: ClientsService) {}
+  constructor(@Inject(ClientsService) private readonly clientsService: ClientsService) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)

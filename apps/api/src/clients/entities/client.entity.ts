@@ -16,10 +16,10 @@ export class Client {
   @Column({ type: "text" })
   address!: string;
 
-  @Column({ type: "text", nullable: true })
+  @Column({ type: "text", nullable: true, name: "billing_address" })
   billingAddress!: string | null;
 
-  @Column({ type: "varchar", length: 20 })
+  @Column({ type: "varchar", length: 20, name: "tax_id" })
   taxId!: string;
 
   @Column({ type: "varchar", length: 20, nullable: true })

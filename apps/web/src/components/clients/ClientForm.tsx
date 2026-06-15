@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Client, ClientType, CreateClientInput, UpdateClientInput } from "@/types/client";
+import { Client, CreateClientInput, UpdateClientInput } from "@/types/client";
 import { ClientService } from "@/services/client.service";
 
 interface ClientFormProps {
@@ -11,15 +11,19 @@ interface ClientFormProps {
 }
 
 export function ClientForm({ client, onSuccess, onCancel }: ClientFormProps) {
+  const initialBillingAddress = client?.billingAddress || "";
+  const initialIsBillingSameAsWork = !client || !initialBillingAddress || initialBillingAddress === (client.address || "");
+
   const [formData, setFormData] = useState<CreateClientInput | UpdateClientInput>({
     name: client?.name || "",
     type: client?.type || "individual",
     address: client?.address || "",
-    billingAddress: client?.billingAddress || "",
+    billingAddress: initialIsBillingSameAsWork ? "" : initialBillingAddress,
     taxId: client?.taxId || "",
     phone: client?.phone || "",
     email: client?.email || ""
   });
+  const [isBillingSameAsWork, setIsBillingSameAsWork] = useState(initialIsBillingSameAsWork);
 
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -35,15 +39,25 @@ export function ClientForm({ client, onSuccess, onCancel }: ClientFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    if (!isBillingSameAsWork && !formData.billingAddress?.trim()) {
+      setError("Billing address is required when it is different from work address");
+      return;
+    }
+
     setLoading(true);
 
     try {
       let result: Client;
+      const payload = {
+        ...formData,
+        billingAddress: isBillingSameAsWork ? formData.address : formData.billingAddress?.trim()
+      };
 
       if (client?.id) {
-        result = await ClientService.update(client.id, formData as UpdateClientInput);
+        result = await ClientService.update(client.id, payload as UpdateClientInput);
       } else {
-        result = await ClientService.create(formData as CreateClientInput);
+        result = await ClientService.create(payload as CreateClientInput);
       }
 
       onSuccess(result);
@@ -108,16 +122,36 @@ export function ClientForm({ client, onSuccess, onCancel }: ClientFormProps) {
         </div>
 
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium mb-1">Billing Address</label>
-          <textarea
-            name="billingAddress"
-            value={formData.billingAddress || ""}
-            onChange={handleChange}
-            rows={2}
-            className="w-full px-3 py-2 border rounded"
-            placeholder="Billing address (if different)"
-          />
+          <label className="inline-flex items-center gap-2 text-sm font-medium">
+            <input
+              type="checkbox"
+              checked={isBillingSameAsWork}
+              onChange={e => {
+                const checked = e.target.checked;
+                setIsBillingSameAsWork(checked);
+                if (checked) {
+                  setFormData(prev => ({ ...prev, billingAddress: "" }));
+                }
+              }}
+            />
+            Billing address is the same as work address
+          </label>
         </div>
+
+        {!isBillingSameAsWork && (
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium mb-1">Billing Address *</label>
+            <textarea
+              name="billingAddress"
+              value={formData.billingAddress || ""}
+              onChange={handleChange}
+              required
+              rows={2}
+              className="w-full px-3 py-2 border rounded"
+              placeholder="Billing address"
+            />
+          </div>
+        )}
 
         <div>
           <label className="block text-sm font-medium mb-1">Tax ID *</label>

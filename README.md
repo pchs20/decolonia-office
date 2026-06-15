@@ -8,6 +8,21 @@ The goal is to reduce manual paperwork, avoid duplicated effort, and make it sim
 
 The system is designed to be easy to use, even for non-technical users, and works smoothly on both laptop and tablet devices.
 
+## Client Management Foundation
+
+The platform includes a complete client management foundation:
+
+- Create, view, edit, and soft-delete clients
+- Search clients by name (case-insensitive)
+- Paginated client listing in the web app
+- API documentation for client endpoints in Swagger UI
+
+Main routes:
+
+- Web: `http://localhost:3000/clients`
+- API: `http://localhost:3001/api/clients`
+- Swagger: `http://localhost:3001/api/docs`
+
 ## Bootstrap Stack
 
 - Monorepo: `pnpm` workspaces + `turbo`
