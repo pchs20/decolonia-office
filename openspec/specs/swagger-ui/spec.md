@@ -18,15 +18,15 @@ The API SHALL generate an OpenAPI 3.0 schema automatically from NestJS controlle
 - **THEN** the OpenAPI schema includes typed definitions for request and response bodies with property descriptions
 
 ### Requirement: Swagger UI served at /api/docs
-The API SHALL serve an interactive Swagger UI interface at the `/api/docs` route.
+The system SHALL serve an interactive Swagger UI interface at the `/api/docs` route independent of a dedicated NestJS runtime process.
 
 #### Scenario: Access Swagger UI in browser
-- **WHEN** a user navigates to `http://localhost:<API_PORT>/api/docs` (or production API URL)
+- **WHEN** a user navigates to `/api/docs` in local or deployed environments
 - **THEN** the browser loads an interactive Swagger UI interface displaying the OpenAPI schema
 
-#### Scenario: Swagger UI displays API title and description
-- **WHEN** Swagger UI loads
-- **THEN** it displays the API title, version, and description as configured in the OpenAPI schema
+#### Scenario: Swagger UI remains available after runtime migration
+- **WHEN** the API runtime is delivered via serverless handlers
+- **THEN** `/api/docs` remains accessible and documents the same REST resources
 
 ### Requirement: Public Swagger UI access (development phase)
 The API SHALL serve the `/api/docs` endpoint publicly without requiring authentication during the initial development phase.
@@ -62,14 +62,14 @@ The Swagger UI SHALL display complete documentation for all documented endpoints
 - **THEN** Swagger UI shows each error response status code with its schema and description (e.g., 400 Bad Request, 401 Unauthorized, 500 Internal Server Error)
 
 ### Requirement: Consistent Swagger UI availability across environments
-The API SHALL expose the `/api/docs` endpoint consistently across development, staging, and production environments.
+The system SHALL expose `/api/docs` consistently across development and production environments used by the project.
 
-#### Scenario: Swagger UI available in all environments
-- **WHEN** accessing `/api/docs` in any environment (dev, staging, production)
-- **THEN** the Swagger UI interface loads successfully with identical functionality
+#### Scenario: Swagger UI available in development and production
+- **WHEN** a user accesses `/api/docs` in supported environments
+- **THEN** the Swagger UI interface loads successfully
 
-#### Scenario: Same documentation everywhere
-- **WHEN** accessing `/api/docs` in different environments
-- **THEN** the OpenAPI schema and documentation display the same information
+#### Scenario: Documentation remains contract-consistent
+- **WHEN** endpoint contracts are updated
+- **THEN** the OpenAPI content served at `/api/docs` reflects those updates in each supported environment
 
 **Future Note**: Once the API implements authentication, this requirement SHALL be superseded by a new requirement to protect `/api/docs` with the API's authentication mechanism across all environments.

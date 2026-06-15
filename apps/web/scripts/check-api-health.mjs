@@ -1,4 +1,4 @@
-const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
 
 async function check(endpoint) {
   const response = await fetch(`${apiBaseUrl}${endpoint}`);
@@ -9,8 +9,8 @@ async function check(endpoint) {
 }
 
 try {
-  const health = await check("/health");
-  const connectivity = await check("/health/connectivity");
+  const health = await check("/api/health");
+  const connectivity = await check("/api/health/connectivity");
 
   console.log("Health:", JSON.stringify(health));
   console.log("Connectivity:", JSON.stringify(connectivity));

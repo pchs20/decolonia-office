@@ -19,7 +19,7 @@ async function fetchJson<T>(url: string): Promise<T | null> {
 }
 
 export default async function HomePage() {
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:3001";
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:3000";
 
   const health = await fetchJson<HealthResponse>(`${apiBaseUrl}/health`);
   const connectivity = await fetchJson<ConnectivityResponse>(`${apiBaseUrl}/health/connectivity`);
@@ -40,7 +40,7 @@ export default async function HomePage() {
       <section className="card">
         <h2>Infrastructure Connectivity</h2>
         <p className={connectivityUp ? "ok" : "fail"}>
-          {connectivityUp ? "API can reach Postgres and MinIO" : "Connectivity checks failed"}
+          {connectivityUp ? "API can reach Postgres" : "Connectivity checks failed"}
         </p>
         {connectivity ? <pre>{JSON.stringify(connectivity, null, 2)}</pre> : null}
       </section>

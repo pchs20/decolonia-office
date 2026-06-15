@@ -6,12 +6,12 @@
   "scripts": {
     "setup": "pnpm install",
     "dev": "pnpm dev:infra && pnpm dev:apps",
-    "dev:infra": "docker compose up -d postgres minio createbuckets",
+    "dev:infra": "docker compose up -d postgres",
     "stop:infra": "docker compose down",
-    "dev:apps": "turbo run dev --parallel --filter=@decolonia/api --filter=@decolonia/web",
-    "build": "turbo run build",
-    "check": "turbo run check",
-    "verify:connectivity": "pnpm --filter @decolonia/api connectivity:check && pnpm --filter @decolonia/web health:check"
+    "dev:apps": "turbo run dev --parallel --filter=@decolonia/web",
+    "build": "turbo run build --filter=@decolonia/web",
+    "check": "turbo run check --filter=@decolonia/web",
+    "verify:connectivity": "pnpm --filter @decolonia/web health:check"
   },
   "devDependencies": {
     "turbo": "^2.0.14"

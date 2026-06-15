@@ -1,12 +1,6 @@
-import {
-  Client,
-  CreateClientInput,
-  UpdateClientInput,
-  ClientListResponse
-} from "@/types/client";
+import { Client, CreateClientInput, UpdateClientInput, ClientListResponse } from "@/types/client";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
-const API_ENDPOINT = `${API_BASE_URL}/api/clients`;
+const API_ENDPOINT = "/api/clients";
 
 export class ClientService {
   /**
