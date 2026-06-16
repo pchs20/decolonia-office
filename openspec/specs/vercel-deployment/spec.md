@@ -6,16 +6,16 @@ Define the requirements for deploying the Next.js monorepo app to Vercel Hobby w
 
 ## ADDED Requirements
 
-### Requirement: Vercel monorepo root configuration
-The repository SHALL contain a `vercel.json` at the repo root that declares `apps/web` as the project root directory so that Vercel correctly resolves the Next.js app, build command, and output directory without manual dashboard configuration.
+### Requirement: Vercel project targets apps/web
+The Vercel project SHALL be configured to use `apps/web` as its root directory so that Vercel resolves the Next.js app, build command, and output directory correctly for this monorepo.
 
-#### Scenario: Vercel detects Next.js app from repo root
+#### Scenario: Vercel project uses apps/web as root directory
 - **WHEN** the Vercel project is linked to the GitHub repository
 - **THEN** Vercel uses `apps/web` as the root directory and auto-detects the Next.js framework without additional build command overrides
 
-#### Scenario: Config is reproducible across environments
-- **WHEN** a new Vercel project is created from the same repository
-- **THEN** the `vercel.json` file provides all necessary configuration without requiring manual dashboard edits
+#### Scenario: Root directory is configured in project settings
+- **WHEN** the Vercel project settings are inspected after import
+- **THEN** the root directory is set to `apps/web`
 
 ### Requirement: Two-environment deployment model via branch strategy
 The project SHALL use a `prod` long-lived branch as the Vercel production branch, so that:

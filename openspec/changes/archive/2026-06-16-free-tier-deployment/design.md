@@ -7,7 +7,7 @@ Current known state:
 - `DATABASE_URL` is the only required runtime env var (used by the `pg` client in Route Handlers).
 - Swagger UI lives at `/api/docs`; OpenAPI JSON at `/api/docs/openapi`. Both are served by Next.js Route Handlers.
 - Health endpoints at `/api/health` and `/api/health/connectivity`.
-- No `vercel.json` or PWA manifest exists.
+- No committed Vercel project config exists yet, and no PWA manifest exists.
 - Migrations are SQL files run manually (no automated migration runner wired to production deploy yet).
 
 ## Architecture Diagrams
@@ -73,7 +73,7 @@ git checkout prod && git merge main && git push
 **What's needed:**
 - Create a `prod` long-lived branch in the repo.
 - Set Vercel project → Settings → Git → Production Branch to `prod`.
-- A `vercel.json` at the repo root declaring `apps/web` as the project root.
+- Vercel project settings configured to use `apps/web` as the root directory.
 - Vercel project linked to the GitHub repo.
 - `DATABASE_URL` set separately per Vercel environment (Preview → dev DB, Production → prod DB).
 
@@ -107,19 +107,11 @@ The README will document this step-by-step with exact variable names and where t
 
 **Deferred:** Service worker, offline caching, push notifications.
 
-### Decision 4: Vercel monorepo config
+### Decision 4: Configure apps/web in Vercel project settings
 
-**Choice:** Add `vercel.json` at repo root specifying `rootDirectory: "apps/web"`.
+**Choice:** Set the Vercel project's root directory to `apps/web` in the Vercel dashboard during import or in project settings.
 
-**Rationale:** Vercel's monorepo detection is project-level. Without this file the build command and output directory must be set manually in the dashboard on every environment. A committed `vercel.json` makes the config reproducible.
-
-```json
-{
-  "rootDirectory": "apps/web"
-}
-```
-
-No framework override needed — Vercel auto-detects Next.js from `apps/web/package.json`.
+**Rationale:** Vercel's import flow for this Turborepo currently rejects `rootDirectory` in `vercel.json`. The reliable path is to configure the root directory in the Vercel UI. No framework override is needed once `apps/web` is selected — Vercel auto-detects Next.js from `apps/web/package.json`.
 
 ## Risks / Trade-offs
 
@@ -149,7 +141,7 @@ No framework override needed — Vercel auto-detects Next.js from `apps/web/pack
    ```
 
 ### Code changes (this branch)
-4. Add `vercel.json` to repo root with `rootDirectory: "apps/web"`.
+4. Configure the Vercel project root directory as `apps/web` during import or in project settings.
 5. Add `apps/web/public/manifest.json` and icon assets.
 6. Add PWA meta tags to `app/layout.tsx`.
 7. Merge this branch to `main`.
@@ -163,7 +155,7 @@ No framework override needed — Vercel auto-detects Next.js from `apps/web/pack
 10. Verify `clients` table in Supabase dev table editor.
 
 ### Vercel project setup
-11. In Vercel dashboard: Import GitHub repo → Vercel detects `apps/web` as root from `vercel.json`.
+11. In Vercel dashboard: Import GitHub repo and confirm the project root directory is `apps/web`.
 12. Settings → Git → **Production Branch**: change from `main` to `prod`.
 13. Add environment variables:
     - **Preview** environment: `DATABASE_URL` = `decolonia-dev` pooler URL (`?pgbouncer=true` appended).
