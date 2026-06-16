@@ -136,6 +136,15 @@ git push
 - Database: Two Supabase Free Postgres projects (dev and prod)
 - Source of truth for OpenAPI definition: `apps/web/src/server/openapi.ts`
 
+### Vercel Import Notes
+
+For this Turborepo, Vercel may try to import `apps/api` first. If that happens:
+
+1. Select `apps/web` during import when the option is available.
+2. If Vercel still imports the wrong app, change the project Root Directory in the Vercel dashboard to `apps/web` and redeploy.
+
+Do not use `rootDirectory` inside `vercel.json` for this project. Vercel rejects that property in this setup.
+
 ### Database Migrations
 
 Database migrations are **run manually from a developer machine** against the target environment before or after deployment.
