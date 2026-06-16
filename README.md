@@ -99,34 +99,106 @@ Selected free-tier provider: **Supabase Postgres (Free Plan)**.
 
 Required environment variables:
 
-- `DATABASE_URL`: Postgres connection string used by serverless route handlers
+- `DATABASE_URL`: Postgres pooler connection string used by serverless route handlers (port 6543 with `?pgbouncer=true`)
+- `DEV_DIRECT_URL`: Direct Postgres connection for running migrations against the dev database (port 5432) — developer-machine-only secret, never set in Vercel
+- `PROD_DIRECT_URL`: Direct Postgres connection for running migrations against the prod database (port 5432) — developer-machine-only secret, never set in Vercel
 - `NEXT_PUBLIC_API_BASE_URL`: optional override for scripts and checks (defaults to `http://localhost:3000`)
 
 For local development, defaults are provided in `.env.example`.
 
 ## Free-Tier Deployment (Vercel + Supabase)
 
-Recommended free-tier target:
+### Deployment Environments
 
-- App/API: Vercel Hobby (Next.js + route handlers)
-- Database: Supabase Free Postgres
+The project uses a **two-environment deployment model** for staging and production:
 
-Deployment notes:
+| Git Branch | Vercel Environment | Deployment | Database | URL Pattern |
+|---|---|---|---|---|
+| `main` | Preview | Auto-deploys on push/merge to `main` | Dev Supabase | `https://<app>-git-main-<username>.vercel.app` |
+| `prod` | Production | Auto-deploys on push/merge to `prod` | Prod Supabase | `https://<app>.vercel.app` |
+| Feature branches | Preview | Auto-deploys on push | Dev Supabase | `https://<app>-git-<branch>-<username>.vercel.app` |
 
-- Add `DATABASE_URL` in Vercel project environment variables.
-- Verify `/api/health`, `/api/clients`, and `/api/docs` after deployment.
-- Keep API docs source of truth in `apps/web/src/server/openapi.ts`.
+**Workflow:**
+- Commits to feature branches and `main` deploy to Preview (dev environment) for testing.
+- Merges from `main` → `prod` trigger the Production deployment.
 
-Operational expectations:
+**Promote to production:**
 
-- Free-tier cold starts can happen under low traffic.
-- Monitor quota/usage from Vercel and Supabase dashboards.
+```bash
+git checkout prod
+git merge main
+git push
+```
 
-Rollback procedure:
+### Recommended Architecture
 
-1. Re-point `NEXT_PUBLIC_API_BASE_URL` to the previous stable deployment URL if needed.
-2. Redeploy web app with the previous environment variable configuration.
-3. Re-run connectivity and contract checks.
+- App/API: Vercel Hobby (Next.js + Route Handlers)
+- Database: Two Supabase Free Postgres projects (dev and prod)
+- Source of truth for OpenAPI definition: `apps/web/src/server/openapi.ts`
+
+### Database Migrations
+
+Database migrations are **run manually from a developer machine** against the target environment before or after deployment.
+
+**For dev environment (after merging to `main` or before testing):**
+
+1. Set `DEV_DIRECT_URL` locally to the Supabase dev project direct connection URL (from Supabase project Settings → Database → Connection String, port 5432).
+2. Run:
+   ```bash
+   psql "$DEV_DIRECT_URL" -f apps/api/src/migrations/<migration-filename>.sql
+   ```
+3. Verify the migration in the Supabase dashboard table editor.
+
+**For prod environment (before promoting to `prod` branch):**
+
+1. Set `PROD_DIRECT_URL` locally to the Supabase prod project direct connection URL.
+2. Run:
+   ```bash
+   psql "$PROD_DIRECT_URL" -f apps/api/src/migrations/<migration-filename>.sql
+   ```
+3. Verify the migration in the Supabase dashboard table editor.
+4. Then merge `main` → `prod` and push to deploy.
+
+### Deployment Validation
+
+After each deployment (dev or prod), verify the following endpoints:
+
+```bash
+# Replace with your Vercel URL
+VERCEL_URL="https://<your-app>.vercel.app"  # for prod or the Preview URL for dev
+
+curl "$VERCEL_URL/api/health"
+curl "$VERCEL_URL/api/health/connectivity"
+curl "$VERCEL_URL/api/clients"
+curl "$VERCEL_URL/api/docs"
+```
+
+All should return HTTP 200.
+
+### Operational Constraints & Monitoring
+
+**Supabase free-tier limits:**
+- 500 MB storage per project
+- 2 GB bandwidth per month
+- Database pauses after **1 week of inactivity** (can be resumed from Supabase dashboard with no data loss)
+
+**Vercel free-tier limits:**
+- Serverless functions can have cold starts under low traffic (expected for internal tools)
+- 100 deployments per day
+
+**Monitoring:**
+- Check Vercel dashboard for deployment status and function invocation logs.
+- Check Supabase dashboard for database storage, bandwidth usage, and connection status.
+
+### Rollback Procedure
+
+**To rollback a production deployment:**
+
+1. In Vercel dashboard, go to Deployments and select a previous stable deployment.
+2. Click "Promote to Production" to instantly roll back (no code push needed).
+3. Run connectivity checks to confirm the rollback succeeded.
+
+**Database rollback is not supported** (migrations are applied directly and cannot be easily reversed). Plan and test migrations carefully before deploying to prod.
 
 Stop infrastructure:
 
