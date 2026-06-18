@@ -16,6 +16,7 @@ export function ClientDetailPage({ clientId, startInEditMode = false }: ClientDe
   const router = useRouter();
   const [client, setClient] = useState<Client | null>(null);
   const [editing, setEditing] = useState(startInEditMode);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -40,8 +41,40 @@ export function ClientDetailPage({ clientId, startInEditMode = false }: ClientDe
   const handleSuccess = (updatedClient: Client) => {
     setClient(updatedClient);
     setEditing(false);
+    setHasUnsavedChanges(false);
     setSuccessMessage(`Client ${updatedClient.name} updated successfully`);
     setTimeout(() => setSuccessMessage(null), 3000);
+  };
+
+  const confirmDiscardChanges = (): boolean => {
+    if (!hasUnsavedChanges) {
+      return true;
+    }
+
+    return window.confirm("You have unsaved changes. Discard them and leave edit mode?");
+  };
+
+  const handleBackFromEdit = () => {
+    if (!confirmDiscardChanges()) {
+      return;
+    }
+
+    if (startInEditMode) {
+      router.push(`/clients/${clientId}`);
+      return;
+    }
+
+    setHasUnsavedChanges(false);
+    setEditing(false);
+  };
+
+  const handleCancelEdit = () => {
+    if (startInEditMode) {
+      router.push(`/clients/${clientId}`);
+      return;
+    }
+    setHasUnsavedChanges(false);
+    setEditing(false);
   };
 
   if (loading) {
@@ -73,19 +106,18 @@ export function ClientDetailPage({ clientId, startInEditMode = false }: ClientDe
   if (editing) {
     return (
       <div className="p-6">
-        <Link href={`/clients/${clientId}`} className="text-blue-600 mb-4 inline-block">
+        <button
+          type="button"
+          onClick={handleBackFromEdit}
+          className="text-blue-600 mb-4 inline-block"
+        >
           ← Back
-        </Link>
+        </button>
         <ClientForm
           client={client}
           onSuccess={handleSuccess}
-          onCancel={() => {
-            if (startInEditMode) {
-              router.push(`/clients/${clientId}`);
-              return;
-            }
-            setEditing(false);
-          }}
+          onCancel={handleCancelEdit}
+          onDirtyChange={setHasUnsavedChanges}
         />
       </div>
     );
@@ -125,18 +157,6 @@ export function ClientDetailPage({ clientId, startInEditMode = false }: ClientDe
             <p className="text-lg">{client.taxId}</p>
           </div>
 
-          <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-600 mb-1">Work Address</label>
-            <p className="text-lg">{client.address}</p>
-          </div>
-
-          {client.billingAddress && (
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-600 mb-1">Billing Address</label>
-              <p className="text-lg">{client.billingAddress}</p>
-            </div>
-          )}
-
           {client.phone && (
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1">Phone</label>
@@ -155,6 +175,28 @@ export function ClientDetailPage({ clientId, startInEditMode = false }: ClientDe
                 <a href={`mailto:${client.email}`} className="text-blue-600 hover:underline">
                   {client.email}
                 </a>
+              </p>
+            </div>
+          )}
+
+          <div className="md:col-span-2 pt-2">
+            <h2 className="text-sm font-semibold text-gray-700">Address</h2>
+          </div>
+
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-600 mb-1">Work Address</label>
+            <p className="text-lg">{client.workAddress.street}</p>
+            <p className="text-sm text-gray-600">
+              {client.workAddress.city} {client.workAddress.postalCode}
+            </p>
+          </div>
+
+          {client.billingAddress.street && client.billingAddress.city && client.billingAddress.postalCode && (
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-600 mb-1">Billing Address</label>
+              <p className="text-lg">{client.billingAddress.street}</p>
+              <p className="text-sm text-gray-600">
+                {client.billingAddress.city} {client.billingAddress.postalCode}
               </p>
             </div>
           )}

@@ -2,6 +2,7 @@ import { Injectable, Inject, BadRequestException, NotFoundException } from "@nes
 import { Client } from "./entities/client.entity";
 import { ClientRepository } from "./entities/client.repository";
 import { CreateClientDto, UpdateClientDto } from "./dto/client.dto";
+import { Address } from "./entities/address.value-object";
 
 @Injectable()
 export class ClientsService {
@@ -13,11 +14,19 @@ export class ClientsService {
   async create(createClientDto: CreateClientDto): Promise<Client> {
     this.validateClient(createClientDto);
 
+    const billingAddress = this.resolveBillingAddress(createClientDto);
+
     const client = this.clientRepository.create({
       ...createClientDto,
-      billingAddress: createClientDto.billingAddress?.trim() || createClientDto.address,
       isActive: true
     });
+
+    client.workAddress = new Address(
+      createClientDto.street.trim(),
+      createClientDto.city.trim(),
+      createClientDto.postalCode.trim()
+    );
+    client.billingAddress = billingAddress;
 
     return this.clientRepository.save(client);
   }
@@ -67,10 +76,25 @@ export class ClientsService {
       this.validateType(updateClientDto.type);
     }
 
+    this.validateBillingCompleteness(updateClientDto);
+
     const updated = this.clientRepository.merge(client, updateClientDto);
 
-    if (updated.address && !updated.billingAddress?.trim()) {
-      updated.billingAddress = updated.address;
+    const hasWorkAddressUpdate =
+      updateClientDto.street !== undefined ||
+      updateClientDto.city !== undefined ||
+      updateClientDto.postalCode !== undefined;
+    const hasBillingAddressUpdate =
+      updateClientDto.billingStreet !== undefined ||
+      updateClientDto.billingCity !== undefined ||
+      updateClientDto.billingPostalCode !== undefined;
+
+    if (hasWorkAddressUpdate && !hasBillingAddressUpdate) {
+      updated.billingAddress = updated.workAddress;
+    }
+
+    if (!updated.billingStreet || !updated.billingCity || !updated.billingPostalCode) {
+      updated.billingAddress = updated.workAddress;
     }
 
     this.validateClient(updated);
@@ -97,13 +121,25 @@ export class ClientsService {
 
     this.validateType(client.type);
 
-    if (!client.address || !client.address.trim()) {
-      throw new BadRequestException("Client address is required");
+    if (!client.street || !client.street.trim()) {
+      throw new BadRequestException("Client street is required");
     }
+
+    if (!client.city || !client.city.trim()) {
+      throw new BadRequestException("Client city is required");
+    }
+
+    if (!client.postalCode || !client.postalCode.trim()) {
+      throw new BadRequestException("Client postal code is required");
+    }
+
+    this.validateAddress(client.workAddress, "Client work address");
 
     if (!client.taxId || !client.taxId.trim()) {
       throw new BadRequestException("Client tax ID is required");
     }
+
+    this.validateBillingCompleteness(client);
 
     // Validate email format if provided
     if (client.email && !this.isValidEmail(client.email)) {
@@ -131,5 +167,43 @@ export class ClientsService {
   private isValidEmail(email: string): boolean {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
+  }
+
+  private resolveBillingAddress(client: CreateClientDto): Address {
+    const billingStreet = client.billingStreet?.trim() || client.street.trim();
+    const billingCity = client.billingCity?.trim() || client.city.trim();
+    const billingPostalCode = client.billingPostalCode?.trim() || client.postalCode.trim();
+
+    return new Address(billingStreet, billingCity, billingPostalCode);
+  }
+
+  private validateBillingCompleteness(client: any): void {
+    const hasAnyBillingField =
+      client.billingStreet !== undefined ||
+      client.billingCity !== undefined ||
+      client.billingPostalCode !== undefined;
+
+    if (!hasAnyBillingField) {
+      return;
+    }
+
+    const billingStreet = client.billingStreet?.trim();
+    const billingCity = client.billingCity?.trim();
+    const billingPostalCode = client.billingPostalCode?.trim();
+
+    const hasAllBillingFields = Boolean(billingStreet && billingCity && billingPostalCode);
+    const hasNoBillingFields = !billingStreet && !billingCity && !billingPostalCode;
+
+    if (!hasAllBillingFields && !hasNoBillingFields) {
+      throw new BadRequestException(
+        "Billing street, city, and postal code must all be provided together"
+      );
+    }
+  }
+
+  private validateAddress(address: Address, label: string): void {
+    if (!address.street?.trim() || !address.city?.trim() || !address.postalCode?.trim()) {
+      throw new BadRequestException(`${label} is incomplete`);
+    }
   }
 }

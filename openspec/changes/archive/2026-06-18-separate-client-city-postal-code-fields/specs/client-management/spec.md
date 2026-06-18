@@ -1,10 +1,4 @@
-# Client Management
-
-## Purpose
-
-Enable your father to store, organize, and retrieve client information (individuals and companies) in a centralized system. This foundation allows all downstream features (budgets, invoices) to reference and auto-fill client data.
-
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: Client data model with standardized fields
 The system SHALL store client information with consistent fields that capture contact and billing details for both individuals and companies.
@@ -44,21 +38,6 @@ The system SHALL provide an API endpoint to create a new client record with vali
 - **WHEN** a POST request is sent to `/api/clients` with type not "individual" or "company"
 - **THEN** the system returns HTTP 400 with validation error
 
-### Requirement: Retrieve single client via API
-The system SHALL provide an API endpoint to fetch a single client by ID, including only active clients by default.
-
-#### Scenario: Retrieve active client by ID
-- **WHEN** a GET request is sent to `/api/clients/:id` for an active client
-- **THEN** the system returns the client record with HTTP 200
-
-#### Scenario: Retrieve archived (inactive) client fails
-- **WHEN** a GET request is sent to `/api/clients/:id` for an archived (is_active=false) client
-- **THEN** the system returns HTTP 404
-
-#### Scenario: Non-existent client returns 404
-- **WHEN** a GET request is sent to `/api/clients/:id` with an invalid ID
-- **THEN** the system returns HTTP 404
-
 ### Requirement: Update client via API
 The system SHALL provide an API endpoint to update an existing client record with validation.
 
@@ -73,40 +52,6 @@ The system SHALL provide an API endpoint to update an existing client record wit
 #### Scenario: Invalid data in update fails
 - **WHEN** a PATCH request is sent to `/api/clients/:id` with invalid data (e.g., missing required work address fields or incomplete billing fields when billing differs)
 - **THEN** the system returns HTTP 400 with validation error details
-
-### Requirement: Soft-delete client via API
-The system SHALL provide an API endpoint to mark a client as archived (inactive) without deleting records.
-
-#### Scenario: Archive active client
-- **WHEN** a DELETE request is sent to `/api/clients/:id` for an active client
-- **THEN** the system marks is_active=false and returns HTTP 204
-
-#### Scenario: Archive non-existent client fails
-- **WHEN** a DELETE request is sent to `/api/clients/:id` with an invalid ID
-- **THEN** the system returns HTTP 404
-
-#### Scenario: Archived client cannot be retrieved
-- **WHEN** a client is archived, then a GET request is sent to `/api/clients/:id`
-- **THEN** the system returns HTTP 404 (archived clients excluded from normal retrieval)
-
-### Requirement: List active clients via API
-The system SHALL provide an API endpoint to retrieve all active clients with pagination and search support.
-
-#### Scenario: List all active clients
-- **WHEN** a GET request is sent to `/api/clients` with no filters
-- **THEN** the system returns a paginated list of all active clients with HTTP 200
-
-#### Scenario: List is paginated
-- **WHEN** a GET request is sent to `/api/clients?page=1&limit=10`
-- **THEN** the system returns max 10 clients per page and includes total count and page info
-
-#### Scenario: Search clients by name
-- **WHEN** a GET request is sent to `/api/clients?search=João`
-- **THEN** the system returns only active clients whose name contains "João" (case-insensitive)
-
-#### Scenario: Empty list when no clients match
-- **WHEN** a GET request is sent to `/api/clients?search=nonexistent`
-- **THEN** the system returns an empty list with HTTP 200
 
 ### Requirement: Frontend integration for client management
 The web app SHALL provide UI components and services to perform client CRUD operations and display client lists.

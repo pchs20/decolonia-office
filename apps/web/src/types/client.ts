@@ -1,11 +1,23 @@
 export type ClientType = "individual" | "company";
 
+export interface Address {
+  street: string;
+  city: string;
+  postalCode: string;
+}
+
 export interface Client {
   id: string;
   name: string;
   type: ClientType;
-  address: string;
-  billingAddress: string | null;
+  workAddress: Address;
+  billingAddress: Address;
+  street: string;
+  city: string;
+  postalCode: string;
+  billingStreet: string | null;
+  billingCity: string | null;
+  billingPostalCode: string | null;
   taxId: string;
   phone: string | null;
   email: string | null;
@@ -17,8 +29,12 @@ export interface Client {
 export interface CreateClientInput {
   name: string;
   type: ClientType;
-  address: string;
-  billingAddress?: string;
+  street: string;
+  city: string;
+  postalCode: string;
+  billingStreet?: string;
+  billingCity?: string;
+  billingPostalCode?: string;
   taxId: string;
   phone?: string;
   email?: string;
@@ -27,8 +43,12 @@ export interface CreateClientInput {
 export interface UpdateClientInput {
   name?: string;
   type?: ClientType;
-  address?: string;
-  billingAddress?: string;
+  street?: string;
+  city?: string;
+  postalCode?: string;
+  billingStreet?: string;
+  billingCity?: string;
+  billingPostalCode?: string;
   taxId?: string;
   phone?: string;
   email?: string;
