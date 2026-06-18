@@ -26,21 +26,57 @@ export class CreateClientDto {
 
   @ApiProperty({
     type: String,
-    description: "Client work address",
-    example: "Carrer de la Pau 123, Barcelona"
+    description: "Client work street",
+    example: "Carrer de la Pau 123"
   })
   @IsString()
-  address!: string;
+  street!: string;
 
   @ApiProperty({
     type: String,
-    description: "Client billing address (optional, defaults to address)",
-    example: "Carrer Principal 456, Barcelona",
+    description: "Client work city",
+    example: "Barcelona"
+  })
+  @IsString()
+  city!: string;
+
+  @ApiProperty({
+    type: String,
+    description: "Client work postal code",
+    example: "08001"
+  })
+  @IsString()
+  postalCode!: string;
+
+  @ApiProperty({
+    type: String,
+    description: "Client billing street (optional, defaults to work street)",
+    example: "Avinguda Diagonal 200",
     required: false
   })
   @IsOptional()
   @IsString()
-  billingAddress?: string;
+  billingStreet?: string;
+
+  @ApiProperty({
+    type: String,
+    description: "Client billing city (optional, defaults to work city)",
+    example: "Barcelona",
+    required: false
+  })
+  @IsOptional()
+  @IsString()
+  billingCity?: string;
+
+  @ApiProperty({
+    type: String,
+    description: "Client billing postal code (optional, defaults to work postal code)",
+    example: "08002",
+    required: false
+  })
+  @IsOptional()
+  @IsString()
+  billingPostalCode?: string;
 
   @ApiProperty({
     type: String,
@@ -85,12 +121,32 @@ export class UpdateClientDto {
   @ApiProperty({ type: String, required: false })
   @IsOptional()
   @IsString()
-  address?: string;
+  street?: string;
 
   @ApiProperty({ type: String, required: false })
   @IsOptional()
   @IsString()
-  billingAddress?: string;
+  city?: string;
+
+  @ApiProperty({ type: String, required: false })
+  @IsOptional()
+  @IsString()
+  postalCode?: string;
+
+  @ApiProperty({ type: String, required: false })
+  @IsOptional()
+  @IsString()
+  billingStreet?: string;
+
+  @ApiProperty({ type: String, required: false })
+  @IsOptional()
+  @IsString()
+  billingCity?: string;
+
+  @ApiProperty({ type: String, required: false })
+  @IsOptional()
+  @IsString()
+  billingPostalCode?: string;
 
   @ApiProperty({ type: String, required: false })
   @IsOptional()
@@ -133,18 +189,48 @@ export class ClientResponseDto {
 
   @ApiProperty({
     type: String,
-    description: "Client work address",
-    example: "Carrer de la Pau 123, Barcelona"
+    description: "Client work street",
+    example: "Carrer de la Pau 123"
   })
-  address!: string;
+  street!: string;
+
+  @ApiProperty({
+    type: String,
+    description: "Client work city",
+    example: "Barcelona"
+  })
+  city!: string;
+
+  @ApiProperty({
+    type: String,
+    description: "Client work postal code",
+    example: "08001"
+  })
+  postalCode!: string;
 
   @ApiProperty({
     type: String,
     nullable: true,
-    description: "Client billing address",
-    example: "Carrer Principal 456, Barcelona"
+    description: "Client billing street",
+    example: "Avinguda Diagonal 200"
   })
-  billingAddress!: string | null;
+  billingStreet!: string | null;
+
+  @ApiProperty({
+    type: String,
+    nullable: true,
+    description: "Client billing city",
+    example: "Barcelona"
+  })
+  billingCity!: string | null;
+
+  @ApiProperty({
+    type: String,
+    nullable: true,
+    description: "Client billing postal code",
+    example: "08002"
+  })
+  billingPostalCode!: string | null;
 
   @ApiProperty({
     type: String,

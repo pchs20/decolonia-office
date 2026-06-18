@@ -7,8 +7,12 @@ type ClientRow = {
   id: string;
   name: string;
   type: "individual" | "company";
-  address: string;
-  billing_address: string | null;
+  street: string;
+  city: string;
+  postal_code: string;
+  billing_street: string | null;
+  billing_city: string | null;
+  billing_postal_code: string | null;
   tax_id: string;
   phone: string | null;
   email: string | null;
@@ -18,12 +22,29 @@ type ClientRow = {
 };
 
 function mapClientRow(row: ClientRow): Client {
+  const workAddress = {
+    street: row.street,
+    city: row.city,
+    postalCode: row.postal_code
+  };
+  const billingAddress = {
+    street: row.billing_street ?? row.street,
+    city: row.billing_city ?? row.city,
+    postalCode: row.billing_postal_code ?? row.postal_code
+  };
+
   return {
     id: row.id,
     name: row.name,
     type: row.type,
-    address: row.address,
-    billingAddress: row.billing_address,
+    workAddress,
+    billingAddress,
+    street: row.street,
+    city: row.city,
+    postalCode: row.postal_code,
+    billingStreet: row.billing_street,
+    billingCity: row.billing_city,
+    billingPostalCode: row.billing_postal_code,
     taxId: row.tax_id,
     phone: row.phone,
     email: row.email,
@@ -60,13 +81,24 @@ export function validateCreateInput(payload: unknown): CreateClientInput {
 
   validateType(data.type);
 
-  const address = normalizeString(data.address);
-  if (!address) throw new ApiError(400, "Client address is required");
+  const street = normalizeString(data.street);
+  if (!street) throw new ApiError(400, "Client street is required");
+
+  const city = normalizeString(data.city);
+  if (!city) throw new ApiError(400, "Client city is required");
+
+  const postalCode = normalizeString(data.postalCode);
+  if (!postalCode) throw new ApiError(400, "Client postal code is required");
 
   const taxId = normalizeString(data.taxId);
   if (!taxId) throw new ApiError(400, "Client tax ID is required");
 
-  const billingAddress = normalizeString(data.billingAddress);
+  const billingStreet = normalizeString(data.billingStreet);
+  const billingCity = normalizeString(data.billingCity);
+  const billingPostalCode = normalizeString(data.billingPostalCode);
+
+  validateBillingCompleteness(billingStreet, billingCity, billingPostalCode);
+
   const phone = normalizeString(data.phone);
   const email = normalizeString(data.email);
 
@@ -81,8 +113,12 @@ export function validateCreateInput(payload: unknown): CreateClientInput {
   return {
     name,
     type: data.type,
-    address,
-    billingAddress,
+    street,
+    city,
+    postalCode,
+    billingStreet,
+    billingCity,
+    billingPostalCode,
     taxId,
     phone,
     email
@@ -108,14 +144,34 @@ export function validateUpdateInput(payload: unknown): UpdateClientInput {
     output.type = data.type;
   }
 
-  if ("address" in data) {
-    const address = normalizeString(data.address);
-    if (!address) throw new ApiError(400, "Client address is required");
-    output.address = address;
+  if ("street" in data) {
+    const street = normalizeString(data.street);
+    if (!street) throw new ApiError(400, "Client street is required");
+    output.street = street;
   }
 
-  if ("billingAddress" in data) {
-    output.billingAddress = normalizeString(data.billingAddress);
+  if ("city" in data) {
+    const city = normalizeString(data.city);
+    if (!city) throw new ApiError(400, "Client city is required");
+    output.city = city;
+  }
+
+  if ("postalCode" in data) {
+    const postalCode = normalizeString(data.postalCode);
+    if (!postalCode) throw new ApiError(400, "Client postal code is required");
+    output.postalCode = postalCode;
+  }
+
+  if ("billingStreet" in data) {
+    output.billingStreet = normalizeString(data.billingStreet);
+  }
+
+  if ("billingCity" in data) {
+    output.billingCity = normalizeString(data.billingCity);
+  }
+
+  if ("billingPostalCode" in data) {
+    output.billingPostalCode = normalizeString(data.billingPostalCode);
   }
 
   if ("taxId" in data) {
@@ -140,6 +196,13 @@ export function validateUpdateInput(payload: unknown): UpdateClientInput {
     output.email = email;
   }
 
+  validateBillingCompleteness(
+    output.billingStreet,
+    output.billingCity,
+    output.billingPostalCode,
+    ["billingStreet", "billingCity", "billingPostalCode"].some(key => key in data)
+  );
+
   return output;
 }
 
@@ -155,19 +218,38 @@ async function querySingleClient(sql: string, params: unknown[]): Promise<Client
 }
 
 export async function createClient(input: CreateClientInput): Promise<Client> {
-  const billingAddress = input.billingAddress?.trim() || input.address;
+  const billingStreet = input.billingStreet?.trim() || input.street;
+  const billingCity = input.billingCity?.trim() || input.city;
+  const billingPostalCode = input.billingPostalCode?.trim() || input.postalCode;
 
   return querySingleClient(
     `
-      INSERT INTO clients (name, type, address, billing_address, tax_id, phone, email, is_active)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, true)
-      RETURNING id, name, type, address, billing_address, tax_id, phone, email, is_active, created_at, updated_at
+      INSERT INTO clients (
+        name,
+        type,
+        street,
+        city,
+        postal_code,
+        billing_street,
+        billing_city,
+        billing_postal_code,
+        tax_id,
+        phone,
+        email,
+        is_active
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, true)
+      RETURNING id, name, type, street, city, postal_code, billing_street, billing_city, billing_postal_code, tax_id, phone, email, is_active, created_at, updated_at
     `,
     [
       input.name,
       input.type,
-      input.address,
-      billingAddress,
+      input.street,
+      input.city,
+      input.postalCode,
+      billingStreet,
+      billingCity,
+      billingPostalCode,
       input.taxId,
       input.phone ?? null,
       input.email ?? null
@@ -178,7 +260,7 @@ export async function createClient(input: CreateClientInput): Promise<Client> {
 export async function getClientById(id: string): Promise<Client> {
   return querySingleClient(
     `
-      SELECT id, name, type, address, billing_address, tax_id, phone, email, is_active, created_at, updated_at
+      SELECT id, name, type, street, city, postal_code, billing_street, billing_city, billing_postal_code, tax_id, phone, email, is_active, created_at, updated_at
       FROM clients
       WHERE id = $1 AND is_active = true
     `,
@@ -203,7 +285,7 @@ export async function listClients(page: number, limit: number, search?: string):
     const searchValue = `%${search.trim()}%`;
     listQuery = await getDbPool().query<ClientRow>(
       `
-        SELECT id, name, type, address, billing_address, tax_id, phone, email, is_active, created_at, updated_at
+        SELECT id, name, type, street, city, postal_code, billing_street, billing_city, billing_postal_code, tax_id, phone, email, is_active, created_at, updated_at
         FROM clients
         WHERE is_active = true AND name ILIKE $1
         ORDER BY created_at DESC
@@ -223,7 +305,7 @@ export async function listClients(page: number, limit: number, search?: string):
   } else {
     listQuery = await getDbPool().query<ClientRow>(
       `
-        SELECT id, name, type, address, billing_address, tax_id, phone, email, is_active, created_at, updated_at
+        SELECT id, name, type, street, city, postal_code, billing_street, billing_city, billing_postal_code, tax_id, phone, email, is_active, created_at, updated_at
         FROM clients
         WHERE is_active = true
         ORDER BY created_at DESC
@@ -262,20 +344,36 @@ export async function updateClient(id: string, input: UpdateClientInput): Promis
 
   if (input.name !== undefined) setField("name", input.name);
   if (input.type !== undefined) setField("type", input.type);
-  if (input.address !== undefined) setField("address", input.address);
+  if (input.street !== undefined) setField("street", input.street);
+  if (input.city !== undefined) setField("city", input.city);
+  if (input.postalCode !== undefined) setField("postal_code", input.postalCode);
   if (input.taxId !== undefined) setField("tax_id", input.taxId);
   if (input.phone !== undefined) setField("phone", input.phone ?? null);
   if (input.email !== undefined) setField("email", input.email ?? null);
 
-  if (input.billingAddress !== undefined) {
-    setField("billing_address", input.billingAddress?.trim() || null);
+  const hasBillingUpdate =
+    input.billingStreet !== undefined ||
+    input.billingCity !== undefined ||
+    input.billingPostalCode !== undefined;
+  const hasWorkUpdate =
+    input.street !== undefined || input.city !== undefined || input.postalCode !== undefined;
+
+  if (hasBillingUpdate) {
+    setField("billing_street", input.billingStreet?.trim() || null);
+    setField("billing_city", input.billingCity?.trim() || null);
+    setField("billing_postal_code", input.billingPostalCode?.trim() || null);
   }
 
-  if (input.address !== undefined && input.billingAddress === undefined) {
+  if (hasWorkUpdate && !hasBillingUpdate) {
     const current = await getClientById(id);
-    if (!current.billingAddress?.trim()) {
-      setField("billing_address", input.address);
-    }
+
+    const effectiveStreet = input.street ?? current.street;
+    const effectiveCity = input.city ?? current.city;
+    const effectivePostalCode = input.postalCode ?? current.postalCode;
+
+    setField("billing_street", effectiveStreet);
+    setField("billing_city", effectiveCity);
+    setField("billing_postal_code", effectivePostalCode);
   }
 
   if (fields.length === 0) {
@@ -290,10 +388,33 @@ export async function updateClient(id: string, input: UpdateClientInput): Promis
       UPDATE clients
       SET ${fields.join(", ")}
       WHERE id = $${values.length} AND is_active = true
-      RETURNING id, name, type, address, billing_address, tax_id, phone, email, is_active, created_at, updated_at
+      RETURNING id, name, type, street, city, postal_code, billing_street, billing_city, billing_postal_code, tax_id, phone, email, is_active, created_at, updated_at
     `,
     values
   );
+}
+
+function validateBillingCompleteness(
+  billingStreet?: string,
+  billingCity?: string,
+  billingPostalCode?: string,
+  forceCheck: boolean = false
+): void {
+  const hasAnyBillingField = forceCheck || billingStreet !== undefined || billingCity !== undefined || billingPostalCode !== undefined;
+
+  if (!hasAnyBillingField) {
+    return;
+  }
+
+  const hasAllBillingFields = Boolean(billingStreet && billingCity && billingPostalCode);
+  const hasNoBillingFields = !billingStreet && !billingCity && !billingPostalCode;
+
+  if (!hasAllBillingFields && !hasNoBillingFields) {
+    throw new ApiError(
+      400,
+      "Billing street, city, and postal code must all be provided together"
+    );
+  }
 }
 
 export async function deleteClient(id: string): Promise<void> {

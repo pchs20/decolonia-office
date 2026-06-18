@@ -99,7 +99,6 @@ export function ClientListPage() {
               </thead>
               <tbody>
                 {clients.map(client => {
-                  const city = client.address.split(",").pop()?.trim() || "-";
                   return (
                     <tr key={client.id} className="border-b hover:bg-gray-50">
                       <td className="px-4 py-3 font-medium">
@@ -112,7 +111,7 @@ export function ClientListPage() {
                       </td>
                       <td className="px-4 py-3 capitalize">{client.type}</td>
                       <td className="px-4 py-3">{client.phone || "-"}</td>
-                      <td className="px-4 py-3">{city}</td>
+                      <td className="px-4 py-3">{client.workAddress.city || "-"}</td>
                       <td className="px-4 py-3 space-x-2">
                         <Link
                           href={`/clients/${client.id}/edit`}

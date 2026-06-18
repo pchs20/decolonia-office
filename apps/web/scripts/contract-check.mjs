@@ -34,7 +34,9 @@ async function main() {
   const createPayload = {
     name: `Contract ${suffix}`,
     type: "individual",
-    address: "Carrer Test 1, Barcelona",
+    street: "Carrer Test 1",
+    city: "Barcelona",
+    postalCode: "08001",
     taxId: `TEST${suffix}`,
     phone: "+34 600000000",
     email: `contract.${suffix}@example.com`
