@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 import { ClientSchema, ClientListResponseSchema } from "@/api/schemas/client-schema";
 import { ClientService } from "@/presentation/api-clients/client.service";
 
 export function ClientListPage() {
+  const { t } = useTranslation();
   const [clients, setClients] = useState<ClientSchema[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -23,7 +25,7 @@ export function ClientListPage() {
       setClients(data.clients);
       setTotal(data.total);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to fetch clients");
+      setError(err instanceof Error ? err.message : t('clients.errors.fetchFailed'));
     } finally {
       setLoading(false);
     }
@@ -44,7 +46,7 @@ export function ClientListPage() {
       setDeleteConfirm(null);
       fetchClients(page, search);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete client");
+      setError(err instanceof Error ? err.message : t('clients.errors.deleteFailed'));
     }
   };
 
@@ -53,12 +55,12 @@ export function ClientListPage() {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Clients</h1>
+        <h1 className="text-3xl font-bold">{t('clients.title')}</h1>
         <Link
           href="/clients/new"
           className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
         >
-          Add Client
+          {t('clients.addButton')}
         </Link>
       </div>
 
@@ -71,7 +73,7 @@ export function ClientListPage() {
       <div className="mb-4">
         <input
           type="text"
-          placeholder="Search by name..."
+          placeholder={t('clients.searchPlaceholder')}
           value={search}
           onChange={handleSearch}
           className="w-full px-4 py-2 border rounded"
@@ -79,10 +81,10 @@ export function ClientListPage() {
       </div>
 
       {loading ? (
-        <div className="text-center py-8">Loading...</div>
+        <div className="text-center py-8">{t('common.loading')}</div>
       ) : clients.length === 0 ? (
         <div className="text-center py-8 text-gray-500">
-          {search ? "No clients found matching your search" : "No clients yet"}
+          {search ? t('clients.noResultsSearch') : t('clients.empty')}
         </div>
       ) : (
         <>
@@ -90,11 +92,11 @@ export function ClientListPage() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b">
                 <tr>
-                  <th className="px-4 py-3 text-left text-sm font-semibold">Name</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold">Type</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold">Phone</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold">City</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold">Actions</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold">{t('common.name')}</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold">{t('clients.fields.type')}</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold">{t('common.phone')}</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold">{t('common.city')}</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold">{t('common.actions')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -117,13 +119,13 @@ export function ClientListPage() {
                           href={`/clients/${client.id}/edit`}
                           className="px-2 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
                         >
-                          Edit
+                          {t('common.edit')}
                         </Link>
                         <button
                           onClick={() => setDeleteConfirm(client.id)}
                           className="px-2 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200"
                         >
-                          Delete
+                          {t('common.delete')}
                         </button>
                       </td>
                     </tr>
@@ -135,7 +137,7 @@ export function ClientListPage() {
 
           <div className="mt-4 flex justify-between items-center">
             <div className="text-sm text-gray-600">
-              Showing {(page - 1) * limit + 1} to {Math.min(page * limit, total)} of {total}
+              {t('common.showingRange', { from: (page - 1) * limit + 1, to: Math.min(page * limit, total), total })}
             </div>
             <div className="space-x-2">
               <button
@@ -143,17 +145,17 @@ export function ClientListPage() {
                 disabled={page === 1}
                 className="px-3 py-1 border rounded disabled:opacity-50"
               >
-                Previous
+                {t('common.previous')}
               </button>
               <span className="px-3 py-1">
-                Page {page} of {totalPages}
+                {t('common.pageOf', { page, total: totalPages })}
               </span>
               <button
                 onClick={() => setPage(Math.min(totalPages, page + 1))}
                 disabled={page === totalPages}
                 className="px-3 py-1 border rounded disabled:opacity-50"
               >
-                Next
+                {t('common.next')}
               </button>
             </div>
           </div>
@@ -168,20 +170,20 @@ export function ClientListPage() {
             aria-labelledby="confirm-delete-title"
             className="bg-white p-6 rounded-lg"
           >
-            <h3 id="confirm-delete-title" className="text-lg font-semibold mb-4">Confirm Delete</h3>
-            <p className="mb-6">Are you sure you want to delete this client?</p>
+            <h3 id="confirm-delete-title" className="text-lg font-semibold mb-4">{t('common.confirmDelete')}</h3>
+            <p className="mb-6">{t('clients.deleteConfirm')}</p>
             <div className="flex gap-2 justify-end">
               <button
                 onClick={() => setDeleteConfirm(null)}
                 className="px-4 py-2 border rounded hover:bg-gray-50"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 onClick={() => handleDelete(deleteConfirm)}
                 className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
               >
-                Delete
+                {t('common.delete')}
               </button>
             </div>
           </div>

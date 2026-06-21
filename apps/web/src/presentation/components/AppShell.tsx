@@ -1,0 +1,33 @@
+'use client';
+
+import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
+import { LanguageToggle } from '@/presentation/components/LanguageToggle';
+
+export function AppShell({ children }: { children: React.ReactNode }) {
+  const { t } = useTranslation();
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <nav className="bg-white border-b px-6 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-6">
+          <span className="font-semibold text-gray-900">{t('nav.appName')}</span>
+          <Link
+            href="/clients"
+            className="text-sm text-gray-600 hover:text-gray-900"
+          >
+            {t('nav.clients')}
+          </Link>
+          <Link
+            href="/workers"
+            className="text-sm text-gray-600 hover:text-gray-900"
+          >
+            {t('nav.workers')}
+          </Link>
+        </div>
+        <LanguageToggle />
+      </nav>
+      <main>{children}</main>
+    </div>
+  );
+}

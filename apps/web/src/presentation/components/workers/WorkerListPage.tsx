@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 import { WorkerSchema, WorkerListResponseSchema } from "@/api/schemas/worker-schema";
 import { WorkerService } from "@/presentation/api-clients/worker.service";
 
 export function WorkerListPage() {
+  const { t } = useTranslation();
   const [workers, setWorkers] = useState<WorkerSchema[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -23,7 +25,7 @@ export function WorkerListPage() {
       setWorkers(data.workers);
       setTotal(data.total);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to fetch workers");
+      setError(err instanceof Error ? err.message : t('workers.errors.fetchFailed'));
     } finally {
       setLoading(false);
     }
@@ -44,7 +46,7 @@ export function WorkerListPage() {
       setDeleteConfirm(null);
       fetchWorkers(page, search);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete worker");
+      setError(err instanceof Error ? err.message : t('workers.errors.deleteFailed'));
     }
   };
 
@@ -53,12 +55,12 @@ export function WorkerListPage() {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Workers</h1>
+        <h1 className="text-3xl font-bold">{t('workers.title')}</h1>
         <Link
           href="/workers/new"
           className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
         >
-          Add Worker
+          {t('workers.addButton')}
         </Link>
       </div>
 
@@ -67,7 +69,7 @@ export function WorkerListPage() {
       <div className="mb-4">
         <input
           type="text"
-          placeholder="Search by name..."
+          placeholder={t('workers.searchPlaceholder')}
           value={search}
           onChange={handleSearch}
           className="w-full px-4 py-2 border rounded"
@@ -75,10 +77,10 @@ export function WorkerListPage() {
       </div>
 
       {loading ? (
-        <div className="text-center py-8">Loading...</div>
+        <div className="text-center py-8">{t('common.loading')}</div>
       ) : workers.length === 0 ? (
         <div className="text-center py-8 text-gray-500">
-          {search ? "No workers found matching your search" : "No workers yet"}
+          {search ? t('workers.noResultsSearch') : t('workers.empty')}
         </div>
       ) : (
         <>
@@ -86,10 +88,10 @@ export function WorkerListPage() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b">
                 <tr>
-                  <th className="px-4 py-3 text-left text-sm font-semibold">Name</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold">Phone</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold">City</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold">Actions</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold">{t('common.name')}</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold">{t('common.phone')}</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold">{t('common.city')}</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold">{t('common.actions')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -108,13 +110,13 @@ export function WorkerListPage() {
                           href={`/workers/${worker.id}/edit`}
                           className="px-2 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
                         >
-                          Edit
+                          {t('common.edit')}
                         </Link>
                         <button
                           onClick={() => setDeleteConfirm(worker.id)}
                           className="px-2 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200"
                         >
-                          Delete
+                          {t('common.delete')}
                         </button>
                       </td>
                     </tr>
@@ -126,7 +128,7 @@ export function WorkerListPage() {
 
           <div className="mt-4 flex justify-between items-center">
             <div className="text-sm text-gray-600">
-              Showing {(page - 1) * limit + 1} to {Math.min(page * limit, total)} of {total}
+              {t('common.showingRange', { from: (page - 1) * limit + 1, to: Math.min(page * limit, total), total })}
             </div>
             <div className="space-x-2">
               <button
@@ -134,17 +136,17 @@ export function WorkerListPage() {
                 disabled={page === 1}
                 className="px-3 py-1 border rounded disabled:opacity-50"
               >
-                Previous
+                {t('common.previous')}
               </button>
               <span className="px-3 py-1">
-                Page {page} of {totalPages}
+                {t('common.pageOf', { page, total: totalPages })}
               </span>
               <button
                 onClick={() => setPage(Math.min(totalPages, page + 1))}
                 disabled={page === totalPages}
                 className="px-3 py-1 border rounded disabled:opacity-50"
               >
-                Next
+                {t('common.next')}
               </button>
             </div>
           </div>
@@ -154,20 +156,20 @@ export function WorkerListPage() {
       {deleteConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div role="dialog" aria-modal="true" className="bg-white p-6 rounded-lg">
-            <h3 className="text-lg font-semibold mb-4">Confirm Delete</h3>
-            <p className="mb-6">Are you sure you want to delete this worker?</p>
+            <h3 className="text-lg font-semibold mb-4">{t('common.confirmDelete')}</h3>
+            <p className="mb-6">{t('workers.deleteConfirm')}</p>
             <div className="flex gap-2 justify-end">
               <button
                 onClick={() => setDeleteConfirm(null)}
                 className="px-4 py-2 border rounded hover:bg-gray-50"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 onClick={() => handleDelete(deleteConfirm)}
                 className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
               >
-                Delete
+                {t('common.delete')}
               </button>
             </div>
           </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { WorkerSchema, CreateWorkerInput, UpdateWorkerInput } from "@/api/schemas/worker-schema";
 import { WorkerService } from "@/presentation/api-clients/worker.service";
 import { ProfileCommonFields } from "@/presentation/components/profiles/ProfileCommonFields";
@@ -14,6 +15,7 @@ interface WorkerFormProps {
 }
 
 export function WorkerForm({ worker, onSuccess, onCancel, onDirtyChange }: WorkerFormProps) {
+  const { t } = useTranslation();
   const initialIsBillingSameAsWork =
     !worker ||
     ((!worker.billingStreet || worker.billingStreet === worker.street) &&
@@ -81,7 +83,7 @@ export function WorkerForm({ worker, onSuccess, onCancel, onDirtyChange }: Worke
     setError(null);
 
     if (!formData.street?.trim() || !formData.city?.trim() || !formData.postalCode?.trim()) {
-      setError("Street, city, and postal code are required");
+      setError(t('profile.errors.workAddressRequired'));
       return;
     }
 
@@ -91,7 +93,7 @@ export function WorkerForm({ worker, onSuccess, onCancel, onDirtyChange }: Worke
         !formData.billingCity?.trim() ||
         !formData.billingPostalCode?.trim())
     ) {
-      setError("Billing street, city, and postal code are required when billing differs");
+      setError(t('profile.errors.billingAddressRequired'));
       return;
     }
 
@@ -116,7 +118,7 @@ export function WorkerForm({ worker, onSuccess, onCancel, onDirtyChange }: Worke
 
       onSuccess(result);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      setError(err instanceof Error ? err.message : t('common.errors.unknown'));
     } finally {
       setLoading(false);
     }
@@ -124,9 +126,7 @@ export function WorkerForm({ worker, onSuccess, onCancel, onDirtyChange }: Worke
 
   const handleCancel = () => {
     if (isDirty) {
-      const shouldDiscard = window.confirm(
-        "You have unsaved changes. Discard them and leave edit mode?"
-      );
+      const shouldDiscard = window.confirm(t('common.unsavedChanges'));
       if (!shouldDiscard) {
         return;
       }
@@ -137,12 +137,12 @@ export function WorkerForm({ worker, onSuccess, onCancel, onDirtyChange }: Worke
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 p-4 bg-white rounded-lg border">
-      <h2 className="text-xl font-semibold">{worker ? "Edit Worker" : "Add New Worker"}</h2>
+      <h2 className="text-xl font-semibold">{worker ? t('workers.form.editTitle') : t('workers.form.newTitle')}</h2>
 
       {error && <div className="p-3 bg-red-100 text-red-700 rounded">{error}</div>}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <ProfileCommonFields values={formData} onChange={handleChange} entityLabel="Worker" />
+        <ProfileCommonFields values={formData} onChange={handleChange} entityLabel={t('workers.entityName')} />
         <ProfileAddressFields
           values={formData}
           onChange={handleChange}
@@ -166,14 +166,14 @@ export function WorkerForm({ worker, onSuccess, onCancel, onDirtyChange }: Worke
           onClick={handleCancel}
           className="px-4 py-2 border rounded hover:bg-gray-50"
         >
-          Cancel
+          {t('common.cancel')}
         </button>
         <button
           type="submit"
           disabled={loading}
           className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400"
         >
-          {loading ? "Saving..." : "Save"}
+          {loading ? t('common.saving') : t('common.save')}
         </button>
       </div>
     </form>

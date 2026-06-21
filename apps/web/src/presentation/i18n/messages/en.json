@@ -1,0 +1,117 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "back": "← Back",
+    "edit": "Edit",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving...",
+    "previous": "Previous",
+    "next": "Next",
+    "pageOf": "Page {{page}} of {{total}}",
+    "showingRange": "Showing {{from}} to {{to}} of {{total}}",
+    "confirmDelete": "Confirm Delete",
+    "unsavedChanges": "You have unsaved changes. Discard them and leave edit mode?",
+    "name": "Name",
+    "phone": "Phone",
+    "city": "City",
+    "actions": "Actions",
+    "errors": {
+      "unknown": "An error occurred"
+    }
+  },
+  "nav": {
+    "appName": "Decolonia Office",
+    "clients": "Clients",
+    "workers": "Workers"
+  },
+  "clients": {
+    "title": "Clients",
+    "entityName": "Client",
+    "addButton": "Add Client",
+    "searchPlaceholder": "Search by name...",
+    "noResultsSearch": "No clients found matching your search",
+    "empty": "No clients yet",
+    "notFound": "Client not found",
+    "backToList": "← Back to Clients",
+    "deleteConfirm": "Are you sure you want to delete this client?",
+    "fields": {
+      "type": "Type",
+      "taxId": "Tax ID",
+      "address": "Address",
+      "workAddress": "Work Address",
+      "billingAddress": "Billing Address",
+      "created": "Created",
+      "lastUpdated": "Last Updated"
+    },
+    "types": {
+      "individual": "Individual",
+      "company": "Company"
+    },
+    "form": {
+      "editTitle": "Edit Client",
+      "newTitle": "Add New Client"
+    },
+    "errors": {
+      "fetchFailed": "Failed to fetch clients",
+      "deleteFailed": "Failed to delete client"
+    },
+    "successUpdate": "Client {{name}} updated successfully"
+  },
+  "workers": {
+    "title": "Workers",
+    "entityName": "Worker",
+    "addButton": "Add Worker",
+    "searchPlaceholder": "Search by name...",
+    "noResultsSearch": "No workers found matching your search",
+    "empty": "No workers yet",
+    "notFound": "Worker not found",
+    "backToList": "← Back to Workers",
+    "deleteConfirm": "Are you sure you want to delete this worker?",
+    "fields": {
+      "taxId": "Tax ID",
+      "address": "Address",
+      "workAddress": "Work Address",
+      "billingAddress": "Billing Address",
+      "created": "Created",
+      "lastUpdated": "Last Updated"
+    },
+    "form": {
+      "editTitle": "Edit Worker",
+      "newTitle": "Add New Worker"
+    },
+    "errors": {
+      "fetchFailed": "Failed to fetch workers",
+      "deleteFailed": "Failed to delete worker"
+    },
+    "successUpdate": "Worker {{name}} updated successfully"
+  },
+  "profile": {
+    "fields": {
+      "name": "Name *",
+      "taxId": "Tax ID *",
+      "phone": "Phone",
+      "email": "Email",
+      "phonePlaceholder": "+34 612 345 678",
+      "address": "Address",
+      "workStreet": "Work Street *",
+      "workCity": "Work City *",
+      "workPostalCode": "Work Postal Code *",
+      "streetPlaceholder": "Street and number",
+      "cityPlaceholder": "City",
+      "postalCodePlaceholder": "Postal code",
+      "billingSameAsWork": "Billing address is the same as work address",
+      "billingStreet": "Billing Street *",
+      "billingCity": "Billing City *",
+      "billingPostalCode": "Billing Postal Code *",
+      "billingStreetPlaceholder": "Billing street and number",
+      "billingCityPlaceholder": "Billing city",
+      "billingPostalCodePlaceholder": "Billing postal code"
+    },
+    "errors": {
+      "workAddressRequired": "Street, city, and postal code are required",
+      "billingAddressRequired": "Billing street, city, and postal code are required when billing differs"
+    }
+  }
+}
