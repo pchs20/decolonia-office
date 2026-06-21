@@ -1,3 +1,7 @@
+'use client';
+
+import { useTranslation } from 'react-i18next';
+
 type ProfileCommonValues = {
   name?: string;
   taxId?: string;
@@ -12,10 +16,11 @@ interface ProfileCommonFieldsProps {
 }
 
 export function ProfileCommonFields({ values, onChange, entityLabel }: ProfileCommonFieldsProps) {
+  const { t } = useTranslation();
   return (
     <>
       <div>
-        <label className="block text-sm font-medium mb-1">Name *</label>
+        <label className="block text-sm font-medium mb-1">{t('profile.fields.name')}</label>
         <input
           type="text"
           name="name"
@@ -23,12 +28,12 @@ export function ProfileCommonFields({ values, onChange, entityLabel }: ProfileCo
           onChange={onChange}
           required
           className="w-full px-3 py-2 border rounded"
-          placeholder={`${entityLabel} name`}
+          placeholder={entityLabel}
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Tax ID *</label>
+        <label className="block text-sm font-medium mb-1">{t('profile.fields.taxId')}</label>
         <input
           type="text"
           name="taxId"
@@ -41,19 +46,19 @@ export function ProfileCommonFields({ values, onChange, entityLabel }: ProfileCo
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Phone</label>
+        <label className="block text-sm font-medium mb-1">{t('profile.fields.phone')}</label>
         <input
           type="tel"
           name="phone"
           value={values.phone || ""}
           onChange={onChange}
           className="w-full px-3 py-2 border rounded"
-          placeholder="+34 612 345 678"
+          placeholder={t('profile.fields.phonePlaceholder')}
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Email</label>
+        <label className="block text-sm font-medium mb-1">{t('profile.fields.email')}</label>
         <input
           type="email"
           name="email"

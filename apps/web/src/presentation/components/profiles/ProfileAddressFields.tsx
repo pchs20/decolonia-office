@@ -1,3 +1,7 @@
+'use client';
+
+import { useTranslation } from 'react-i18next';
+
 type ProfileAddressValues = {
   street?: string;
   city?: string;
@@ -22,14 +26,15 @@ export function ProfileAddressFields({
   setIsBillingSameAsWork,
   onBillingSameAsWorkChange
 }: ProfileAddressFieldsProps) {
+  const { t } = useTranslation();
   return (
     <>
       <div className="md:col-span-2 pt-2">
-        <h3 className="text-sm font-semibold text-gray-700">Address</h3>
+        <h3 className="text-sm font-semibold text-gray-700">{t('profile.fields.address')}</h3>
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Work Street *</label>
+        <label className="block text-sm font-medium mb-1">{t('profile.fields.workStreet')}</label>
         <input
           type="text"
           name="street"
@@ -37,12 +42,12 @@ export function ProfileAddressFields({
           onChange={onChange}
           required
           className="w-full px-3 py-2 border rounded"
-          placeholder="Street and number"
+          placeholder={t('profile.fields.streetPlaceholder')}
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Work City *</label>
+        <label className="block text-sm font-medium mb-1">{t('profile.fields.workCity')}</label>
         <input
           type="text"
           name="city"
@@ -50,12 +55,12 @@ export function ProfileAddressFields({
           onChange={onChange}
           required
           className="w-full px-3 py-2 border rounded"
-          placeholder="City"
+          placeholder={t('profile.fields.cityPlaceholder')}
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Work Postal Code *</label>
+        <label className="block text-sm font-medium mb-1">{t('profile.fields.workPostalCode')}</label>
         <input
           type="text"
           name="postalCode"
@@ -63,7 +68,7 @@ export function ProfileAddressFields({
           onChange={onChange}
           required
           className="w-full px-3 py-2 border rounded"
-          placeholder="Postal code"
+          placeholder={t('profile.fields.postalCodePlaceholder')}
         />
       </div>
 
@@ -78,12 +83,12 @@ export function ProfileAddressFields({
               onBillingSameAsWorkChange(checked);
             }}
           />
-          Billing address is the same as work address
+          {t('profile.fields.billingSameAsWork')}
         </label>
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Billing Street *</label>
+        <label className="block text-sm font-medium mb-1">{t('profile.fields.billingStreet')}</label>
         <input
           type="text"
           name="billingStreet"
@@ -92,12 +97,12 @@ export function ProfileAddressFields({
           required={!isBillingSameAsWork}
           disabled={isBillingSameAsWork}
           className="w-full px-3 py-2 border rounded disabled:bg-gray-100"
-          placeholder="Billing street and number"
+          placeholder={t('profile.fields.billingStreetPlaceholder')}
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Billing City *</label>
+        <label className="block text-sm font-medium mb-1">{t('profile.fields.billingCity')}</label>
         <input
           type="text"
           name="billingCity"
@@ -106,12 +111,12 @@ export function ProfileAddressFields({
           required={!isBillingSameAsWork}
           disabled={isBillingSameAsWork}
           className="w-full px-3 py-2 border rounded disabled:bg-gray-100"
-          placeholder="Billing city"
+          placeholder={t('profile.fields.billingCityPlaceholder')}
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Billing Postal Code *</label>
+        <label className="block text-sm font-medium mb-1">{t('profile.fields.billingPostalCode')}</label>
         <input
           type="text"
           name="billingPostalCode"
@@ -120,7 +125,7 @@ export function ProfileAddressFields({
           required={!isBillingSameAsWork}
           disabled={isBillingSameAsWork}
           className="w-full px-3 py-2 border rounded disabled:bg-gray-100"
-          placeholder="Billing postal code"
+          placeholder={t('profile.fields.billingPostalCodePlaceholder')}
         />
       </div>
     </>

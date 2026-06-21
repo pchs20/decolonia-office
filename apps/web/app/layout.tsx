@@ -2,6 +2,8 @@ import "./globals.css";
 import type { Metadata } from "next";
 import type { Viewport } from "next";
 import type { ReactNode } from "react";
+import { cookies } from "next/headers";
+import { DEFAULT_LOCALE, LOCALE_COOKIE, SUPPORTED_LOCALES, type Locale } from "@/presentation/i18n/config";
 
 export const metadata: Metadata = {
   title: "Decolonia Office",
@@ -19,9 +21,16 @@ export const viewport: Viewport = {
   themeColor: "#2563eb"
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  const cookieStore = await cookies();
+  const localeCookie = cookieStore.get(LOCALE_COOKIE)?.value;
+  const locale: Locale =
+    (SUPPORTED_LOCALES as readonly string[]).includes(localeCookie ?? "")
+      ? (localeCookie as Locale)
+      : DEFAULT_LOCALE;
+
   return (
-    <html lang="en">
+    <html lang={locale}>
       <body>{children}</body>
     </html>
   );

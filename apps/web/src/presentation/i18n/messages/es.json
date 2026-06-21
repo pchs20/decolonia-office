@@ -1,0 +1,117 @@
+{
+  "common": {
+    "loading": "Cargando...",
+    "back": "← Atrás",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "saving": "Guardando...",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "pageOf": "Página {{page}} de {{total}}",
+    "showingRange": "Mostrando {{from}} a {{to}} de {{total}}",
+    "confirmDelete": "Confirmar eliminación",
+    "unsavedChanges": "Tienes cambios sin guardar. ¿Descartarlos y salir del modo edición?",
+    "name": "Nombre",
+    "phone": "Teléfono",
+    "city": "Ciudad",
+    "actions": "Acciones",
+    "errors": {
+      "unknown": "Se ha producido un error"
+    }
+  },
+  "nav": {
+    "appName": "Decolonia Office",
+    "clients": "Clientes",
+    "workers": "Trabajadores"
+  },
+  "clients": {
+    "title": "Clientes",
+    "entityName": "Cliente",
+    "addButton": "Añadir cliente",
+    "searchPlaceholder": "Buscar por nombre...",
+    "noResultsSearch": "No se han encontrado clientes con ese nombre",
+    "empty": "Todavía no hay clientes",
+    "notFound": "Cliente no encontrado",
+    "backToList": "← Volver a clientes",
+    "deleteConfirm": "¿Seguro que quieres eliminar este cliente?",
+    "fields": {
+      "type": "Tipo",
+      "taxId": "NIF/CIF",
+      "address": "Dirección",
+      "workAddress": "Dirección de trabajo",
+      "billingAddress": "Dirección de facturación",
+      "created": "Creado",
+      "lastUpdated": "Última actualización"
+    },
+    "types": {
+      "individual": "Particular",
+      "company": "Empresa"
+    },
+    "form": {
+      "editTitle": "Editar cliente",
+      "newTitle": "Nuevo cliente"
+    },
+    "errors": {
+      "fetchFailed": "Error al cargar los clientes",
+      "deleteFailed": "Error al eliminar el cliente"
+    },
+    "successUpdate": "Cliente {{name}} actualizado correctamente"
+  },
+  "workers": {
+    "title": "Trabajadores",
+    "entityName": "Trabajador",
+    "addButton": "Añadir trabajador",
+    "searchPlaceholder": "Buscar por nombre...",
+    "noResultsSearch": "No se han encontrado trabajadores con ese nombre",
+    "empty": "Todavía no hay trabajadores",
+    "notFound": "Trabajador no encontrado",
+    "backToList": "← Volver a trabajadores",
+    "deleteConfirm": "¿Seguro que quieres eliminar este trabajador?",
+    "fields": {
+      "taxId": "NIF/NIE",
+      "address": "Dirección",
+      "workAddress": "Dirección de trabajo",
+      "billingAddress": "Dirección de facturación",
+      "created": "Creado",
+      "lastUpdated": "Última actualización"
+    },
+    "form": {
+      "editTitle": "Editar trabajador",
+      "newTitle": "Nuevo trabajador"
+    },
+    "errors": {
+      "fetchFailed": "Error al cargar los trabajadores",
+      "deleteFailed": "Error al eliminar el trabajador"
+    },
+    "successUpdate": "Trabajador {{name}} actualizado correctamente"
+  },
+  "profile": {
+    "fields": {
+      "name": "Nombre *",
+      "taxId": "NIF/NIE/CIF *",
+      "phone": "Teléfono",
+      "email": "Email",
+      "phonePlaceholder": "+34 612 345 678",
+      "address": "Dirección",
+      "workStreet": "Calle de trabajo *",
+      "workCity": "Ciudad de trabajo *",
+      "workPostalCode": "Código postal de trabajo *",
+      "streetPlaceholder": "Calle y número",
+      "cityPlaceholder": "Ciudad",
+      "postalCodePlaceholder": "Código postal",
+      "billingSameAsWork": "La dirección de facturación es la misma que la de trabajo",
+      "billingStreet": "Calle de facturación *",
+      "billingCity": "Ciudad de facturación *",
+      "billingPostalCode": "Código postal de facturación *",
+      "billingStreetPlaceholder": "Calle y número de facturación",
+      "billingCityPlaceholder": "Ciudad de facturación",
+      "billingPostalCodePlaceholder": "Código postal de facturación"
+    },
+    "errors": {
+      "workAddressRequired": "La calle, ciudad y código postal son obligatorios",
+      "billingAddressRequired": "La calle, ciudad y código postal de facturación son obligatorios cuando la dirección de facturación es diferente"
+    }
+  }
+}

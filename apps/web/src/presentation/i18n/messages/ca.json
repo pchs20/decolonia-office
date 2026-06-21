@@ -1,0 +1,117 @@
+{
+  "common": {
+    "loading": "Carregant...",
+    "back": "← Enrere",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "cancel": "Cancel·lar",
+    "save": "Desar",
+    "saving": "Desant...",
+    "previous": "Anterior",
+    "next": "Següent",
+    "pageOf": "Pàgina {{page}} de {{total}}",
+    "showingRange": "Mostrant {{from}} a {{to}} de {{total}}",
+    "confirmDelete": "Confirmar eliminació",
+    "unsavedChanges": "Tens canvis sense desar. Descartar-los i sortir del mode edició?",
+    "name": "Nom",
+    "phone": "Telèfon",
+    "city": "Ciutat",
+    "actions": "Accions",
+    "errors": {
+      "unknown": "S'ha produït un error"
+    }
+  },
+  "nav": {
+    "appName": "Decolonia Office",
+    "clients": "Clients",
+    "workers": "Treballadors"
+  },
+  "clients": {
+    "title": "Clients",
+    "entityName": "Client",
+    "addButton": "Afegir client",
+    "searchPlaceholder": "Cercar per nom...",
+    "noResultsSearch": "No s'han trobat clients amb aquest nom",
+    "empty": "Encara no hi ha clients",
+    "notFound": "Client no trobat",
+    "backToList": "← Tornar a clients",
+    "deleteConfirm": "Segur que vols eliminar aquest client?",
+    "fields": {
+      "type": "Tipus",
+      "taxId": "NIF/CIF",
+      "address": "Adreça",
+      "workAddress": "Adreça de treball",
+      "billingAddress": "Adreça de facturació",
+      "created": "Creat",
+      "lastUpdated": "Última actualització"
+    },
+    "types": {
+      "individual": "Particular",
+      "company": "Empresa"
+    },
+    "form": {
+      "editTitle": "Editar client",
+      "newTitle": "Nou client"
+    },
+    "errors": {
+      "fetchFailed": "Error en carregar els clients",
+      "deleteFailed": "Error en eliminar el client"
+    },
+    "successUpdate": "Client {{name}} actualitzat correctament"
+  },
+  "workers": {
+    "title": "Treballadors",
+    "entityName": "Treballador",
+    "addButton": "Afegir treballador",
+    "searchPlaceholder": "Cercar per nom...",
+    "noResultsSearch": "No s'han trobat treballadors amb aquest nom",
+    "empty": "Encara no hi ha treballadors",
+    "notFound": "Treballador no trobat",
+    "backToList": "← Tornar a treballadors",
+    "deleteConfirm": "Segur que vols eliminar aquest treballador?",
+    "fields": {
+      "taxId": "NIF/NIE",
+      "address": "Adreça",
+      "workAddress": "Adreça de treball",
+      "billingAddress": "Adreça de facturació",
+      "created": "Creat",
+      "lastUpdated": "Última actualització"
+    },
+    "form": {
+      "editTitle": "Editar treballador",
+      "newTitle": "Nou treballador"
+    },
+    "errors": {
+      "fetchFailed": "Error en carregar els treballadors",
+      "deleteFailed": "Error en eliminar el treballador"
+    },
+    "successUpdate": "Treballador {{name}} actualitzat correctament"
+  },
+  "profile": {
+    "fields": {
+      "name": "Nom *",
+      "taxId": "NIF/NIE/CIF *",
+      "phone": "Telèfon",
+      "email": "Email",
+      "phonePlaceholder": "+34 612 345 678",
+      "address": "Adreça",
+      "workStreet": "Carrer de treball *",
+      "workCity": "Ciutat de treball *",
+      "workPostalCode": "Codi postal de treball *",
+      "streetPlaceholder": "Carrer i número",
+      "cityPlaceholder": "Ciutat",
+      "postalCodePlaceholder": "Codi postal",
+      "billingSameAsWork": "L'adreça de facturació és la mateixa que la de treball",
+      "billingStreet": "Carrer de facturació *",
+      "billingCity": "Ciutat de facturació *",
+      "billingPostalCode": "Codi postal de facturació *",
+      "billingStreetPlaceholder": "Carrer i número de facturació",
+      "billingCityPlaceholder": "Ciutat de facturació",
+      "billingPostalCodePlaceholder": "Codi postal de facturació"
+    },
+    "errors": {
+      "workAddressRequired": "El carrer, la ciutat i el codi postal són obligatoris",
+      "billingAddressRequired": "El carrer, la ciutat i el codi postal de facturació són obligatoris quan l'adreça de facturació és diferent"
+    }
+  }
+}

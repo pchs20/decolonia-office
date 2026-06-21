@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { ClientSchema } from "@/api/schemas/client-schema";
 import { ClientService } from "@/presentation/api-clients/client.service";
 import { ClientForm } from "./ClientForm";
@@ -14,6 +15,7 @@ interface ClientDetailPageProps {
 
 export function ClientDetailPage({ clientId, startInEditMode = false }: ClientDetailPageProps) {
   const router = useRouter();
+  const { t } = useTranslation();
   const [client, setClient] = useState<ClientSchema | null>(null);
   const [editing, setEditing] = useState(startInEditMode);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -32,7 +34,7 @@ export function ClientDetailPage({ clientId, startInEditMode = false }: ClientDe
       const data = await ClientService.getById(clientId);
       setClient(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to fetch client");
+      setError(err instanceof Error ? err.message : t('clients.errors.fetchFailed'));
     } finally {
       setLoading(false);
     }
@@ -42,7 +44,7 @@ export function ClientDetailPage({ clientId, startInEditMode = false }: ClientDe
     setClient(updatedClient);
     setEditing(false);
     setHasUnsavedChanges(false);
-    setSuccessMessage(`Client ${updatedClient.name} updated successfully`);
+    setSuccessMessage(t('clients.successUpdate', { name: updatedClient.name }));
     setTimeout(() => setSuccessMessage(null), 3000);
   };
 
@@ -51,7 +53,7 @@ export function ClientDetailPage({ clientId, startInEditMode = false }: ClientDe
       return true;
     }
 
-    return window.confirm("You have unsaved changes. Discard them and leave edit mode?");
+    return window.confirm(t('common.unsavedChanges'));
   };
 
   const handleBackFromEdit = () => {
@@ -78,7 +80,7 @@ export function ClientDetailPage({ clientId, startInEditMode = false }: ClientDe
   };
 
   if (loading) {
-    return <div className="p-6 text-center">Loading...</div>;
+    return <div className="p-6 text-center">{t('common.loading')}</div>;
   }
 
   if (error) {
@@ -86,7 +88,7 @@ export function ClientDetailPage({ clientId, startInEditMode = false }: ClientDe
       <div className="p-6">
         <div className="p-3 bg-red-100 text-red-700 rounded">{error}</div>
         <Link href="/clients" className="mt-4 inline-block text-blue-600">
-          Back to Clients
+          {t('clients.backToList')}
         </Link>
       </div>
     );
@@ -95,9 +97,9 @@ export function ClientDetailPage({ clientId, startInEditMode = false }: ClientDe
   if (!client) {
     return (
       <div className="p-6">
-        <div>Client not found</div>
+        <div>{t('clients.notFound')}</div>
         <Link href="/clients" className="mt-4 inline-block text-blue-600">
-          Back to Clients
+          {t('clients.backToList')}
         </Link>
       </div>
     );
@@ -111,7 +113,7 @@ export function ClientDetailPage({ clientId, startInEditMode = false }: ClientDe
           onClick={handleBackFromEdit}
           className="text-blue-600 mb-4 inline-block"
         >
-          ← Back
+          {t('common.back')}
         </button>
         <ClientForm
           client={client}
@@ -127,13 +129,13 @@ export function ClientDetailPage({ clientId, startInEditMode = false }: ClientDe
     <div className="p-6">
       <div className="flex justify-between items-start mb-6">
         <Link href="/clients" className="text-blue-600">
-          ← Back to Clients
+          {t('clients.backToList')}
         </Link>
         <button
           onClick={() => setEditing(true)}
           className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
         >
-          Edit
+          {t('common.edit')}
         </button>
       </div>
 
@@ -148,18 +150,18 @@ export function ClientDetailPage({ clientId, startInEditMode = false }: ClientDe
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Type</label>
+            <label className="block text-sm font-medium text-gray-600 mb-1">{t('clients.fields.type')}</label>
             <p className="capitalize text-lg">{client.type}</p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Tax ID</label>
+            <label className="block text-sm font-medium text-gray-600 mb-1">{t('clients.fields.taxId')}</label>
             <p className="text-lg">{client.taxId}</p>
           </div>
 
           {client.phone && (
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">Phone</label>
+              <label className="block text-sm font-medium text-gray-600 mb-1">{t('common.phone')}</label>
               <p className="text-lg">
                 <a href={`tel:${client.phone}`} className="text-blue-600 hover:underline">
                   {client.phone}
@@ -170,7 +172,7 @@ export function ClientDetailPage({ clientId, startInEditMode = false }: ClientDe
 
           {client.email && (
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">Email</label>
+              <label className="block text-sm font-medium text-gray-600 mb-1">{t('profile.fields.email')}</label>
               <p className="text-lg">
                 <a href={`mailto:${client.email}`} className="text-blue-600 hover:underline">
                   {client.email}
@@ -180,11 +182,11 @@ export function ClientDetailPage({ clientId, startInEditMode = false }: ClientDe
           )}
 
           <div className="md:col-span-2 pt-2">
-            <h2 className="text-sm font-semibold text-gray-700">Address</h2>
+            <h2 className="text-sm font-semibold text-gray-700">{t('clients.fields.address')}</h2>
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-600 mb-1">Work Address</label>
+            <label className="block text-sm font-medium text-gray-600 mb-1">{t('clients.fields.workAddress')}</label>
             <p className="text-lg">{client.street}</p>
             <p className="text-sm text-gray-600">
               {client.city} {client.postalCode}
@@ -193,7 +195,7 @@ export function ClientDetailPage({ clientId, startInEditMode = false }: ClientDe
 
           {client.billingStreet && client.billingCity && client.billingPostalCode && (
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-600 mb-1">Billing Address</label>
+              <label className="block text-sm font-medium text-gray-600 mb-1">{t('clients.fields.billingAddress')}</label>
               <p className="text-lg">{client.billingStreet}</p>
               <p className="text-sm text-gray-600">
                 {client.billingCity} {client.billingPostalCode}
@@ -202,14 +204,14 @@ export function ClientDetailPage({ clientId, startInEditMode = false }: ClientDe
           )}
 
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Created</label>
+            <label className="block text-sm font-medium text-gray-600 mb-1">{t('clients.fields.created')}</label>
             <p className="text-sm text-gray-600">
               {new Date(client.createdAt).toLocaleDateString()}
             </p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Last Updated</label>
+            <label className="block text-sm font-medium text-gray-600 mb-1">{t('clients.fields.lastUpdated')}</label>
             <p className="text-sm text-gray-600">
               {new Date(client.updatedAt).toLocaleDateString()}
             </p>

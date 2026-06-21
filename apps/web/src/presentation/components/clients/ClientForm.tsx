@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ClientSchema, CreateClientInput, UpdateClientInput } from "@/api/schemas/client-schema";
 import { ClientService } from "@/presentation/api-clients/client.service";
 import { ProfileCommonFields } from "@/presentation/components/profiles/ProfileCommonFields";
@@ -14,6 +15,7 @@ interface ClientFormProps {
 }
 
 export function ClientForm({ client, onSuccess, onCancel, onDirtyChange }: ClientFormProps) {
+  const { t } = useTranslation();
   const initialIsBillingSameAsWork =
     !client ||
     ((!client.billingStreet || client.billingStreet === client.street) &&
@@ -83,7 +85,7 @@ export function ClientForm({ client, onSuccess, onCancel, onDirtyChange }: Clien
     setError(null);
 
     if (!formData.street?.trim() || !formData.city?.trim() || !formData.postalCode?.trim()) {
-      setError("Street, city, and postal code are required");
+      setError(t('profile.errors.workAddressRequired'));
       return;
     }
 
@@ -93,7 +95,7 @@ export function ClientForm({ client, onSuccess, onCancel, onDirtyChange }: Clien
         !formData.billingCity?.trim() ||
         !formData.billingPostalCode?.trim())
     ) {
-      setError("Billing street, city, and postal code are required when billing differs");
+      setError(t('profile.errors.billingAddressRequired'));
       return;
     }
 
@@ -118,7 +120,7 @@ export function ClientForm({ client, onSuccess, onCancel, onDirtyChange }: Clien
 
       onSuccess(result);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      setError(err instanceof Error ? err.message : t('common.errors.unknown'));
     } finally {
       setLoading(false);
     }
@@ -126,9 +128,7 @@ export function ClientForm({ client, onSuccess, onCancel, onDirtyChange }: Clien
 
   const handleCancel = () => {
     if (isDirty) {
-      const shouldDiscard = window.confirm(
-        "You have unsaved changes. Discard them and leave edit mode?"
-      );
+      const shouldDiscard = window.confirm(t('common.unsavedChanges'));
       if (!shouldDiscard) {
         return;
       }
@@ -140,7 +140,7 @@ export function ClientForm({ client, onSuccess, onCancel, onDirtyChange }: Clien
   return (
     <form onSubmit={handleSubmit} className="space-y-4 p-4 bg-white rounded-lg border">
       <h2 className="text-xl font-semibold">
-        {client ? "Edit Client" : "Add New Client"}
+        {client ? t('clients.form.editTitle') : t('clients.form.newTitle')}
       </h2>
 
       {error && (
@@ -150,10 +150,10 @@ export function ClientForm({ client, onSuccess, onCancel, onDirtyChange }: Clien
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <ProfileCommonFields values={formData} onChange={handleChange} entityLabel="Client" />
+        <ProfileCommonFields values={formData} onChange={handleChange} entityLabel={t('clients.entityName')} />
 
         <div>
-          <label className="block text-sm font-medium mb-1">Type *</label>
+          <label className="block text-sm font-medium mb-1">{t('clients.fields.type')} *</label>
           <select
             name="type"
             value={formData.type}
@@ -161,8 +161,8 @@ export function ClientForm({ client, onSuccess, onCancel, onDirtyChange }: Clien
             required
             className="w-full px-3 py-2 border rounded"
           >
-            <option value="individual">Individual</option>
-            <option value="company">Company</option>
+            <option value="individual">{t('clients.types.individual')}</option>
+            <option value="company">{t('clients.types.company')}</option>
           </select>
         </div>
         <ProfileAddressFields
@@ -189,14 +189,14 @@ export function ClientForm({ client, onSuccess, onCancel, onDirtyChange }: Clien
           onClick={handleCancel}
           className="px-4 py-2 border rounded hover:bg-gray-50"
         >
-          Cancel
+          {t('common.cancel')}
         </button>
         <button
           type="submit"
           disabled={loading}
           className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400"
         >
-          {loading ? "Saving..." : "Save"}
+          {loading ? t('common.saving') : t('common.save')}
         </button>
       </div>
     </form>
