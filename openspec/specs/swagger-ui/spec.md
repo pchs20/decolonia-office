@@ -6,19 +6,19 @@ Provide interactive API documentation and testing capabilities for the backend A
 
 ## Requirements
 
-### Requirement: OpenAPI schema generation from decorators
-The API SHALL generate an OpenAPI 3.0 schema automatically from NestJS controller and DTO decorators.
+### Requirement: OpenAPI schema generation from in-repo API contract artifact
+The API SHALL serve an OpenAPI 3.0 schema generated from the versioned in-repo OpenAPI builder module.
 
 #### Scenario: Schema includes all documented endpoints
-- **WHEN** a controller has @ApiOperation, @ApiResponse, and @ApiParam decorators
+- **WHEN** endpoint contracts are represented in the OpenAPI builder module
 - **THEN** the OpenAPI schema includes those endpoints with their methods, parameters, request/response types, and status codes
 
 #### Scenario: Schema includes data model definitions
-- **WHEN** DTOs use @ApiProperty decorators
-- **THEN** the OpenAPI schema includes typed definitions for request and response bodies with property descriptions
+- **WHEN** request and response schemas are defined in the OpenAPI builder module
+- **THEN** the OpenAPI schema includes typed definitions for request and response bodies with field-level nullability and descriptions where provided
 
 ### Requirement: Swagger UI served at /api/docs
-The system SHALL serve an interactive Swagger UI interface at the `/api/docs` route independent of a dedicated NestJS runtime process.
+The system SHALL serve an interactive Swagger UI interface at the `/api/docs` route independent of a dedicated framework-specific backend process.
 
 #### Scenario: Access Swagger UI in browser
 - **WHEN** a user navigates to `/api/docs` in local or deployed environments

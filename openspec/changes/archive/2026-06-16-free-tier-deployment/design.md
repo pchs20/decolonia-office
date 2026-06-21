@@ -150,7 +150,7 @@ The README will document this step-by-step with exact variable names and where t
 8. In Supabase dashboard for `decolonia-dev`: Settings → Database → Connection String → URI (port 5432) → copy as `DEV_DIRECT_URL`.
 9. Run migrations against dev:
    ```bash
-   psql "$DEV_DIRECT_URL" -f apps/api/src/migrations/<migration-file>.sql
+    psql "$DEV_DIRECT_URL" -f apps/web/src/layers/infrastructure/persistence/postgres/migrations/<migration-file>.sql
    ```
 10. Verify `clients` table in Supabase dev table editor.
 
@@ -173,7 +173,7 @@ The README will document this step-by-step with exact variable names and where t
 16. In Supabase dashboard for `decolonia-prod`: copy `PROD_DIRECT_URL`.
 17. Run migrations against prod:
     ```bash
-    psql "$PROD_DIRECT_URL" -f apps/api/src/migrations/<migration-file>.sql
+    psql "$PROD_DIRECT_URL" -f apps/web/src/layers/infrastructure/persistence/postgres/migrations/<migration-file>.sql
     ```
 18. Verify `clients` table in Supabase prod table editor.
 

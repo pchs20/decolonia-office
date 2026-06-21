@@ -42,6 +42,16 @@ docs/adr/       Architecture decision records
 docker-compose.yml
 ```
 
+## Layered Architecture (apps/web)
+
+The web runtime follows a layered structure to keep concerns explicit:
+
+- `apps/web/app/api/*`: web layer (HTTP adapters only)
+- `apps/web/src/application/*`: application layer (use cases + outbound ports)
+- `apps/web/src/infrastructure/*`: infrastructure layer (Postgres adapters, repositories, SQL)
+- `apps/web/src/api/*`: API schemas, validators, mappers, OpenAPI, API error mapping
+- `apps/web/src/domain/*`: entities, value objects, domain exceptions
+
 ## First-Time Setup
 
 1. Install prerequisites:
@@ -134,27 +144,26 @@ git push
 
 - App/API: Vercel Hobby (Next.js + Route Handlers)
 - Database: Two Supabase Free Postgres projects (dev and prod)
-- Source of truth for OpenAPI definition: `apps/web/src/server/openapi.ts`
+- Source of truth for OpenAPI definition: `apps/web/src/api/openapi/openapi.ts`
 
 ### Vercel Import Notes
 
-For this Turborepo, Vercel may try to import `apps/api` first. If that happens:
+This repository deploys `apps/web` only.
 
-1. Select `apps/web` during import when the option is available.
-2. If Vercel still imports the wrong app, change the project Root Directory in the Vercel dashboard to `apps/web` and redeploy.
-
-Do not use `rootDirectory` inside `vercel.json` for this project. Vercel rejects that property in this setup.
+Set the Vercel project Root Directory to `apps/web`.
 
 ### Database Migrations
 
 Database migrations are **run manually from a developer machine** against the target environment before or after deployment.
+
+For local development (`DATABASE_URL` pointing to localhost), the app auto-applies pending SQL migrations once at runtime (controlled by `AUTO_RUN_MIGRATIONS`, default enabled in `.env.example`).
 
 **For dev environment (after merging to `main` or before testing):**
 
 1. Set `DEV_DIRECT_URL` locally to the Supabase dev project direct connection URL (from Supabase project Settings → Database → Connection String, port 5432).
 2. Run:
    ```bash
-   psql "$DEV_DIRECT_URL" -f apps/api/src/migrations/<migration-filename>.sql
+   psql "$DEV_DIRECT_URL" -f apps/web/src/infrastructure/persistence/postgres/migrations/<migration-filename>.sql
    ```
 3. Verify the migration in the Supabase dashboard table editor.
 
@@ -163,7 +172,7 @@ Database migrations are **run manually from a developer machine** against the ta
 1. Set `PROD_DIRECT_URL` locally to the Supabase prod project direct connection URL.
 2. Run:
    ```bash
-   psql "$PROD_DIRECT_URL" -f apps/api/src/migrations/<migration-filename>.sql
+   psql "$PROD_DIRECT_URL" -f apps/web/src/infrastructure/persistence/postgres/migrations/<migration-filename>.sql
    ```
 3. Verify the migration in the Supabase dashboard table editor.
 4. Then merge `main` → `prod` and push to deploy.

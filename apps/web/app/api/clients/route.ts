@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient, listClients, validateCreateInput } from "@/server/clients-service";
-import { getErrorResponse } from "@/server/api-errors";
+import { createClientsUseCases } from "@/application/use-cases/clients/clients-service";
+import { getErrorResponse } from "@/api/errors/api-errors";
+import { validateClientCreatePayload } from "@/api/schemas/client-validator";
+import { toClientListResponseSchema, toClientSchema } from "@/api/mappers/client-mapper";
+import { postgresClientRepository } from "@/infrastructure/persistence/postgres/repositories/client-repository";
+
+const { createClient, listClients } = createClientsUseCases(postgresClientRepository);
 
 export async function GET(request: NextRequest) {
   try {
@@ -10,7 +15,7 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get("search") ?? undefined;
 
     const data = await listClients(page, limit, search);
-    return NextResponse.json(data, { status: 200 });
+    return NextResponse.json(toClientListResponseSchema(data), { status: 200 });
   } catch (error) {
     console.error("GET /api/clients failed", error);
     const mapped = getErrorResponse(error);
@@ -21,10 +26,10 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const payload = await request.json();
-    const input = validateCreateInput(payload);
+    const input = validateClientCreatePayload(payload);
     const client = await createClient(input);
 
-    return NextResponse.json(client, { status: 201 });
+    return NextResponse.json(toClientSchema(client), { status: 201 });
   } catch (error) {
     console.error("POST /api/clients failed", error);
     const mapped = getErrorResponse(error);

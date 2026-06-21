@@ -1,0 +1,38 @@
+import { NextRequest, NextResponse } from "next/server";
+import { createWorkersUseCases } from "@/application/use-cases/workers/workers-service";
+import { getErrorResponse } from "@/api/errors/api-errors";
+import { validateWorkerCreatePayload } from "@/api/schemas/worker-validator";
+import { toWorkerListResponseSchema, toWorkerSchema } from "@/api/mappers/worker-mapper";
+import { postgresWorkerRepository } from "@/infrastructure/persistence/postgres/repositories/worker-repository";
+
+const { createWorker, listWorkers } = createWorkersUseCases(postgresWorkerRepository);
+
+export async function GET(request: NextRequest) {
+  try {
+    const searchParams = request.nextUrl.searchParams;
+    const page = Number(searchParams.get("page") ?? "1");
+    const limit = Number(searchParams.get("limit") ?? "10");
+    const search = searchParams.get("search") ?? undefined;
+
+    const data = await listWorkers(page, limit, search);
+    return NextResponse.json(toWorkerListResponseSchema(data), { status: 200 });
+  } catch (error) {
+    console.error("GET /api/workers failed", error);
+    const mapped = getErrorResponse(error);
+    return NextResponse.json(mapped.body, { status: mapped.status });
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const payload = await request.json();
+    const input = validateWorkerCreatePayload(payload);
+    const worker = await createWorker(input);
+
+    return NextResponse.json(toWorkerSchema(worker), { status: 201 });
+  } catch (error) {
+    console.error("POST /api/workers failed", error);
+    const mapped = getErrorResponse(error);
+    return NextResponse.json(mapped.body, { status: mapped.status });
+  }
+}
