@@ -1,11 +1,11 @@
 ## 1. Dependency Installation
 
-- [x] 1.1 Install `@nestjs/swagger` package in `apps/api` workspace
-- [x] 1.2 Install `swagger-ui-express` package in `apps/api` workspace
+- [x] 1.1 Install OpenAPI documentation dependencies in `apps/web` workspace
+- [x] 1.2 Ensure Swagger UI support is available through Next.js API docs route
 
 ## 2. SwaggerModule Configuration and Setup
 
-- [x] 2.1 Import `SwaggerModule` and `DocumentBuilder` from `@nestjs/swagger` in `apps/api/src/main.ts`
+- [x] 2.1 Configure OpenAPI document builder in `apps/web/src/layers/web/openapi/openapi.ts`
 - [x] 2.2 Create OpenAPI configuration with `DocumentBuilder` (title: "Decolonia Office API", version: "1.0", description)
 - [x] 2.3 Build the Swagger document from the app module in `main.ts`
 - [x] 2.4 Register SwaggerModule to serve at `/api/docs` route in `main.ts`
@@ -23,7 +23,7 @@
 
 ## 4. Testing and Validation
 
-- [x] 4.1 Start the API locally and verify Swagger UI loads at `http://localhost:3001/api/docs`
+- [x] 4.1 Start the app locally and verify Swagger UI loads at `http://localhost:3000/api/docs`
 - [x] 4.2 Verify `/health` endpoint appears in Swagger UI with correct method, description, and response schema
 - [x] 4.3 Verify `/health/connectivity` endpoint appears in Swagger UI with correct method, description, and response schemas
 - [x] 4.4 Test "Try it out" feature: make a request to `/health` from Swagger UI and verify response displays

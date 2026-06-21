@@ -22,7 +22,7 @@
 ## 4. Database Migration — Dev
 
 - [x] 4.1 Set `DEV_DIRECT_URL` locally to the `decolonia-dev` direct connection URL (optional if using SQL Editor)
-- [x] 4.2 Run the migration against dev by executing `apps/api/src/migrations/1718394400000-CreateClientsTable.sql` in Supabase SQL Editor
+- [x] 4.2 Run the migration against dev by executing `apps/web/src/layers/infrastructure/persistence/postgres/migrations/1718394400000-CreateClientsTable.sql` in Supabase SQL Editor
 - [x] 4.3 Verify the `clients` table exists in the Supabase dev table editor
 
 ## 5. Vercel Project Setup
@@ -43,7 +43,7 @@
 ## 7. Database Migration — Prod
 
 - [x] 7.1 Set `PROD_DIRECT_URL` locally to the `decolonia-prod` direct connection URL (optional if using SQL Editor)
-- [x] 7.2 Run the migration against prod by executing `apps/api/src/migrations/1718394400000-CreateClientsTable.sql` in Supabase SQL Editor
+- [x] 7.2 Run the migration against prod by executing `apps/web/src/layers/infrastructure/persistence/postgres/migrations/1718394400000-CreateClientsTable.sql` in Supabase SQL Editor
 - [x] 7.3 Verify the `clients` table exists in the Supabase prod table editor
 
 ## 8. Production Promotion & Validation

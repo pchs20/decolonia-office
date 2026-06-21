@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { deleteClient, getClientById, updateClient, validateUpdateInput } from "@/server/clients-service";
-import { getErrorResponse } from "@/server/api-errors";
+import { createClientsUseCases } from "@/application/use-cases/clients/clients-service";
+import { getErrorResponse } from "@/api/errors/api-errors";
+import { validateClientUpdatePayload } from "@/api/schemas/client-validator";
+import { toClientSchema } from "@/api/mappers/client-mapper";
+import { postgresClientRepository } from "@/infrastructure/persistence/postgres/repositories/client-repository";
+
+const { deleteClient, getClientById, updateClient } = createClientsUseCases(postgresClientRepository);
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -9,7 +14,7 @@ export async function GET(_: NextRequest, { params }: Params) {
     const { id } = await params;
     const client = await getClientById(id);
 
-    return NextResponse.json(client, { status: 200 });
+    return NextResponse.json(toClientSchema(client), { status: 200 });
   } catch (error) {
     console.error("GET /api/clients/:id failed", error);
     const mapped = getErrorResponse(error);
@@ -21,10 +26,10 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   try {
     const { id } = await params;
     const payload = await request.json();
-    const input = validateUpdateInput(payload);
+    const input = validateClientUpdatePayload(payload);
     const client = await updateClient(id, input);
 
-    return NextResponse.json(client, { status: 200 });
+    return NextResponse.json(toClientSchema(client), { status: 200 });
   } catch (error) {
     console.error("PATCH /api/clients/:id failed", error);
     const mapped = getErrorResponse(error);

@@ -11,19 +11,23 @@ The system SHALL store client information with consistent fields that capture co
 
 #### Scenario: Individual client created with all required fields
 - **WHEN** a user creates a client of type "individual"
-- **THEN** the system stores: name, street, city, postal_code, billing_street, billing_city, billing_postal_code, tax_id (NIF/NIE), phone, email, and marks the client as active
+- **THEN** the system stores: name, street, city, postalCode, billingStreet, billingCity, billingPostalCode, taxId (NIF/NIE), phone, email, and marks the client as active
 
 #### Scenario: Company client created with all required fields
 - **WHEN** a user creates a client of type "company"
-- **THEN** the system stores: name, street, city, postal_code, billing_street, billing_city, billing_postal_code, tax_id (CIF), phone, email, and marks the client as active
+- **THEN** the system stores: name, street, city, postalCode, billingStreet, billingCity, billingPostalCode, taxId (CIF), phone, email, and marks the client as active
 
 #### Scenario: Billing address fields default to work address fields
 - **WHEN** a user creates or updates a client without explicit billing address fields
-- **THEN** the system defaults billing_street, billing_city, and billing_postal_code to the corresponding work address values
+- **THEN** the system defaults billingStreet, billingCity, and billingPostalCode to the corresponding work address values
 
-#### Scenario: Client exposes two address relations in code
-- **WHEN** a client is loaded in application code
-- **THEN** the client exposes `workAddress` and `billingAddress` value objects mapped from flattened address columns in persistence
+#### Scenario: Client domain entity exposes two address relations in code
+- **WHEN** a client is loaded in domain/application code
+- **THEN** the domain entity exposes `workAddress` and `billingAddress` value objects mapped from flattened address columns in persistence
+
+#### Scenario: Client API response uses flat transport address fields
+- **WHEN** a client is returned from REST endpoints
+- **THEN** the response payload exposes flat transport fields (`street`, `city`, `postalCode`, `billingStreet`, `billingCity`, `billingPostalCode`) rather than nested address objects
 
 #### Scenario: Client record includes timestamps
 - **WHEN** a client is created or updated
@@ -33,7 +37,7 @@ The system SHALL store client information with consistent fields that capture co
 The system SHALL provide an API endpoint to create a new client record with validation.
 
 #### Scenario: Valid client creation
-- **WHEN** a POST request is sent to `/api/clients` with valid client data (name, type, street, city, postal_code, billing_street, billing_city, billing_postal_code, tax_id, phone, email)
+- **WHEN** a POST request is sent to `/api/clients` with valid client data (name, type, street, city, postalCode, billingStreet, billingCity, billingPostalCode, taxId, phone, email)
 - **THEN** the system creates the client and returns the new client record with HTTP 201
 
 #### Scenario: Missing required field fails
@@ -116,7 +120,7 @@ The web app SHALL provide UI components and services to perform client CRUD oper
 - **THEN** the web app fetches the client list from `/api/clients` and displays clients with name, phone, and city from the dedicated city field
 
 #### Scenario: Create client via form
-- **WHEN** a user clicks "Add Client" and fills out the client form (name, type, street, city, postal_code, billing_street, billing_city, billing_postal_code, tax_id, phone, email)
+- **WHEN** a user clicks "Add Client" and fills out the client form (name, type, street, city, postalCode, billingStreet, billingCity, billingPostalCode, taxId, phone, email)
 - **THEN** the web app sends a POST request to `/api/clients` and displays success/error feedback
 
 #### Scenario: Form captures explicit billing fields
@@ -125,7 +129,7 @@ The web app SHALL provide UI components and services to perform client CRUD oper
 
 #### Scenario: Billing same-as-work toggle applies structured fields
 - **WHEN** a user marks billing address as the same as work address in the client form
-- **THEN** the web app writes billing_street, billing_city, and billing_postal_code values equal to work address fields
+- **THEN** the web app writes billingStreet, billingCity, and billingPostalCode values equal to work address fields
 
 #### Scenario: Edit existing client
 - **WHEN** a user selects a client and modifies fields, then saves
@@ -138,3 +142,25 @@ The web app SHALL provide UI components and services to perform client CRUD oper
 #### Scenario: Search clients in UI
 - **WHEN** a user types a name in the search box
 - **THEN** the web app queries `/api/clients?search=<name>` and updates the list in real-time (or on search submit)
+
+### Requirement: Client profile semantics align with shared Profile model
+Client-management requirements SHALL remain compatible with the shared abstract `Profile` model used by both clients and workers.
+
+#### Scenario: Shared field conventions remain consistent
+- **WHEN** client and worker profile capabilities are used together
+- **THEN** shared fields (name, tax identifier, contact fields, active status, timestamps, work address, billing address) use consistent semantics and naming conventions
+
+#### Scenario: Client-specific behavior remains preserved
+- **WHEN** client-management operations are executed after introducing worker profiles
+- **THEN** existing client-specific behavior, including client `type` and client endpoint contracts, remains unchanged
+
+### Requirement: Client and worker address semantics stay aligned
+Client-management address behavior SHALL remain aligned with worker-profile address behavior for structured work and billing fields.
+
+#### Scenario: Billing default behavior is equivalent across profiles
+- **WHEN** billing address fields are omitted for client or worker profiles
+- **THEN** billing street, billing city, and billing postal code default to the corresponding work address fields for both profile types
+
+#### Scenario: Billing completeness validation is equivalent across profiles
+- **WHEN** any billing field is provided in client or worker profile payloads
+- **THEN** all billing address fields are required together for both profile types

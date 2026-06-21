@@ -7,11 +7,11 @@ Establish foundational monorepo structure, local development infrastructure, and
 ## Requirements
 
 ### Requirement: Bootstrap repository structure
-The project SHALL define a monorepo structure that separates web app, API app, shared packages, and infrastructure configuration.
+The project SHALL define a monorepo structure with a Next.js app runtime, shared packages, and infrastructure configuration.
 
 #### Scenario: Developer inspects repository layout
 - **WHEN** a developer clones the repository
-- **THEN** they can identify dedicated folders for frontend, backend, shared code, and local infrastructure
+- **THEN** they can identify dedicated folders for the Next.js app runtime, shared code, and local infrastructure
 
 ### Requirement: Local stack orchestration
 The project SHALL provide a local orchestration setup that starts required services for development in the serverless-oriented architecture.

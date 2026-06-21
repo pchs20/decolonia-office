@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
-import { getDbPool } from "@/server/db";
+import { ensureDatabaseReady, getDbPool } from "@/infrastructure/persistence/postgres/db";
 
 export async function GET() {
   try {
+    await ensureDatabaseReady();
     await getDbPool().query("SELECT 1");
 
     return NextResponse.json(

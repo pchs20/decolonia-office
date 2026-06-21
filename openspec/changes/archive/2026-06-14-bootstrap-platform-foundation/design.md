@@ -51,16 +51,15 @@ decolonia-office/
 
 - `GET /health` - API basic health
 - `GET /health/connectivity` - Full infrastructure connectivity report
-- `pnpm verify:connectivity` - Script-based validation from web and API
+- `pnpm verify:connectivity` - Script-based validation from web runtime
 
 ## Environment Configuration
 
 Local development uses predictable defaults:
 - Database: `postgresql://decolonia:decolonia@localhost:5433/decolonia_office`
 - Object Storage: `http://localhost:9000` (admin: minioadmin/minioadmin)
-- API Base: `http://localhost:3001`
+- API Base: `http://localhost:3000`
 
 Environment files:
 - `.env` (root shared defaults)
-- `apps/api/.env` (API-specific)
 - `apps/web/.env.local` (Web-specific)

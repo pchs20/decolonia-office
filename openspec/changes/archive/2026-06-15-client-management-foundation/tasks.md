@@ -6,7 +6,7 @@
 
 ## 2. Backend: Entity & Database Layer
 
-- [x] 2.1 Create `Client` entity (TypeORM) in `apps/api/src/clients/entities/client.entity.ts`
+- [x] 2.1 Define client persistence model in the active web API runtime layer
 - [x] 2.2 Create `ClientRepository` extending `Repository<Client>` with custom query methods (findActive, searchByName, etc.)
 - [x] 2.3 Implement `findActive()` method that filters `is_active = true` by default
 - [x] 2.4 Implement `searchByName(name: string, page, limit)` method with pagination
