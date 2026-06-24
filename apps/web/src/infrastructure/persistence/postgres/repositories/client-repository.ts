@@ -92,7 +92,7 @@ export async function listActiveClients(page: number, limit: number, search?: st
       `
         SELECT id, name, type, street, city, postal_code, billing_street, billing_city, billing_postal_code, tax_id, phone, email, is_active, created_at, updated_at
         FROM clients
-        WHERE is_active = true AND name ILIKE $1
+        WHERE is_active = true AND (name ILIKE $1 OR city ILIKE $1)
         ORDER BY created_at DESC
         LIMIT $2 OFFSET $3
       `,
@@ -103,7 +103,7 @@ export async function listActiveClients(page: number, limit: number, search?: st
       `
         SELECT COUNT(*)::text AS total
         FROM clients
-        WHERE is_active = true AND name ILIKE $1
+        WHERE is_active = true AND (name ILIKE $1 OR city ILIKE $1)
       `,
       [searchValue]
     );

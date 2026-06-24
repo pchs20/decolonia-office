@@ -2,8 +2,13 @@
   "common": {
     "loading": "Loading...",
     "back": "← Back",
+    "view": "View",
     "edit": "Edit",
+    "finalize": "Finalize",
+    "archive": "Archive",
     "delete": "Delete",
+    "deleting": "Deleting...",
+    "add": "Add",
     "cancel": "Cancel",
     "save": "Save",
     "saving": "Saving...",
@@ -11,11 +16,18 @@
     "next": "Next",
     "pageOf": "Page {{page}} of {{total}}",
     "showingRange": "Showing {{from}} to {{to}} of {{total}}",
-    "confirmDelete": "Confirm Delete",
+    "confirmDelete": "Are you sure?",
     "unsavedChanges": "You have unsaved changes. Discard them and leave edit mode?",
     "name": "Name",
     "phone": "Phone",
     "city": "City",
+    "notFoundInDropdown": "Not found in the list?",
+    "createClient": "Create client",
+    "createWorker": "Create worker",
+    "editClient": "Edit client",
+    "editWorker": "Edit worker",
+    "search": "Search",
+    "clearFilter": "Clear filter",
     "actions": "Actions",
     "errors": {
       "unknown": "An error occurred"
@@ -24,18 +36,27 @@
   "nav": {
     "appName": "Decolonia Office",
     "clients": "Clients",
-    "workers": "Workers"
+    "workers": "Workers",
+    "budgets": "Budgets",
+    "invoices": "Invoices",
+    "settings": "Settings"
   },
   "clients": {
     "title": "Clients",
     "entityName": "Client",
     "addButton": "Add Client",
-    "searchPlaceholder": "Search by name...",
+    "searchPlaceholder": "Search by name or city...",
     "noResultsSearch": "No clients found matching your search",
     "empty": "No clients yet",
     "notFound": "Client not found",
     "backToList": "← Back to Clients",
     "deleteConfirm": "Are you sure you want to delete this client?",
+    "links": {
+      "viewBudgets": "View Budgets",
+      "viewInvoices": "View Invoices",
+      "budgets": "Budgets",
+      "invoices": "Invoices"
+    },
     "fields": {
       "type": "Type",
       "taxId": "Tax ID",
@@ -55,7 +76,11 @@
     },
     "errors": {
       "fetchFailed": "Failed to fetch clients",
-      "deleteFailed": "Failed to delete client"
+      "fetchOneFailed": "Failed to fetch client",
+      "createFailed": "Failed to create client",
+      "updateFailed": "Failed to update client",
+      "deleteFailed": "Failed to delete client",
+      "notFound": "Client not found"
     },
     "successUpdate": "Client {{name}} updated successfully"
   },
@@ -63,7 +88,7 @@
     "title": "Workers",
     "entityName": "Worker",
     "addButton": "Add Worker",
-    "searchPlaceholder": "Search by name...",
+    "searchPlaceholder": "Search by name or city...",
     "noResultsSearch": "No workers found matching your search",
     "empty": "No workers yet",
     "notFound": "Worker not found",
@@ -83,7 +108,11 @@
     },
     "errors": {
       "fetchFailed": "Failed to fetch workers",
-      "deleteFailed": "Failed to delete worker"
+      "fetchOneFailed": "Failed to fetch worker",
+      "createFailed": "Failed to create worker",
+      "updateFailed": "Failed to update worker",
+      "deleteFailed": "Failed to delete worker",
+      "notFound": "Worker not found"
     },
     "successUpdate": "Worker {{name}} updated successfully"
   },
@@ -112,6 +141,173 @@
     "errors": {
       "workAddressRequired": "Street, city, and postal code are required",
       "billingAddressRequired": "Billing street, city, and postal code are required when billing differs"
+    }
+  },
+  "budgets": {
+    "title": "Budgets",
+    "addButton": "New Budget",
+    "empty": "No budgets yet",
+    "searchPlaceholder": "Search by number, client, worker, or city...",
+    "noResultsSearch": "No budgets found matching your search",
+    "backToList": "← Back to Budgets",
+    "fields": {
+      "client": "Client *",
+      "selectClient": "Select a client...",
+      "worker": "Worker *",
+      "selectWorker": "Select a worker...",
+      "noTax": "No tax",
+      "notes": "Notes",
+      "tax": "Tax",
+      "deliveredAt": "Delivered At",
+      "status": "Status",
+      "total": "Total",
+      "createdAt": "Created"
+    },
+    "form": {
+      "editTitle": "Edit Budget",
+      "newTitle": "Create Budget"
+    },
+    "errors": {
+      "clientRequired": "Client is required",
+      "workerRequired": "Worker is required",
+      "fetchFailed": "Failed to fetch budgets",
+      "createFailed": "Failed to create budget"
+    },
+    "filters": {
+      "clientApplied": "Showing budgets for selected client."
+    }
+  },
+  "invoices": {
+    "title": "Invoices",
+    "addButton": "New Invoice",
+    "empty": "No invoices yet",
+    "searchPlaceholder": "Search by number, client, worker, or city...",
+    "noResultsSearch": "No invoices found matching your search",
+    "backToList": "← Back to Invoices",
+    "fields": {
+      "client": "Client *",
+      "selectClient": "Select a client...",
+      "worker": "Worker *",
+      "selectWorker": "Select a worker...",
+      "noTax": "No tax",
+      "notes": "Notes",
+      "tax": "Tax",
+      "issuedAt": "Issued At",
+      "sourceBudget": "Source Budget",
+      "noSourceBudget": "No source budget",
+      "linkedBudget": "Linked budget",
+      "status": "Status",
+      "total": "Total",
+      "year": "Year",
+      "allYears": "All years",
+      "createdAt": "Created"
+    },
+    "form": {
+      "editTitle": "Edit Invoice",
+      "newTitle": "Create Invoice"
+    },
+    "errors": {
+      "clientRequired": "Client is required",
+      "workerRequired": "Worker is required",
+      "fetchFailed": "Failed to fetch invoices",
+      "createFailed": "Failed to create invoice"
+    },
+    "filters": {
+      "clientApplied": "Showing invoices for selected client."
+    }
+  },
+  "commercialDocuments": {
+    "jobItems": "Line Items",
+    "noJobItems": "No items yet",
+    "noTemplate": "No template",
+    "addItem": "Add Item",
+    "quantity": "Quantity",
+    "unitPrice": "Unit Price",
+    "totalPrice": "Total",
+    "title": "Title *",
+    "description": "Description",
+    "subtotal": "Subtotal",
+    "lineItemsSubtotal": "Line items subtotal",
+    "manualDocumentSubtotal": "Manual document subtotal",
+    "taxAmount": "Tax",
+    "totalAmount": "Total Amount",
+    "pricingModes": {
+      "computed": "Computed from line items",
+      "manualSubtotal": "Manual subtotal"
+    },
+    "fields": {
+      "number": "Number",
+      "client": "Client",
+      "worker": "Worker",
+      "clientInfo": "Client Information",
+      "workerInfo": "Worker Information",
+      "taxId": "Tax ID",
+      "workAddress": "Work Address",
+      "billingAddress": "Billing Address",
+      "workTemplate": "Work Template",
+      "pricingMode": "Pricing mode",
+      "manualSubtotalAmount": "Manual subtotal",
+      "calculatedTotal": "Calculated total"
+    }
+  },
+  "catalog": {
+    "title": "Commercial Documents Settings",
+    "tabs": {
+      "taxes": "Tax Definitions",
+      "templates": "Work Templates",
+      "pricing": "Pricing",
+      "numbering": "Document Numbering"
+    },
+    "pricing": {
+      "title": "Pricing defaults",
+      "defaultMode": "Default pricing mode for new documents",
+      "defaultBudgetMode": "Default pricing mode for new budgets",
+      "defaultInvoiceMode": "Default pricing mode for new invoices",
+      "saved": "Pricing settings saved"
+    },
+    "taxes": {
+      "title": "Tax Definitions",
+      "addButton": "Add Tax",
+      "empty": "No taxes defined yet",
+      "fields": {
+        "name": "Name",
+        "rate": "Rate (%)",
+        "behavior": "Behavior",
+        "status": "Status"
+      },
+      "behaviors": {
+        "added": "Added to subtotal",
+        "included": "Included in price"
+      }
+    },
+    "templates": {
+      "title": "Work Templates",
+      "addButton": "Add Template",
+      "empty": "No templates defined yet",
+      "fields": {
+        "title": "Title",
+        "description": "Description",
+        "defaultUnitPrice": "Unit Price"
+      }
+    },
+    "numbering": {
+      "title": "Document Numbering",
+      "documentType": "Document Type",
+      "documentTypes": {
+        "budget": "Budget",
+        "invoice": "Invoice"
+      },
+      "scope": "Year/Scope",
+      "globalScope": "Global",
+      "nextNumber": "Next Number",
+      "adjust": "Adjust",
+      "noteLabel": "Note:",
+      "note": "Adjusting document numbers affects future document creation. Use with caution.",
+      "errors": {
+        "fetchFailed": "Failed to fetch document sequences",
+        "updateFailed": "Failed to update document sequence",
+        "invalidNextNumber": "Next number must be an integer greater than 0"
+      }
     }
   }
 }

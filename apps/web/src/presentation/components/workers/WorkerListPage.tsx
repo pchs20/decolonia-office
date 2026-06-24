@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { WorkerSchema, WorkerListResponseSchema } from "@/api/schemas/worker-schema";
 import { WorkerService } from "@/presentation/api-clients/worker.service";
 
 export function WorkerListPage() {
   const { t } = useTranslation();
+  const router = useRouter();
   const [workers, setWorkers] = useState<WorkerSchema[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -97,9 +99,17 @@ export function WorkerListPage() {
               <tbody>
                 {workers.map(worker => {
                   return (
-                    <tr key={worker.id} className="border-b hover:bg-gray-50">
+                    <tr
+                      key={worker.id}
+                      className="border-b hover:bg-gray-50 cursor-pointer"
+                      onClick={() => router.push(`/workers/${worker.id}`)}
+                    >
                       <td className="px-4 py-3 font-medium">
-                        <Link href={`/workers/${worker.id}`} className="text-blue-600 hover:underline">
+                        <Link
+                          href={`/workers/${worker.id}`}
+                          className="text-blue-600 hover:underline"
+                          onClick={event => event.stopPropagation()}
+                        >
                           {worker.name}
                         </Link>
                       </td>
@@ -107,14 +117,25 @@ export function WorkerListPage() {
                       <td className="px-4 py-3">{worker.city || "-"}</td>
                       <td className="px-4 py-3 space-x-2">
                         <Link
+                          href={`/workers/${worker.id}`}
+                          className="px-2 py-1 text-sm bg-emerald-100 text-emerald-800 rounded hover:bg-emerald-200"
+                          onClick={event => event.stopPropagation()}
+                        >
+                          {t('common.view')}
+                        </Link>
+                        <Link
                           href={`/workers/${worker.id}/edit`}
-                          className="px-2 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
+                          className="px-2 py-1 text-sm bg-sky-100 text-sky-800 rounded hover:bg-sky-200"
+                          onClick={event => event.stopPropagation()}
                         >
                           {t('common.edit')}
                         </Link>
                         <button
-                          onClick={() => setDeleteConfirm(worker.id)}
-                          className="px-2 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200"
+                          onClick={event => {
+                            event.stopPropagation();
+                            setDeleteConfirm(worker.id);
+                          }}
+                          className="px-2 py-1 text-sm bg-rose-100 text-rose-800 rounded hover:bg-rose-200"
                         >
                           {t('common.delete')}
                         </button>

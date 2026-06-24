@@ -2,8 +2,13 @@
   "common": {
     "loading": "Carregant...",
     "back": "← Enrere",
+    "view": "Veure",
     "edit": "Editar",
+    "finalize": "Finalitzar",
+    "archive": "Arxivar",
     "delete": "Eliminar",
+    "deleting": "Eliminant...",
+    "add": "Afegir",
     "cancel": "Cancel·lar",
     "save": "Desar",
     "saving": "Desant...",
@@ -11,12 +16,19 @@
     "next": "Següent",
     "pageOf": "Pàgina {{page}} de {{total}}",
     "showingRange": "Mostrant {{from}} a {{to}} de {{total}}",
-    "confirmDelete": "Confirmar eliminació",
+    "confirmDelete": "Estàs segur?",
     "unsavedChanges": "Tens canvis sense desar. Descartar-los i sortir del mode edició?",
     "name": "Nom",
     "phone": "Telèfon",
     "city": "Ciutat",
+    "search": "Cercar",
+    "clearFilter": "Treure filtre",
     "actions": "Accions",
+    "notFoundInDropdown": "No apareix a la llista?",
+    "createClient": "Crear client",
+    "createWorker": "Crear treballador",
+    "editClient": "Editar client",
+    "editWorker": "Editar treballador",
     "errors": {
       "unknown": "S'ha produït un error"
     }
@@ -24,18 +36,27 @@
   "nav": {
     "appName": "Decolonia Office",
     "clients": "Clients",
-    "workers": "Treballadors"
+    "workers": "Treballadors",
+    "budgets": "Pressupostos",
+    "invoices": "Factures",
+    "settings": "Configuració"
   },
   "clients": {
     "title": "Clients",
     "entityName": "Client",
     "addButton": "Afegir client",
-    "searchPlaceholder": "Cercar per nom...",
+    "searchPlaceholder": "Cercar per nom o ciutat...",
     "noResultsSearch": "No s'han trobat clients amb aquest nom",
     "empty": "Encara no hi ha clients",
     "notFound": "Client no trobat",
     "backToList": "← Tornar a clients",
     "deleteConfirm": "Segur que vols eliminar aquest client?",
+    "links": {
+      "viewBudgets": "Veure pressupostos",
+      "viewInvoices": "Veure factures",
+      "budgets": "Pressupostos",
+      "invoices": "Factures"
+    },
     "fields": {
       "type": "Tipus",
       "taxId": "NIF/CIF",
@@ -55,7 +76,11 @@
     },
     "errors": {
       "fetchFailed": "Error en carregar els clients",
-      "deleteFailed": "Error en eliminar el client"
+      "fetchOneFailed": "Error en carregar el client",
+      "createFailed": "Error en crear el client",
+      "updateFailed": "Error en actualitzar el client",
+      "deleteFailed": "Error en eliminar el client",
+      "notFound": "Client no trobat"
     },
     "successUpdate": "Client {{name}} actualitzat correctament"
   },
@@ -63,7 +88,7 @@
     "title": "Treballadors",
     "entityName": "Treballador",
     "addButton": "Afegir treballador",
-    "searchPlaceholder": "Cercar per nom...",
+    "searchPlaceholder": "Cercar per nom o ciutat...",
     "noResultsSearch": "No s'han trobat treballadors amb aquest nom",
     "empty": "Encara no hi ha treballadors",
     "notFound": "Treballador no trobat",
@@ -83,7 +108,11 @@
     },
     "errors": {
       "fetchFailed": "Error en carregar els treballadors",
-      "deleteFailed": "Error en eliminar el treballador"
+      "fetchOneFailed": "Error en carregar el treballador",
+      "createFailed": "Error en crear el treballador",
+      "updateFailed": "Error en actualitzar el treballador",
+      "deleteFailed": "Error en eliminar el treballador",
+      "notFound": "Treballador no trobat"
     },
     "successUpdate": "Treballador {{name}} actualitzat correctament"
   },
@@ -112,6 +141,173 @@
     "errors": {
       "workAddressRequired": "El carrer, la ciutat i el codi postal són obligatoris",
       "billingAddressRequired": "El carrer, la ciutat i el codi postal de facturació són obligatoris quan l'adreça de facturació és diferent"
+    }
+  },
+  "budgets": {
+    "title": "Pressupostos",
+    "addButton": "Nou pressupost",
+    "empty": "No hi ha pressupostos",
+    "searchPlaceholder": "Cerca per número, client, treballador o ciutat...",
+    "noResultsSearch": "No hi ha pressupostos que coincideixin amb la cerca",
+    "backToList": "← Tornar a pressupostos",
+    "fields": {
+      "client": "Client *",
+      "selectClient": "Selecciona un client...",
+      "worker": "Treballador *",
+      "selectWorker": "Selecciona un treballador...",
+      "noTax": "Sense impost",
+      "notes": "Notes",
+      "tax": "Impost",
+      "deliveredAt": "Entregat el",
+      "status": "Estat",
+      "total": "Total",
+      "createdAt": "Creat"
+    },
+    "form": {
+      "editTitle": "Editar pressupost",
+      "newTitle": "Crear pressupost"
+    },
+    "errors": {
+      "clientRequired": "El client és obligatori",
+      "workerRequired": "El treballador és obligatori",
+      "fetchFailed": "Error en carregar els pressupostos",
+      "createFailed": "Error en crear el pressupost"
+    },
+    "filters": {
+      "clientApplied": "Mostrant pressupostos del client seleccionat."
+    }
+  },
+  "invoices": {
+    "title": "Factures",
+    "addButton": "Nova factura",
+    "empty": "No hi ha factures",
+    "searchPlaceholder": "Cerca per número, client, treballador o ciutat...",
+    "noResultsSearch": "No hi ha factures que coincideixin amb la cerca",
+    "backToList": "← Tornar a factures",
+    "fields": {
+      "client": "Client *",
+      "selectClient": "Selecciona un client...",
+      "worker": "Treballador *",
+      "selectWorker": "Selecciona un treballador...",
+      "noTax": "Sense impost",
+      "notes": "Notes",
+      "tax": "Impost",
+      "issuedAt": "Expedida el",
+      "sourceBudget": "Pressupost d'origen",
+      "noSourceBudget": "Sense pressupost d'origen",
+      "linkedBudget": "Pressupost vinculat",
+      "status": "Estat",
+      "total": "Total",
+      "year": "Any",
+      "allYears": "Tots els anys",
+      "createdAt": "Creat"
+    },
+    "form": {
+      "editTitle": "Editar factura",
+      "newTitle": "Crear factura"
+    },
+    "errors": {
+      "clientRequired": "El client és obligatori",
+      "workerRequired": "El treballador és obligatori",
+      "fetchFailed": "Error en carregar les factures",
+      "createFailed": "Error en crear la factura"
+    },
+    "filters": {
+      "clientApplied": "Mostrant factures del client seleccionat."
+    }
+  },
+  "commercialDocuments": {
+    "jobItems": "Conceptes",
+    "noJobItems": "Sense conceptes",
+    "noTemplate": "Sense plantilla",
+    "addItem": "Afegir concepte",
+    "quantity": "Quantitat",
+    "unitPrice": "Preu unitari",
+    "totalPrice": "Total",
+    "title": "Títol *",
+    "description": "Descripció",
+    "subtotal": "Subtotal",
+    "lineItemsSubtotal": "Subtotal de conceptes",
+    "manualDocumentSubtotal": "Subtotal manual del document",
+    "taxAmount": "Impost",
+    "totalAmount": "Import total",
+    "pricingModes": {
+      "computed": "Calculat des de conceptes",
+      "manualSubtotal": "Subtotal manual"
+    },
+    "fields": {
+      "number": "Número",
+      "client": "Client",
+      "worker": "Treballador",
+      "clientInfo": "Informació del client",
+      "workerInfo": "Informació del treballador",
+      "taxId": "NIF/CIF",
+      "workAddress": "Adreça de treball",
+      "billingAddress": "Adreça de facturació",
+      "workTemplate": "Plantilla de treball",
+      "pricingMode": "Mode de preu",
+      "manualSubtotalAmount": "Subtotal manual",
+      "calculatedTotal": "Total calculat"
+    }
+  },
+  "catalog": {
+    "title": "Configuració de documents comercials",
+    "tabs": {
+      "taxes": "Impostos",
+      "templates": "Plantilles de treball",
+      "pricing": "Preus",
+      "numbering": "Numeració de documents"
+    },
+    "pricing": {
+      "title": "Valors per defecte de preus",
+      "defaultMode": "Mode de preu per defecte per a nous documents",
+      "defaultBudgetMode": "Mode de preu per defecte per a nous pressupostos",
+      "defaultInvoiceMode": "Mode de preu per defecte per a noves factures",
+      "saved": "Configuració de preus desada"
+    },
+    "taxes": {
+      "title": "Definicions d'impostos",
+      "addButton": "Afegir impost",
+      "empty": "Sense impostos definits",
+      "fields": {
+        "name": "Nom",
+        "rate": "Tarifa (%)",
+        "behavior": "Comportament",
+        "status": "Estat"
+      },
+      "behaviors": {
+        "added": "Afegit al subtotal",
+        "included": "Inclòs en el preu"
+      }
+    },
+    "templates": {
+      "title": "Plantilles de treball",
+      "addButton": "Afegir plantilla",
+      "empty": "Sense plantilles definides",
+      "fields": {
+        "title": "Títol",
+        "description": "Descripció",
+        "defaultUnitPrice": "Preu unitari"
+      }
+    },
+    "numbering": {
+      "title": "Numeració de documents",
+      "documentType": "Tipus de document",
+      "documentTypes": {
+        "budget": "Pressupost",
+        "invoice": "Factura"
+      },
+      "scope": "Any/Abast",
+      "globalScope": "Global",
+      "nextNumber": "Próxim número",
+      "adjust": "Ajustar",
+      "noteLabel": "Nota:",
+      "note": "Ajustar els números de document afecta els documents futurs. Usar amb cura.",
+      "errors": {
+        "fetchFailed": "Error en carregar les seqüències de numeració",
+        "updateFailed": "Error en actualitzar la seqüència de numeració",
+        "invalidNextNumber": "El pròxim número ha de ser un enter més gran que 0"
+      }
     }
   }
 }

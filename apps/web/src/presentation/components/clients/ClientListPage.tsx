@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { ClientSchema, ClientListResponseSchema } from "@/api/schemas/client-schema";
 import { ClientService } from "@/presentation/api-clients/client.service";
 
 export function ClientListPage() {
   const { t } = useTranslation();
+  const router = useRouter();
   const [clients, setClients] = useState<ClientSchema[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -102,11 +104,16 @@ export function ClientListPage() {
               <tbody>
                 {clients.map(client => {
                   return (
-                    <tr key={client.id} className="border-b hover:bg-gray-50">
+                    <tr
+                      key={client.id}
+                      className="border-b hover:bg-gray-50 cursor-pointer"
+                      onClick={() => router.push(`/clients/${client.id}`)}
+                    >
                       <td className="px-4 py-3 font-medium">
                         <Link
                           href={`/clients/${client.id}`}
                           className="text-blue-600 hover:underline"
+                          onClick={event => event.stopPropagation()}
                         >
                           {client.name}
                         </Link>
@@ -116,14 +123,39 @@ export function ClientListPage() {
                       <td className="px-4 py-3">{client.city || "-"}</td>
                       <td className="px-4 py-3 space-x-2">
                         <Link
+                          href={`/clients/${client.id}`}
+                          className="px-2 py-1 text-sm bg-emerald-100 text-emerald-800 rounded hover:bg-emerald-200"
+                          onClick={event => event.stopPropagation()}
+                        >
+                          {t('common.view')}
+                        </Link>
+                        <Link
+                          href={`/budgets?clientId=${client.id}`}
+                          className="px-2 py-1 text-sm bg-amber-100 text-amber-800 rounded hover:bg-amber-200"
+                          onClick={event => event.stopPropagation()}
+                        >
+                          {t('clients.links.budgets')}
+                        </Link>
+                        <Link
+                          href={`/invoices?clientId=${client.id}`}
+                          className="px-2 py-1 text-sm bg-violet-100 text-violet-800 rounded hover:bg-violet-200"
+                          onClick={event => event.stopPropagation()}
+                        >
+                          {t('clients.links.invoices')}
+                        </Link>
+                        <Link
                           href={`/clients/${client.id}/edit`}
-                          className="px-2 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
+                          className="px-2 py-1 text-sm bg-sky-100 text-sky-800 rounded hover:bg-sky-200"
+                          onClick={event => event.stopPropagation()}
                         >
                           {t('common.edit')}
                         </Link>
                         <button
-                          onClick={() => setDeleteConfirm(client.id)}
-                          className="px-2 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200"
+                          onClick={event => {
+                            event.stopPropagation();
+                            setDeleteConfirm(client.id);
+                          }}
+                          className="px-2 py-1 text-sm bg-rose-100 text-rose-800 rounded hover:bg-rose-200"
                         >
                           {t('common.delete')}
                         </button>
