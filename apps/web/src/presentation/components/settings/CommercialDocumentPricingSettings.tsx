@@ -24,11 +24,15 @@ export function CommercialDocumentPricingSettings() {
 
   const onSave = async () => {
     setSuccess(null);
-    await update({
-      defaultBudgetPricingMode: budgetMode,
-      defaultInvoicePricingMode: invoiceMode
-    });
-    setSuccess(t("catalog.pricing.saved"));
+    try {
+      await update({
+        defaultBudgetPricingMode: budgetMode,
+        defaultInvoicePricingMode: invoiceMode
+      });
+      setSuccess(t("catalog.pricing.saved"));
+    } catch {
+      // Error state is managed by the hook.
+    }
   };
 
   return (

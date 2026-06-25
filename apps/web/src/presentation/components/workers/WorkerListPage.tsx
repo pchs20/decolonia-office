@@ -101,8 +101,16 @@ export function WorkerListPage() {
                   return (
                     <tr
                       key={worker.id}
+                      role="link"
+                      tabIndex={0}
                       className="border-b hover:bg-gray-50 cursor-pointer"
                       onClick={() => router.push(`/workers/${worker.id}`)}
+                      onKeyDown={event => {
+                        if (event.key === "Enter" || event.key === " ") {
+                          event.preventDefault();
+                          router.push(`/workers/${worker.id}`);
+                        }
+                      }}
                     >
                       <td className="px-4 py-3 font-medium">
                         <Link

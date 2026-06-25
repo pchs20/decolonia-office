@@ -48,8 +48,8 @@ export async function POST(request: NextRequest) {
       throw new ApiError(400, "name is required");
     }
 
-    if (!Number.isFinite(rate) || rate < 0) {
-      throw new ApiError(400, "rate must be a positive number");
+    if (!Number.isFinite(rate) || rate < 0 || rate > 100) {
+      throw new ApiError(400, "rate must be a number between 0 and 100");
     }
 
     const tax = await createTax({ name, rate });

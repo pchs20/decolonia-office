@@ -21,6 +21,18 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     const unitPrice = payload.unitPrice === null || payload.unitPrice === "" ? null : Number(payload.unitPrice);
     const totalPrice = payload.totalPrice === null || payload.totalPrice === "" ? null : Number(payload.totalPrice);
 
+    if (quantity !== null && !Number.isFinite(quantity)) {
+      throw new ApiError(400, "quantity must be a valid number or null");
+    }
+
+    if (unitPrice !== null && !Number.isFinite(unitPrice)) {
+      throw new ApiError(400, "unitPrice must be a valid number or null");
+    }
+
+    if (totalPrice !== null && !Number.isFinite(totalPrice)) {
+      throw new ApiError(400, "totalPrice must be a valid number or null");
+    }
+
     if (!title) {
       throw new ApiError(400, "title is required");
     }

@@ -19,7 +19,7 @@ export interface JobItemCreateRequest {
 }
 
 export interface JobItemUpdateRequest {
-  title?: string;
+  title: string;
   description?: string | null;
   quantity?: number | null;
   unitPrice?: number | null;

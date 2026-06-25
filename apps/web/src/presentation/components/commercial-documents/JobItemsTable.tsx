@@ -24,8 +24,6 @@ interface JobItemsTableProps {
 
 export function JobItemsTable({
   items,
-  pricingMode: _pricingMode = "computed",
-  manualSubtotalAmount: _manualSubtotalAmount = null,
   onEdit,
   onDelete,
   editable = false

@@ -278,6 +278,10 @@
       "behaviors": {
         "added": "Afegit al subtotal",
         "included": "Inclòs en el preu"
+      },
+      "status": {
+        "active": "Actiu",
+        "archived": "Arxivat"
       }
     },
     "templates": {

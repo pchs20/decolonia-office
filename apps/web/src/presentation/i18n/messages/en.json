@@ -278,6 +278,10 @@
       "behaviors": {
         "added": "Added to subtotal",
         "included": "Included in price"
+      },
+      "status": {
+        "active": "Active",
+        "archived": "Archived"
       }
     },
     "templates": {

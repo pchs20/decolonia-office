@@ -106,8 +106,16 @@ export function ClientListPage() {
                   return (
                     <tr
                       key={client.id}
+                      role="link"
+                      tabIndex={0}
                       className="border-b hover:bg-gray-50 cursor-pointer"
                       onClick={() => router.push(`/clients/${client.id}`)}
+                      onKeyDown={event => {
+                        if (event.key === "Enter" || event.key === " ") {
+                          event.preventDefault();
+                          router.push(`/clients/${client.id}`);
+                        }
+                      }}
                     >
                       <td className="px-4 py-3 font-medium">
                         <Link

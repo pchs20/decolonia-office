@@ -12,14 +12,18 @@ export function TaxCatalogManager() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    getAll(1, 100, true);
-  }, [getAll]);
+    void getAll(1, 100, true).catch(err => {
+      setError(err instanceof Error ? err.message : t("common.errors.unknown"));
+    });
+  }, [getAll, t]);
 
   const [formData, setFormData] = useState({
     name: "",
     rate: "",
     behavior: "added"
   });
+  const activeStatusLabel = t("catalog.taxes.status.active" as any);
+  const archivedStatusLabel = t("catalog.taxes.status.archived" as any);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -34,7 +38,7 @@ export function TaxCatalogManager() {
     setError(null);
 
     const rate = Number(formData.rate);
-    if (!formData.name.trim() || !Number.isFinite(rate) || rate < 0) {
+    if (!formData.name.trim() || !Number.isFinite(rate) || rate < 0 || rate > 100) {
       setError(t("common.errors.unknown"));
       return;
     }
@@ -143,7 +147,7 @@ export function TaxCatalogManager() {
                   <td className="px-3 py-2">{tax.behavior}</td>
                   <td className="px-3 py-2">
                     <span className={`text-xs px-2 py-1 rounded ${tax.isActive ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}`}>
-                      {tax.isActive ? "Active" : "Archived"}
+                      {tax.isActive ? activeStatusLabel : archivedStatusLabel}
                     </span>
                   </td>
                 </tr>
