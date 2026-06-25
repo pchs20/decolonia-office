@@ -148,6 +148,33 @@ export function ClientDetailPage({ clientId, startInEditMode = false }: ClientDe
       <div className="bg-white rounded-lg border p-6 max-w-2xl">
         <h1 className="text-3xl font-bold mb-6">{client.name}</h1>
 
+        <div className="mb-6 flex gap-3">
+          <Link
+            href={`/budgets?clientId=${client.id}`}
+            className="px-3 py-2 rounded border border-blue-300 text-blue-700 hover:bg-blue-50 text-sm"
+          >
+            {t('clients.links.viewBudgets')}
+          </Link>
+          <Link
+            href={`/budgets/new?clientId=${client.id}`}
+            className="px-3 py-2 rounded border border-emerald-300 text-emerald-700 hover:bg-emerald-50 text-sm"
+          >
+            + {t('budgets.addButton')}
+          </Link>
+          <Link
+            href={`/invoices?clientId=${client.id}`}
+            className="px-3 py-2 rounded border border-blue-300 text-blue-700 hover:bg-blue-50 text-sm"
+          >
+            {t('clients.links.viewInvoices')}
+          </Link>
+          <Link
+            href={`/invoices/new?clientId=${client.id}`}
+            className="px-3 py-2 rounded border border-emerald-300 text-emerald-700 hover:bg-emerald-50 text-sm"
+          >
+            + {t('invoices.addButton')}
+          </Link>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-1">{t('clients.fields.type')}</label>

@@ -21,5 +21,5 @@ The software may have also a dashboard or something.
 The software should be usable with its iPad and laptop.
 It should be taken into account that my father is not really good at technology.
 The software should be in catalan, spanish and english.
-The software should work as a PWA, installable on ipad ("add to home screen") to open like a native app. It should have offline features too: create draft budgets/invoices, store drafts locally annd syc automatically when back online. Not full database replication offline, offline is best effort, not full ERP offline system.
+The software should work as a PWA, installable on ipad ("add to home screen") to open like a native app. It should have offline features too: create budgets/invoices while offline, store local pending changes and sync automatically when back online. Not full database replication offline, offline is best effort, not full ERP offline system.
 In the future, the software may be enhanced with OCR for scanned invoices, automaticc categorization of expenses, background jobs system (for OCR/email processing).

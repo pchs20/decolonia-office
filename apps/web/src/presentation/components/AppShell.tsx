@@ -24,6 +24,24 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           >
             {t('nav.workers')}
           </Link>
+          <Link
+            href="/budgets"
+            className="text-sm text-gray-600 hover:text-gray-900"
+          >
+            {t('nav.budgets')}
+          </Link>
+          <Link
+            href="/invoices"
+            className="text-sm text-gray-600 hover:text-gray-900"
+          >
+            {t('nav.invoices')}
+          </Link>
+          <Link
+            href="/settings/catalog"
+            className="text-sm text-gray-600 hover:text-gray-900"
+          >
+            {t('nav.settings')}
+          </Link>
         </div>
         <LanguageToggle />
       </nav>

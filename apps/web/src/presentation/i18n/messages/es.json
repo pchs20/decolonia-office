@@ -2,8 +2,13 @@
   "common": {
     "loading": "Cargando...",
     "back": "← Atrás",
+    "view": "Ver",
     "edit": "Editar",
+    "finalize": "Finalizar",
+    "archive": "Archivar",
     "delete": "Eliminar",
+    "deleting": "Eliminando...",
+    "add": "Añadir",
     "cancel": "Cancelar",
     "save": "Guardar",
     "saving": "Guardando...",
@@ -11,11 +16,18 @@
     "next": "Siguiente",
     "pageOf": "Página {{page}} de {{total}}",
     "showingRange": "Mostrando {{from}} a {{to}} de {{total}}",
-    "confirmDelete": "Confirmar eliminación",
+    "confirmDelete": "¿Estás seguro?",
     "unsavedChanges": "Tienes cambios sin guardar. ¿Descartarlos y salir del modo edición?",
     "name": "Nombre",
     "phone": "Teléfono",
     "city": "Ciudad",
+    "notFoundInDropdown": "¿No aparece en la lista?",
+    "createClient": "Crear cliente",
+    "createWorker": "Crear trabajador",
+    "editClient": "Editar cliente",
+    "editWorker": "Editar trabajador",
+    "search": "Buscar",
+    "clearFilter": "Quitar filtro",
     "actions": "Acciones",
     "errors": {
       "unknown": "Se ha producido un error"
@@ -24,18 +36,27 @@
   "nav": {
     "appName": "Decolonia Office",
     "clients": "Clientes",
-    "workers": "Trabajadores"
+    "workers": "Trabajadores",
+    "budgets": "Presupuestos",
+    "invoices": "Facturas",
+    "settings": "Configuración"
   },
   "clients": {
     "title": "Clientes",
     "entityName": "Cliente",
     "addButton": "Añadir cliente",
-    "searchPlaceholder": "Buscar por nombre...",
+    "searchPlaceholder": "Buscar por nombre o ciudad...",
     "noResultsSearch": "No se han encontrado clientes con ese nombre",
     "empty": "Todavía no hay clientes",
     "notFound": "Cliente no encontrado",
     "backToList": "← Volver a clientes",
     "deleteConfirm": "¿Seguro que quieres eliminar este cliente?",
+    "links": {
+      "viewBudgets": "Ver presupuestos",
+      "viewInvoices": "Ver facturas",
+      "budgets": "Presupuestos",
+      "invoices": "Facturas"
+    },
     "fields": {
       "type": "Tipo",
       "taxId": "NIF/CIF",
@@ -55,7 +76,11 @@
     },
     "errors": {
       "fetchFailed": "Error al cargar los clientes",
-      "deleteFailed": "Error al eliminar el cliente"
+      "fetchOneFailed": "Error al cargar el cliente",
+      "createFailed": "Error al crear el cliente",
+      "updateFailed": "Error al actualizar el cliente",
+      "deleteFailed": "Error al eliminar el cliente",
+      "notFound": "Cliente no encontrado"
     },
     "successUpdate": "Cliente {{name}} actualizado correctamente"
   },
@@ -63,7 +88,7 @@
     "title": "Trabajadores",
     "entityName": "Trabajador",
     "addButton": "Añadir trabajador",
-    "searchPlaceholder": "Buscar por nombre...",
+    "searchPlaceholder": "Buscar por nombre o ciudad...",
     "noResultsSearch": "No se han encontrado trabajadores con ese nombre",
     "empty": "Todavía no hay trabajadores",
     "notFound": "Trabajador no encontrado",
@@ -83,7 +108,11 @@
     },
     "errors": {
       "fetchFailed": "Error al cargar los trabajadores",
-      "deleteFailed": "Error al eliminar el trabajador"
+      "fetchOneFailed": "Error al cargar el trabajador",
+      "createFailed": "Error al crear el trabajador",
+      "updateFailed": "Error al actualizar el trabajador",
+      "deleteFailed": "Error al eliminar el trabajador",
+      "notFound": "Trabajador no encontrado"
     },
     "successUpdate": "Trabajador {{name}} actualizado correctamente"
   },
@@ -112,6 +141,177 @@
     "errors": {
       "workAddressRequired": "La calle, ciudad y código postal son obligatorios",
       "billingAddressRequired": "La calle, ciudad y código postal de facturación son obligatorios cuando la dirección de facturación es diferente"
+    }
+  },
+  "budgets": {
+    "title": "Presupuestos",
+    "addButton": "Nuevo presupuesto",
+    "empty": "No hay presupuestos",
+    "searchPlaceholder": "Buscar por número, cliente, trabajador o ciudad...",
+    "noResultsSearch": "No hay presupuestos que coincidan con la búsqueda",
+    "backToList": "← Volver a presupuestos",
+    "fields": {
+      "client": "Cliente *",
+      "selectClient": "Selecciona un cliente...",
+      "worker": "Trabajador *",
+      "selectWorker": "Selecciona un trabajador...",
+      "noTax": "Sin impuesto",
+      "notes": "Notas",
+      "tax": "Impuesto",
+      "deliveredAt": "Entregado el",
+      "status": "Estado",
+      "total": "Total",
+      "createdAt": "Creado"
+    },
+    "form": {
+      "editTitle": "Editar presupuesto",
+      "newTitle": "Crear presupuesto"
+    },
+    "errors": {
+      "clientRequired": "El cliente es obligatorio",
+      "workerRequired": "El trabajador es obligatorio",
+      "fetchFailed": "Error al cargar los presupuestos",
+      "createFailed": "Error al crear el presupuesto"
+    },
+    "filters": {
+      "clientApplied": "Mostrando presupuestos del cliente seleccionado."
+    }
+  },
+  "invoices": {
+    "title": "Facturas",
+    "addButton": "Nueva factura",
+    "empty": "No hay facturas",
+    "searchPlaceholder": "Buscar por número, cliente, trabajador o ciudad...",
+    "noResultsSearch": "No hay facturas que coincidan con la búsqueda",
+    "backToList": "← Volver a facturas",
+    "fields": {
+      "client": "Cliente *",
+      "selectClient": "Selecciona un cliente...",
+      "worker": "Trabajador *",
+      "selectWorker": "Selecciona un trabajador...",
+      "noTax": "Sin impuesto",
+      "notes": "Notas",
+      "tax": "Impuesto",
+      "issuedAt": "Emitida el",
+      "sourceBudget": "Presupuesto de origen",
+      "noSourceBudget": "Sin presupuesto de origen",
+      "linkedBudget": "Presupuesto vinculado",
+      "status": "Estado",
+      "total": "Total",
+      "year": "Año",
+      "allYears": "Todos los años",
+      "createdAt": "Creado"
+    },
+    "form": {
+      "editTitle": "Editar factura",
+      "newTitle": "Crear factura"
+    },
+    "errors": {
+      "clientRequired": "El cliente es obligatorio",
+      "workerRequired": "El trabajador es obligatorio",
+      "fetchFailed": "Error al cargar las facturas",
+      "createFailed": "Error al crear la factura"
+    },
+    "filters": {
+      "clientApplied": "Mostrando facturas del cliente seleccionado."
+    }
+  },
+  "commercialDocuments": {
+    "jobItems": "Conceptos",
+    "noJobItems": "Sin conceptos",
+    "noTemplate": "Sin plantilla",
+    "addItem": "Añadir concepto",
+    "quantity": "Cantidad",
+    "unitPrice": "Precio unitario",
+    "totalPrice": "Total",
+    "title": "Título *",
+    "description": "Descripción",
+    "subtotal": "Subtotal",
+    "lineItemsSubtotal": "Subtotal de conceptos",
+    "manualDocumentSubtotal": "Subtotal manual del documento",
+    "taxAmount": "Impuesto",
+    "totalAmount": "Importe total",
+    "pricingModes": {
+      "computed": "Calculado desde conceptos",
+      "manualSubtotal": "Subtotal manual"
+    },
+    "fields": {
+      "number": "Número",
+      "client": "Cliente",
+      "worker": "Trabajador",
+      "clientInfo": "Información del cliente",
+      "workerInfo": "Información del trabajador",
+      "taxId": "NIF/CIF",
+      "workAddress": "Dirección de trabajo",
+      "billingAddress": "Dirección de facturación",
+      "workTemplate": "Plantilla de trabajo",
+      "pricingMode": "Modo de precio",
+      "manualSubtotalAmount": "Subtotal manual",
+      "calculatedTotal": "Total calculado"
+    }
+  },
+  "catalog": {
+    "title": "Configuración de documentos comerciales",
+    "tabs": {
+      "taxes": "Impuestos",
+      "templates": "Plantillas de trabajo",
+      "pricing": "Precios",
+      "numbering": "Numeración de documentos"
+    },
+    "pricing": {
+      "title": "Valores por defecto de precios",
+      "defaultMode": "Modo de precio por defecto para nuevos documentos",
+      "defaultBudgetMode": "Modo de precio por defecto para nuevos presupuestos",
+      "defaultInvoiceMode": "Modo de precio por defecto para nuevas facturas",
+      "saved": "Configuración de precios guardada"
+    },
+    "taxes": {
+      "title": "Definiciones de impuestos",
+      "addButton": "Añadir impuesto",
+      "empty": "Sin impuestos definidos",
+      "fields": {
+        "name": "Nombre",
+        "rate": "Tarifa (%)",
+        "behavior": "Comportamiento",
+        "status": "Estado"
+      },
+      "behaviors": {
+        "added": "Añadido al subtotal",
+        "included": "Incluido en el precio"
+      },
+      "status": {
+        "active": "Activo",
+        "archived": "Archivado"
+      }
+    },
+    "templates": {
+      "title": "Plantillas de trabajo",
+      "addButton": "Añadir plantilla",
+      "empty": "Sin plantillas definidas",
+      "fields": {
+        "title": "Título",
+        "description": "Descripción",
+        "defaultUnitPrice": "Precio unitario"
+      }
+    },
+    "numbering": {
+      "title": "Numeración de documentos",
+      "documentType": "Tipo de documento",
+      "documentTypes": {
+        "budget": "Presupuesto",
+        "invoice": "Factura"
+      },
+      "scope": "Año/Ámbito",
+      "globalScope": "Global",
+      "nextNumber": "Próximo número",
+      "adjust": "Ajustar",
+      "noteLabel": "Nota:",
+      "note": "Ajustar los números de documento afecta a los documentos futuros. Usar con cuidado.",
+      "errors": {
+        "fetchFailed": "Error al cargar las secuencias de numeración",
+        "updateFailed": "Error al actualizar la secuencia de numeración",
+        "invalidNextNumber": "El próximo número debe ser un entero mayor que 0"
+      }
     }
   }
 }

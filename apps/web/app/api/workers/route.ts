@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createWorkersUseCases } from "@/application/use-cases/workers/workers-service";
+import { workerUseCases } from "@/api/composition/workers";
 import { getErrorResponse } from "@/api/errors/api-errors";
 import { validateWorkerCreatePayload } from "@/api/schemas/worker-validator";
 import { toWorkerListResponseSchema, toWorkerSchema } from "@/api/mappers/worker-mapper";
-import { postgresWorkerRepository } from "@/infrastructure/persistence/postgres/repositories/worker-repository";
 
-const { createWorker, listWorkers } = createWorkersUseCases(postgresWorkerRepository);
+const { createWorker, listWorkers } = workerUseCases;
 
 export async function GET(request: NextRequest) {
   try {
