@@ -145,6 +145,10 @@ export function createCommercialDocumentsUseCases(deps: CommercialDocumentDeps) 
       return item;
     },
 
+    async listBudgetItems(budgetId: string): Promise<JobItem[]> {
+      return deps.jobItemRepository.findByDocumentId(budgetId);
+    },
+
     async updateBudgetItem(
       budgetId: string,
       itemId: string,
@@ -265,6 +269,10 @@ export function createCommercialDocumentsUseCases(deps: CommercialDocumentDeps) 
       );
       await calculateInvoiceTotals(invoiceId, deps.jobItemRepository, deps.invoiceRepository);
       return item;
+    },
+
+    async listInvoiceItems(invoiceId: string): Promise<JobItem[]> {
+      return deps.jobItemRepository.findByDocumentId(invoiceId);
     },
 
     async updateInvoiceItem(

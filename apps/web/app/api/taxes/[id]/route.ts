@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ApiError, getErrorResponse } from "@/api/errors/api-errors";
 import { mapTaxToResponse } from "@/api/mappers/tax-mapper";
-import { commercialDocumentsUseCases } from "@/application/use-cases/commercial-documents/commercial-documents-runtime";
+import { commercialDocumentsUseCases } from "@/api/composition/commercial-documents";
 
 const { getTaxById, updateTax } = commercialDocumentsUseCases;
 

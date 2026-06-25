@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ApiError, getErrorResponse } from "@/api/errors/api-errors";
 import { mapJobItemToResponse } from "@/api/mappers/job-item-mapper";
-import { commercialDocumentsUseCases } from "@/application/use-cases/commercial-documents/commercial-documents-runtime";
-import { postgresJobItemRepository } from "@/infrastructure/persistence/postgres/repositories/job-item-repository";
+import { commercialDocumentsUseCases } from "@/api/composition/commercial-documents";
 
-const { addInvoiceItem } = commercialDocumentsUseCases;
+const { addInvoiceItem, listInvoiceItems } = commercialDocumentsUseCases;
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -15,7 +14,7 @@ type Params = { params: Promise<{ id: string }> };
 export async function GET(_: NextRequest, { params }: Params) {
   try {
     const { id } = await params;
-    const items = await postgresJobItemRepository.findByDocumentId(id);
+    const items = await listInvoiceItems(id);
     return NextResponse.json(items.map(mapJobItemToResponse), { status: 200 });
   } catch (error) {
     console.error("GET /api/invoices/:id/items failed", error);

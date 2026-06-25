@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ApiError, getErrorResponse } from "@/api/errors/api-errors";
 import { mapWorkTemplateToResponse } from "@/api/mappers/work-template-mapper";
-import { commercialDocumentsUseCases } from "@/application/use-cases/commercial-documents/commercial-documents-runtime";
+import { commercialDocumentsUseCases } from "@/api/composition/commercial-documents";
 
 const { createWorkTemplate, listWorkTemplates } = commercialDocumentsUseCases;
 

@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClientsUseCases } from "@/application/use-cases/clients/clients-service";
+import { clientUseCases } from "@/api/composition/clients";
 import { getErrorResponse } from "@/api/errors/api-errors";
 import { validateClientUpdatePayload } from "@/api/schemas/client-validator";
 import { toClientSchema } from "@/api/mappers/client-mapper";
-import { postgresClientRepository } from "@/infrastructure/persistence/postgres/repositories/client-repository";
 
-const { deleteClient, getClientById, updateClient } = createClientsUseCases(postgresClientRepository);
+const { deleteClient, getClientById, updateClient } = clientUseCases;
 
 type Params = { params: Promise<{ id: string }> };
 

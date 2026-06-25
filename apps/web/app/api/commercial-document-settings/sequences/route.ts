@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ApiError, getErrorResponse } from "@/api/errors/api-errors";
 import { mapDocumentSequenceToResponse } from "@/api/mappers/document-sequence-mapper";
-import { commercialDocumentsUseCases } from "@/application/use-cases/commercial-documents/commercial-documents-runtime";
+import { commercialDocumentsUseCases } from "@/api/composition/commercial-documents";
 
 const { getSequenceState } = commercialDocumentsUseCases;
 

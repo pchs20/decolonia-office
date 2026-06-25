@@ -3,7 +3,7 @@ import { getErrorResponse, ApiError } from "@/api/errors/api-errors";
 import { mapBudgetToResponse } from "@/api/mappers/budget-mapper";
 import { ClientSnapshot } from "@/domain/value-objects/client-snapshot";
 import { WorkerSnapshot } from "@/domain/value-objects/worker-snapshot";
-import { commercialDocumentsUseCases } from "@/application/use-cases/commercial-documents/commercial-documents-runtime";
+import { commercialDocumentsUseCases } from "@/api/composition/commercial-documents";
 
 const { createBudget, listBudgets } = commercialDocumentsUseCases;
 

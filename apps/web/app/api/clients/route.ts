@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClientsUseCases } from "@/application/use-cases/clients/clients-service";
+import { clientUseCases } from "@/api/composition/clients";
 import { getErrorResponse } from "@/api/errors/api-errors";
 import { validateClientCreatePayload } from "@/api/schemas/client-validator";
 import { toClientListResponseSchema, toClientSchema } from "@/api/mappers/client-mapper";
-import { postgresClientRepository } from "@/infrastructure/persistence/postgres/repositories/client-repository";
 
-const { createClient, listClients } = createClientsUseCases(postgresClientRepository);
+const { createClient, listClients } = clientUseCases;
 
 export async function GET(request: NextRequest) {
   try {

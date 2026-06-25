@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createWorkersUseCases } from "@/application/use-cases/workers/workers-service";
+import { workerUseCases } from "@/api/composition/workers";
 import { getErrorResponse } from "@/api/errors/api-errors";
 import { validateWorkerUpdatePayload } from "@/api/schemas/worker-validator";
 import { toWorkerSchema } from "@/api/mappers/worker-mapper";
-import { postgresWorkerRepository } from "@/infrastructure/persistence/postgres/repositories/worker-repository";
 
-const { deleteWorker, getWorkerById, updateWorker } = createWorkersUseCases(postgresWorkerRepository);
+const { deleteWorker, getWorkerById, updateWorker } = workerUseCases;
 
 type Params = { params: Promise<{ id: string }> };
 

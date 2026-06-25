@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getErrorResponse } from "@/api/errors/api-errors";
-import { commercialDocumentsUseCases } from "@/application/use-cases/commercial-documents/commercial-documents-runtime";
+import { commercialDocumentsUseCases } from "@/api/composition/commercial-documents";
 
 const { archiveTax } = commercialDocumentsUseCases;
 
