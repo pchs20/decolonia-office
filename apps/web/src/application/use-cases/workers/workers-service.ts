@@ -31,6 +31,7 @@ function buildWorkerForCreate(params: CreateWorkerParams): Worker {
     taxId: params.taxId,
     phone: toNullable(params.phone),
     email: toNullable(params.email),
+    bankAccount: params.bankAccount ?? null,
     isActive: true,
     createdAt: now,
     updatedAt: now
@@ -69,6 +70,7 @@ function mergeWorkerUpdate(current: Worker, params: UpdateWorkerParams): Worker 
     taxId: params.taxId ?? current.taxId,
     phone: params.phone !== undefined ? toNullable(params.phone) : current.phone,
     email: params.email !== undefined ? toNullable(params.email) : current.email,
+    bankAccount: params.bankAccount !== undefined ? (params.bankAccount ?? null) : current.bankAccount,
     updatedAt: new Date()
   };
 }

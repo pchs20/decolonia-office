@@ -17,11 +17,13 @@ export interface DocumentPartyInput {
   taxId: string;
   phone?: string | null;
   email?: string | null;
+  bankAccount?: string | null;
   workAddress: DocumentAddressInput;
   billingAddress: DocumentAddressInput;
 }
 
 export interface DocumentPartySchema extends Pick<ProfileSchema, "id" | "name" | "taxId" | "phone" | "email"> {
+  bankAccount?: string | null;
   workAddress: DocumentAddressSchema;
   billingAddress: DocumentAddressSchema;
 }

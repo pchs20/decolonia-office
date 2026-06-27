@@ -10,6 +10,7 @@ export type WorkerRow = {
   tax_id: string;
   phone: string | null;
   email: string | null;
+  bank_account: string | null;
   is_active: boolean;
   created_at: Date | string;
   updated_at: Date | string;

@@ -39,6 +39,7 @@ export async function createBudgetRecord(
           worker_snapshot_name, worker_snapshot_tax_id, worker_snapshot_phone, worker_snapshot_email,
           worker_snapshot_work_street, worker_snapshot_work_city, worker_snapshot_work_postal_code,
           worker_snapshot_billing_street, worker_snapshot_billing_city, worker_snapshot_billing_postal_code,
+          worker_snapshot_bank_account,
           tax_snapshot_name, tax_snapshot_rate, tax_snapshot_behavior,
           pricing_mode, manual_subtotal_amount,
           subtotal_amount, tax_amount, total_amount, created_at, updated_at
@@ -51,9 +52,10 @@ export async function createBudgetRecord(
           $17, $18, $19, $20,
           $21, $22, $23,
           $24, $25, $26,
-          $27, $28, $29,
-          $30, $31,
-          $32, $33, $34, $35, $36
+          $27,
+          $28, $29, $30,
+          $31, $32,
+          $33, $34, $35, $36, $37
         )
         RETURNING id, number, client_id, worker_id, notes, delivered_at,
           client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
@@ -62,6 +64,7 @@ export async function createBudgetRecord(
           worker_snapshot_name, worker_snapshot_tax_id, worker_snapshot_phone, worker_snapshot_email,
           worker_snapshot_work_street, worker_snapshot_work_city, worker_snapshot_work_postal_code,
           worker_snapshot_billing_street, worker_snapshot_billing_city, worker_snapshot_billing_postal_code,
+          worker_snapshot_bank_account,
           tax_snapshot_name, tax_snapshot_rate, tax_snapshot_behavior,
           pricing_mode, manual_subtotal_amount,
           subtotal_amount, tax_amount, total_amount, created_at, updated_at
@@ -93,6 +96,7 @@ export async function createBudgetRecord(
         budget.workerSnapshot.billingAddress.street,
         budget.workerSnapshot.billingAddress.city,
         budget.workerSnapshot.billingAddress.postalCode,
+        budget.workerSnapshot.bankAccount,
         budget.taxSnapshot?.name ?? null,
         budget.taxSnapshot?.rate ?? null,
         budget.taxSnapshot?.behavior ?? null,
@@ -130,6 +134,7 @@ export async function getBudgetById(id: string): Promise<Budget> {
         worker_snapshot_name, worker_snapshot_tax_id, worker_snapshot_phone, worker_snapshot_email,
         worker_snapshot_work_street, worker_snapshot_work_city, worker_snapshot_work_postal_code,
         worker_snapshot_billing_street, worker_snapshot_billing_city, worker_snapshot_billing_postal_code,
+        worker_snapshot_bank_account,
         tax_snapshot_name, tax_snapshot_rate, tax_snapshot_behavior,
         pricing_mode, manual_subtotal_amount,
         subtotal_amount, tax_amount, total_amount, created_at, updated_at
@@ -164,6 +169,7 @@ export async function listBudgets(
       worker_snapshot_name, worker_snapshot_tax_id, worker_snapshot_phone, worker_snapshot_email,
       worker_snapshot_work_street, worker_snapshot_work_city, worker_snapshot_work_postal_code,
       worker_snapshot_billing_street, worker_snapshot_billing_city, worker_snapshot_billing_postal_code,
+      worker_snapshot_bank_account,
       tax_snapshot_name, tax_snapshot_rate, tax_snapshot_behavior,
       pricing_mode, manual_subtotal_amount,
       subtotal_amount, tax_amount, total_amount, created_at, updated_at
@@ -222,10 +228,11 @@ export async function updateBudgetRecord(budget: Budget): Promise<Budget> {
         worker_snapshot_name = $13, worker_snapshot_tax_id = $14, worker_snapshot_phone = $15, worker_snapshot_email = $16,
         worker_snapshot_work_street = $17, worker_snapshot_work_city = $18, worker_snapshot_work_postal_code = $19,
         worker_snapshot_billing_street = $20, worker_snapshot_billing_city = $21, worker_snapshot_billing_postal_code = $22,
-        tax_snapshot_name = $23, tax_snapshot_rate = $24, tax_snapshot_behavior = $25,
-        pricing_mode = $26, manual_subtotal_amount = $27,
-        subtotal_amount = $28, tax_amount = $29, total_amount = $30, updated_at = $31
-      WHERE id = $32
+        worker_snapshot_bank_account = $23,
+        tax_snapshot_name = $24, tax_snapshot_rate = $25, tax_snapshot_behavior = $26,
+        pricing_mode = $27, manual_subtotal_amount = $28,
+        subtotal_amount = $29, tax_amount = $30, total_amount = $31, updated_at = $32
+      WHERE id = $33
       RETURNING id, number, client_id, worker_id, notes, delivered_at,
         client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
         client_snapshot_work_street, client_snapshot_work_city, client_snapshot_work_postal_code,
@@ -233,6 +240,7 @@ export async function updateBudgetRecord(budget: Budget): Promise<Budget> {
         worker_snapshot_name, worker_snapshot_tax_id, worker_snapshot_phone, worker_snapshot_email,
         worker_snapshot_work_street, worker_snapshot_work_city, worker_snapshot_work_postal_code,
         worker_snapshot_billing_street, worker_snapshot_billing_city, worker_snapshot_billing_postal_code,
+        worker_snapshot_bank_account,
         tax_snapshot_name, tax_snapshot_rate, tax_snapshot_behavior,
         pricing_mode, manual_subtotal_amount,
         subtotal_amount, tax_amount, total_amount, created_at, updated_at
@@ -260,6 +268,7 @@ export async function updateBudgetRecord(budget: Budget): Promise<Budget> {
       budget.workerSnapshot.billingAddress.street,
       budget.workerSnapshot.billingAddress.city,
       budget.workerSnapshot.billingAddress.postalCode,
+      budget.workerSnapshot.bankAccount,
       budget.taxSnapshot?.name ?? null,
       budget.taxSnapshot?.rate ?? null,
       budget.taxSnapshot?.behavior ?? null,

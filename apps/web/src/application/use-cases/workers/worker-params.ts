@@ -9,6 +9,7 @@ export interface CreateWorkerParams {
   taxId: string;
   phone?: string;
   email?: string;
+  bankAccount?: string | null;
 }
 
 export interface UpdateWorkerParams {
@@ -22,4 +23,5 @@ export interface UpdateWorkerParams {
   taxId?: string;
   phone?: string;
   email?: string;
+  bankAccount?: string | null;
 }

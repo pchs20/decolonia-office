@@ -25,6 +25,7 @@ export interface BudgetRow {
   worker_snapshot_billing_street: string;
   worker_snapshot_billing_city: string;
   worker_snapshot_billing_postal_code: string;
+  worker_snapshot_bank_account: string | null;
   tax_snapshot_name: string | null;
   tax_snapshot_rate: string | null;
   tax_snapshot_behavior: string | null;

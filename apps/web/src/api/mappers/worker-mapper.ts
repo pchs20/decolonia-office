@@ -17,6 +17,7 @@ export function toWorkerSchema(worker: Worker): WorkerSchema {
     taxId: worker.taxId,
     phone: worker.phone,
     email: worker.email,
+    bankAccount: worker.bankAccount,
     isActive: worker.isActive,
     createdAt: worker.createdAt.toISOString(),
     updatedAt: worker.updatedAt.toISOString()

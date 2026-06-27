@@ -98,7 +98,8 @@ function parseWorkerSnapshot(value: unknown): WorkerSnapshot | undefined {
     phone: typeof raw.phone === "string" && raw.phone.trim() ? raw.phone.trim() : null,
     email: typeof raw.email === "string" && raw.email.trim() ? raw.email.trim() : null,
     workAddress: parseSnapshotAddress(raw.workAddress, "workerSnapshot.workAddress"),
-    billingAddress: parseSnapshotAddress(raw.billingAddress, "workerSnapshot.billingAddress")
+    billingAddress: parseSnapshotAddress(raw.billingAddress, "workerSnapshot.billingAddress"),
+    bankAccount: typeof raw.bankAccount === "string" && raw.bankAccount.trim() ? raw.bankAccount.trim() : null
   };
 }
 

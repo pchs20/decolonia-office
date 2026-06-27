@@ -83,6 +83,7 @@ describe("budget use-cases", () => {
       taxId: "TW",
       phone: null,
       email: null,
+      bankAccount: null,
       isActive: true,
       createdAt: new Date(),
       updatedAt: new Date()
@@ -141,6 +142,7 @@ describe("budget use-cases", () => {
         taxId: "TW",
         phone: null,
         email: null,
+        bankAccount: null,
         workAddress: { street: "W2", city: "C2", postalCode: "3" },
         billingAddress: { street: "B2", city: "BC2", postalCode: "4" }
       },
