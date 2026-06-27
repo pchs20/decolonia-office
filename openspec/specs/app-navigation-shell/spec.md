@@ -1,14 +1,14 @@
 ## Purpose
 
-Provide a persistent navigation shell wrapping all app pages (clients, workers, and future routes), containing app branding, route navigation, and language toggle controls.
+Provide a persistent navigation shell wrapping all app pages (clients, workers, budgets, invoices, settings, and the home page dashboard), containing app branding, route navigation, and language toggle controls.
 
 ## Requirements
 
 ### Requirement: App navigation shell layout
-The system SHALL provide a `(web-routes)/layout.tsx` server component that wraps all app route pages (clients, workers, and future routes) with an `<I18nProvider>` and an `<AppShell>` component containing a top navigation bar. This layout SHALL NOT apply to `/api/*` or `/api/docs` routes.
+The system SHALL provide a `(web-routes)/layout.tsx` server component that wraps all app route pages (clients, workers, budgets, invoices, settings, and the home page dashboard) with an `<I18nProvider>` and an `<AppShell>` component containing a top navigation bar. The root route (`/`) SHALL resolve inside this group. This layout SHALL NOT apply to `/api/*` or `/api/docs` routes.
 
-#### Scenario: Shell wraps app pages
-- **WHEN** the user navigates to any route inside `(web-routes)/`
+#### Scenario: Shell wraps app pages including the home page
+- **WHEN** the user navigates to any route inside `(web-routes)/`, including `/`
 - **THEN** the page SHALL render inside the navbar shell
 
 #### Scenario: Shell does not wrap API routes
