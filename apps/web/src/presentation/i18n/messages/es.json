@@ -333,5 +333,14 @@
     "total": "Total",
     "paymentMethod": "Forma de pago",
     "bankTransfer": "Transferencia bancaria"
+  },
+  "dashboard": {
+    "newBudget": "+ Nuevo presupuesto",
+    "newInvoice": "+ Nueva factura",
+    "recentBudgets": "Presupuestos recientes",
+    "recentInvoices": "Facturas recientes",
+    "seeAll": "Ver todos →",
+    "emptyBudgets": "Aún no hay presupuestos.",
+    "emptyInvoices": "Aún no hay facturas."
   }
 }

@@ -333,5 +333,14 @@
     "total": "Total",
     "paymentMethod": "Payment method",
     "bankTransfer": "Bank transfer"
+  },
+  "dashboard": {
+    "newBudget": "+ New budget",
+    "newInvoice": "+ New invoice",
+    "recentBudgets": "Recent budgets",
+    "recentInvoices": "Recent invoices",
+    "seeAll": "See all →",
+    "emptyBudgets": "No budgets yet.",
+    "emptyInvoices": "No invoices yet."
   }
 }

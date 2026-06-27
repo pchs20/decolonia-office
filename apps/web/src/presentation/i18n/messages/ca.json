@@ -333,5 +333,14 @@
     "total": "Total",
     "paymentMethod": "Forma de pagament",
     "bankTransfer": "Transferència bancària"
+  },
+  "dashboard": {
+    "newBudget": "+ Nou pressupost",
+    "newInvoice": "+ Nova factura",
+    "recentBudgets": "Pressupostos recents",
+    "recentInvoices": "Factures recents",
+    "seeAll": "Veure tots →",
+    "emptyBudgets": "Encara no hi ha pressupostos.",
+    "emptyInvoices": "Encara no hi ha factures."
   }
 }
