@@ -126,13 +126,33 @@ export default function BudgetDetailPage({ params }: BudgetDetailPageProps) {
         )}
         <div className="flex items-center gap-2">
           {!editing ? (
-            <button
-              type="button"
-              onClick={() => setEditing(true)}
-              className="px-3 py-1 text-sm bg-sky-100 text-sky-800 rounded hover:bg-sky-200"
-            >
-              {t("common.edit")}
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={async () => {
+                  if (!budgetId) return;
+                  const response = await fetch(`/api/budgets/${budgetId}/pdf`);
+                  if (!response.ok) return;
+                  const blob = await response.blob();
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = `presupuesto-${budget.number}.pdf`;
+                  a.click();
+                  URL.revokeObjectURL(url);
+                }}
+                className="px-3 py-1 text-sm bg-green-100 text-green-800 rounded hover:bg-green-200"
+              >
+                {t("budgets.exportPdf")}
+              </button>
+              <button
+                type="button"
+                onClick={() => setEditing(true)}
+                className="px-3 py-1 text-sm bg-sky-100 text-sky-800 rounded hover:bg-sky-200"
+              >
+                {t("common.edit")}
+              </button>
+            </>
           ) : null}
         </div>
       </div>

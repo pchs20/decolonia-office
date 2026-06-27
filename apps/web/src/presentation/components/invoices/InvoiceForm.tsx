@@ -32,6 +32,7 @@ interface SnapshotPartyFormData {
   taxId: string;
   phone: string;
   email: string;
+  bankAccount: string | null;
   workAddress: {
     street: string;
     city: string;
@@ -50,6 +51,7 @@ function mapClientToSnapshot(client: ClientSchema): SnapshotPartyFormData {
     taxId: client.taxId,
     phone: client.phone || "",
     email: client.email || "",
+    bankAccount: null,
     workAddress: {
       street: client.street,
       city: client.city,
@@ -69,6 +71,7 @@ function mapWorkerToSnapshot(worker: WorkerSchema): SnapshotPartyFormData {
     taxId: worker.taxId,
     phone: worker.phone || "",
     email: worker.email || "",
+    bankAccount: worker.bankAccount,
     workAddress: {
       street: worker.street,
       city: worker.city,
@@ -88,6 +91,7 @@ function mapInvoicePartyToSnapshot(party: InvoiceResponse["client"] | InvoiceRes
     taxId: party.taxId,
     phone: party.phone || "",
     email: party.email || "",
+    bankAccount: party.bankAccount ?? null,
     workAddress: {
       street: party.workAddress.street,
       city: party.workAddress.city,
@@ -107,6 +111,7 @@ function emptySnapshot(): SnapshotPartyFormData {
     taxId: "",
     phone: "",
     email: "",
+    bankAccount: null,
     workAddress: { street: "", city: "", postalCode: "" },
     billingAddress: { street: "", city: "", postalCode: "" }
   };
@@ -347,6 +352,7 @@ export function InvoiceForm({ invoice, initialClientId, initialItems = [], onSuc
     taxId: snapshot.taxId.trim(),
     phone: snapshot.phone.trim() || null,
     email: snapshot.email.trim() || null,
+    bankAccount: snapshot.bankAccount || null,
     workAddress: {
       street: snapshot.workAddress.street.trim(),
       city: snapshot.workAddress.city.trim(),

@@ -37,7 +37,8 @@ export function mapInvoiceRow(row: InvoiceRow): Invoice {
         street: row.worker_snapshot_billing_street,
         city: row.worker_snapshot_billing_city,
         postalCode: row.worker_snapshot_billing_postal_code
-      }
+      },
+      bankAccount: row.worker_snapshot_bank_account
     },
     notes: row.notes,
     taxSnapshot: row.tax_snapshot_name

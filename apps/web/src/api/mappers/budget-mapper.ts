@@ -28,6 +28,7 @@ export function mapBudgetToResponse(budget: Budget): BudgetResponse {
       taxId: budget.workerSnapshot.taxId,
       phone: budget.workerSnapshot.phone,
       email: budget.workerSnapshot.email,
+      bankAccount: budget.workerSnapshot.bankAccount,
       workAddress: {
         street: budget.workerSnapshot.workAddress.street,
         city: budget.workerSnapshot.workAddress.city,

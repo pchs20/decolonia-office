@@ -5,6 +5,7 @@ export interface WorkerSnapshot {
   taxId: string;
   phone: string | null;
   email: string | null;
+  bankAccount: string | null;
   workAddress: Address;
   billingAddress: Address;
 }

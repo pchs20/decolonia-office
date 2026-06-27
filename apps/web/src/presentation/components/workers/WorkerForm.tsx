@@ -34,7 +34,8 @@ export function WorkerForm({ worker, onSuccess, onCancel, onDirtyChange }: Worke
       : worker?.billingPostalCode || "",
     taxId: worker?.taxId || "",
     phone: worker?.phone || "",
-    email: worker?.email || ""
+    email: worker?.email || "",
+    bankAccount: worker?.bankAccount || ""
   });
   const [isBillingSameAsWork, setIsBillingSameAsWork] = useState(initialIsBillingSameAsWork);
 
@@ -157,6 +158,18 @@ export function WorkerForm({ worker, onSuccess, onCancel, onDirtyChange }: Worke
               billingPostalCode: prev.postalCode || ""
             }));
           }}
+        />
+      </div>
+
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-gray-700">{t('profile.fields.bankAccount')}</label>
+        <input
+          type="text"
+          name="bankAccount"
+          value={formData.bankAccount || ""}
+          onChange={handleChange}
+          placeholder={t('profile.fields.bankAccountPlaceholder')}
+          className="w-full border rounded px-3 py-2 text-sm"
         />
       </div>
 

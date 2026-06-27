@@ -1002,6 +1002,56 @@ export function getOpenApiDocument() {
           }
         }
       },
+      "/api/budgets/{id}/pdf": {
+        get: {
+          tags: ["Budgets"],
+          summary: "Export budget as PDF",
+          parameters: [
+            {
+              name: "id",
+              in: "path",
+              required: true,
+              schema: { type: "string", format: "uuid" }
+            }
+          ],
+          responses: {
+            "200": {
+              description: "PDF file",
+              content: {
+                "application/pdf": {
+                  schema: { type: "string", format: "binary" }
+                }
+              }
+            },
+            "404": { description: "Budget not found" }
+          }
+        }
+      },
+      "/api/invoices/{id}/pdf": {
+        get: {
+          tags: ["Invoices"],
+          summary: "Export invoice as PDF",
+          parameters: [
+            {
+              name: "id",
+              in: "path",
+              required: true,
+              schema: { type: "string", format: "uuid" }
+            }
+          ],
+          responses: {
+            "200": {
+              description: "PDF file",
+              content: {
+                "application/pdf": {
+                  schema: { type: "string", format: "binary" }
+                }
+              }
+            },
+            "404": { description: "Invoice not found" }
+          }
+        }
+      },
       "/api/invoices": {
         get: {
           tags: ["Invoices"],

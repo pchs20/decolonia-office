@@ -28,6 +28,7 @@ export function mapInvoiceToResponse(invoice: Invoice): InvoiceResponse {
       taxId: invoice.workerSnapshot.taxId,
       phone: invoice.workerSnapshot.phone,
       email: invoice.workerSnapshot.email,
+      bankAccount: invoice.workerSnapshot.bankAccount,
       workAddress: {
         street: invoice.workerSnapshot.workAddress.street,
         city: invoice.workerSnapshot.workAddress.city,

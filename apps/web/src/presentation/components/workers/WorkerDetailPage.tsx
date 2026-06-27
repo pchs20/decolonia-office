@@ -201,6 +201,13 @@ export function WorkerDetailPage({ workerId, startInEditMode = false }: WorkerDe
             <label className="block text-sm font-medium text-gray-600 mb-1">{t('workers.fields.lastUpdated')}</label>
             <p className="text-sm text-gray-600">{new Date(worker.updatedAt).toLocaleDateString()}</p>
           </div>
+
+          {worker.bankAccount && (
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-600 mb-1">{t('profile.fields.bankAccount')}</label>
+              <p className="text-lg font-mono">{worker.bankAccount}</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

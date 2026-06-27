@@ -136,7 +136,9 @@
       "billingPostalCode": "Código postal de facturación *",
       "billingStreetPlaceholder": "Calle y número de facturación",
       "billingCityPlaceholder": "Ciudad de facturación",
-      "billingPostalCodePlaceholder": "Código postal de facturación"
+      "billingPostalCodePlaceholder": "Código postal de facturación",
+      "bankAccount": "Cuenta bancaria",
+      "bankAccountPlaceholder": "IBAN o número de cuenta"
     },
     "errors": {
       "workAddressRequired": "La calle, ciudad y código postal son obligatorios",
@@ -175,7 +177,8 @@
     },
     "filters": {
       "clientApplied": "Mostrando presupuestos del cliente seleccionado."
-    }
+    },
+    "exportPdf": "Exportar PDF"
   },
   "invoices": {
     "title": "Facturas",
@@ -184,6 +187,7 @@
     "searchPlaceholder": "Buscar por número, cliente, trabajador o ciudad...",
     "noResultsSearch": "No hay facturas que coincidan con la búsqueda",
     "backToList": "← Volver a facturas",
+    "exportPdf": "Exportar PDF",
     "fields": {
       "client": "Cliente *",
       "selectClient": "Selecciona un cliente...",
@@ -313,5 +317,21 @@
         "invalidNextNumber": "El próximo número debe ser un entero mayor que 0"
       }
     }
+  },
+  "pdf": {
+    "budget": "Presupuesto",
+    "invoice": "FACTURA",
+    "number": "Número",
+    "date": "Fecha",
+    "client": "Cliente",
+    "description": "Descripción",
+    "quantity": "Cant.",
+    "unitPrice": "Precio unit.",
+    "totalPrice": "Total",
+    "subtotal": "Subtotal",
+    "noTax": "Impuestos no incluidos",
+    "total": "Total",
+    "paymentMethod": "Forma de pago",
+    "bankTransfer": "Transferencia bancaria"
   }
 }

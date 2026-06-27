@@ -136,7 +136,9 @@
       "billingPostalCode": "Billing Postal Code *",
       "billingStreetPlaceholder": "Billing street and number",
       "billingCityPlaceholder": "Billing city",
-      "billingPostalCodePlaceholder": "Billing postal code"
+      "billingPostalCodePlaceholder": "Billing postal code",
+      "bankAccount": "Bank Account",
+      "bankAccountPlaceholder": "IBAN or account number"
     },
     "errors": {
       "workAddressRequired": "Street, city, and postal code are required",
@@ -175,7 +177,8 @@
     },
     "filters": {
       "clientApplied": "Showing budgets for selected client."
-    }
+    },
+    "exportPdf": "Export PDF"
   },
   "invoices": {
     "title": "Invoices",
@@ -184,6 +187,7 @@
     "searchPlaceholder": "Search by number, client, worker, or city...",
     "noResultsSearch": "No invoices found matching your search",
     "backToList": "← Back to Invoices",
+    "exportPdf": "Export PDF",
     "fields": {
       "client": "Client *",
       "selectClient": "Select a client...",
@@ -313,5 +317,21 @@
         "invalidNextNumber": "Next number must be an integer greater than 0"
       }
     }
+  },
+  "pdf": {
+    "budget": "Quote",
+    "invoice": "INVOICE",
+    "number": "Number",
+    "date": "Date",
+    "client": "Client",
+    "description": "Description",
+    "quantity": "Qty.",
+    "unitPrice": "Unit Price",
+    "totalPrice": "Total",
+    "subtotal": "Subtotal",
+    "noTax": "Taxes not included",
+    "total": "Total",
+    "paymentMethod": "Payment method",
+    "bankTransfer": "Bank transfer"
   }
 }

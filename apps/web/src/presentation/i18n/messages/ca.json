@@ -136,7 +136,9 @@
       "billingPostalCode": "Codi postal de facturació *",
       "billingStreetPlaceholder": "Carrer i número de facturació",
       "billingCityPlaceholder": "Ciutat de facturació",
-      "billingPostalCodePlaceholder": "Codi postal de facturació"
+      "billingPostalCodePlaceholder": "Codi postal de facturació",
+      "bankAccount": "Compte bancari",
+      "bankAccountPlaceholder": "IBAN o número de compte"
     },
     "errors": {
       "workAddressRequired": "El carrer, la ciutat i el codi postal són obligatoris",
@@ -175,7 +177,8 @@
     },
     "filters": {
       "clientApplied": "Mostrant pressupostos del client seleccionat."
-    }
+    },
+    "exportPdf": "Exportar PDF"
   },
   "invoices": {
     "title": "Factures",
@@ -184,6 +187,7 @@
     "searchPlaceholder": "Cerca per número, client, treballador o ciutat...",
     "noResultsSearch": "No hi ha factures que coincideixin amb la cerca",
     "backToList": "← Tornar a factures",
+    "exportPdf": "Exportar PDF",
     "fields": {
       "client": "Client *",
       "selectClient": "Selecciona un client...",
@@ -313,5 +317,21 @@
         "invalidNextNumber": "El pròxim número ha de ser un enter més gran que 0"
       }
     }
+  },
+  "pdf": {
+    "budget": "Pressupost",
+    "invoice": "FACTURA",
+    "number": "Número",
+    "date": "Data",
+    "client": "Client",
+    "description": "Descripció",
+    "quantity": "Quant.",
+    "unitPrice": "Preu unit.",
+    "totalPrice": "Total",
+    "subtotal": "Subtotal",
+    "noTax": "Impostos no inclosos",
+    "total": "Total",
+    "paymentMethod": "Forma de pagament",
+    "bankTransfer": "Transferència bancària"
   }
 }

@@ -44,6 +44,7 @@ export interface WorkerCreatePayload {
   taxId: string;
   phone?: string;
   email?: string;
+  bankAccount?: string;
 }
 
 export interface WorkerUpdatePayload {
@@ -57,6 +58,7 @@ export interface WorkerUpdatePayload {
   taxId?: string;
   phone?: string;
   email?: string;
+  bankAccount?: string;
 }
 
 export function validateWorkerCreatePayload(payload: unknown): WorkerCreatePayload {
@@ -108,7 +110,8 @@ export function validateWorkerCreatePayload(payload: unknown): WorkerCreatePaylo
     billingPostalCode,
     taxId,
     phone,
-    email
+    email,
+    bankAccount: normalizeString(data.bankAccount)
   };
 }
 
@@ -176,6 +179,10 @@ export function validateWorkerUpdatePayload(payload: unknown): WorkerUpdatePaylo
       throw new ApiError(400, "Invalid email format");
     }
     output.email = email;
+  }
+
+  if ("bankAccount" in data) {
+    output.bankAccount = normalizeString(data.bankAccount);
   }
 
   validateBillingCompleteness(

@@ -2,8 +2,13 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  outputFileTracingIncludes: {
-    "/api/**": ["./src/infrastructure/persistence/postgres/migrations/*.sql"]
+  serverExternalPackages: ["@react-pdf/renderer"],
+  webpack(config) {
+    config.module.rules.push({
+      test: /\.sql$/,
+      type: "asset/source"
+    });
+    return config;
   }
 };
 

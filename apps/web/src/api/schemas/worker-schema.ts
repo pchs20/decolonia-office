@@ -1,10 +1,16 @@
 import { ProfileSchema, CreateProfileInput, UpdateProfileInput } from "@/api/schemas/profile-schema";
 
-export interface WorkerSchema extends ProfileSchema {}
+export interface WorkerSchema extends ProfileSchema {
+  bankAccount: string | null;
+}
 
-export interface CreateWorkerInput extends CreateProfileInput {}
+export interface CreateWorkerInput extends CreateProfileInput {
+  bankAccount?: string;
+}
 
-export interface UpdateWorkerInput extends UpdateProfileInput {}
+export interface UpdateWorkerInput extends UpdateProfileInput {
+  bankAccount?: string;
+}
 
 export interface WorkerListResponseSchema {
   workers: WorkerSchema[];

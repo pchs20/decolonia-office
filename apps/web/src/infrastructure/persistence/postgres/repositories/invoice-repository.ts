@@ -34,6 +34,7 @@ export async function createInvoiceRecord(invoice: Invoice): Promise<Invoice> {
           worker_snapshot_name, worker_snapshot_tax_id, worker_snapshot_phone, worker_snapshot_email,
           worker_snapshot_work_street, worker_snapshot_work_city, worker_snapshot_work_postal_code,
           worker_snapshot_billing_street, worker_snapshot_billing_city, worker_snapshot_billing_postal_code,
+          worker_snapshot_bank_account,
           tax_snapshot_name, tax_snapshot_rate, tax_snapshot_behavior,
           pricing_mode, manual_subtotal_amount,
           subtotal_amount, tax_amount, total_amount, created_at, updated_at
@@ -46,9 +47,10 @@ export async function createInvoiceRecord(invoice: Invoice): Promise<Invoice> {
           $18, $19, $20, $21,
           $22, $23, $24,
           $25, $26, $27,
-          $28, $29, $30,
-          $31, $32,
-          $33, $34, $35, $36, $37
+          $28,
+          $29, $30, $31,
+          $32, $33,
+          $34, $35, $36, $37, $38
         )
         RETURNING id, number, client_id, worker_id, notes, issued_at, source_budget_id,
           client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
@@ -57,6 +59,7 @@ export async function createInvoiceRecord(invoice: Invoice): Promise<Invoice> {
           worker_snapshot_name, worker_snapshot_tax_id, worker_snapshot_phone, worker_snapshot_email,
           worker_snapshot_work_street, worker_snapshot_work_city, worker_snapshot_work_postal_code,
           worker_snapshot_billing_street, worker_snapshot_billing_city, worker_snapshot_billing_postal_code,
+          worker_snapshot_bank_account,
           tax_snapshot_name, tax_snapshot_rate, tax_snapshot_behavior,
           pricing_mode, manual_subtotal_amount,
           subtotal_amount, tax_amount, total_amount, created_at, updated_at
@@ -89,6 +92,7 @@ export async function createInvoiceRecord(invoice: Invoice): Promise<Invoice> {
         invoice.workerSnapshot.billingAddress.street,
         invoice.workerSnapshot.billingAddress.city,
         invoice.workerSnapshot.billingAddress.postalCode,
+        invoice.workerSnapshot.bankAccount,
         invoice.taxSnapshot?.name ?? null,
         invoice.taxSnapshot?.rate ?? null,
         invoice.taxSnapshot?.behavior ?? null,
@@ -126,6 +130,7 @@ export async function getInvoiceById(id: string): Promise<Invoice> {
         worker_snapshot_name, worker_snapshot_tax_id, worker_snapshot_phone, worker_snapshot_email,
         worker_snapshot_work_street, worker_snapshot_work_city, worker_snapshot_work_postal_code,
         worker_snapshot_billing_street, worker_snapshot_billing_city, worker_snapshot_billing_postal_code,
+        worker_snapshot_bank_account,
         tax_snapshot_name, tax_snapshot_rate, tax_snapshot_behavior,
         pricing_mode, manual_subtotal_amount,
         subtotal_amount, tax_amount, total_amount, created_at, updated_at
@@ -161,6 +166,7 @@ export async function listInvoices(
       worker_snapshot_name, worker_snapshot_tax_id, worker_snapshot_phone, worker_snapshot_email,
       worker_snapshot_work_street, worker_snapshot_work_city, worker_snapshot_work_postal_code,
       worker_snapshot_billing_street, worker_snapshot_billing_city, worker_snapshot_billing_postal_code,
+      worker_snapshot_bank_account,
       tax_snapshot_name, tax_snapshot_rate, tax_snapshot_behavior,
       pricing_mode, manual_subtotal_amount,
       subtotal_amount, tax_amount, total_amount, created_at, updated_at
@@ -224,10 +230,11 @@ export async function updateInvoiceRecord(invoice: Invoice): Promise<Invoice> {
         worker_snapshot_name = $14, worker_snapshot_tax_id = $15, worker_snapshot_phone = $16, worker_snapshot_email = $17,
         worker_snapshot_work_street = $18, worker_snapshot_work_city = $19, worker_snapshot_work_postal_code = $20,
         worker_snapshot_billing_street = $21, worker_snapshot_billing_city = $22, worker_snapshot_billing_postal_code = $23,
-        tax_snapshot_name = $24, tax_snapshot_rate = $25, tax_snapshot_behavior = $26,
-        pricing_mode = $27, manual_subtotal_amount = $28,
-        subtotal_amount = $29, tax_amount = $30, total_amount = $31, updated_at = $32
-      WHERE id = $33
+        worker_snapshot_bank_account = $24,
+        tax_snapshot_name = $25, tax_snapshot_rate = $26, tax_snapshot_behavior = $27,
+        pricing_mode = $28, manual_subtotal_amount = $29,
+        subtotal_amount = $30, tax_amount = $31, total_amount = $32, updated_at = $33
+      WHERE id = $34
       RETURNING id, number, client_id, worker_id, notes, issued_at, source_budget_id,
         client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
         client_snapshot_work_street, client_snapshot_work_city, client_snapshot_work_postal_code,
@@ -235,6 +242,7 @@ export async function updateInvoiceRecord(invoice: Invoice): Promise<Invoice> {
         worker_snapshot_name, worker_snapshot_tax_id, worker_snapshot_phone, worker_snapshot_email,
         worker_snapshot_work_street, worker_snapshot_work_city, worker_snapshot_work_postal_code,
         worker_snapshot_billing_street, worker_snapshot_billing_city, worker_snapshot_billing_postal_code,
+        worker_snapshot_bank_account,
         tax_snapshot_name, tax_snapshot_rate, tax_snapshot_behavior,
         pricing_mode, manual_subtotal_amount,
         subtotal_amount, tax_amount, total_amount, created_at, updated_at
@@ -263,6 +271,7 @@ export async function updateInvoiceRecord(invoice: Invoice): Promise<Invoice> {
       invoice.workerSnapshot.billingAddress.street,
       invoice.workerSnapshot.billingAddress.city,
       invoice.workerSnapshot.billingAddress.postalCode,
+      invoice.workerSnapshot.bankAccount,
       invoice.taxSnapshot?.name ?? null,
       invoice.taxSnapshot?.rate ?? null,
       invoice.taxSnapshot?.behavior ?? null,

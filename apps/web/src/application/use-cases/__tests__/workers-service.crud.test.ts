@@ -50,6 +50,7 @@ describe("workers-service CRUD", () => {
       taxId: "12345678X",
       phone: null,
       email: null,
+      bankAccount: null,
       isActive: true,
       createdAt: new Date("2026-01-01T00:00:00.000Z"),
       updatedAt: new Date("2026-01-01T00:00:00.000Z")
@@ -73,6 +74,7 @@ describe("workers-service CRUD", () => {
           taxId: "12345678X",
           phone: null,
           email: null,
+          bankAccount: null,
           isActive: true,
           createdAt: new Date("2026-01-01T00:00:00.000Z"),
           updatedAt: new Date("2026-01-01T00:00:00.000Z")
@@ -97,6 +99,7 @@ describe("workers-service CRUD", () => {
       taxId: "12345678X",
       phone: null,
       email: null,
+      bankAccount: null,
       isActive: true,
       createdAt: new Date("2026-01-01T00:00:00.000Z"),
       updatedAt: new Date("2026-01-01T00:00:00.000Z")

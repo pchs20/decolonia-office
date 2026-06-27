@@ -48,6 +48,7 @@ export async function createInvoice(
     taxId: worker.taxId,
     phone: worker.phone,
     email: worker.email,
+    bankAccount: worker.bankAccount,
     workAddress: worker.workAddress,
     billingAddress: worker.billingAddress
   };
