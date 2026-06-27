@@ -30,7 +30,9 @@ export async function GET(request: NextRequest, { params }: Params) {
     const locale = request.cookies.get(LOCALE_COOKIE)?.value;
     const labels = getPdfLabels(locale);
 
-    const buffer = await renderToBuffer(React.createElement(InvoiceDocument, { invoice: invoiceResponse, items: itemResponses, labels }));
+    const buffer = await renderToBuffer(
+      React.createElement(InvoiceDocument, { invoice: invoiceResponse, items: itemResponses, labels }) as React.ReactElement
+    );
     const uint8 = new Uint8Array(buffer);
 
     const safeNumber = invoice.number.replace(/[^a-zA-Z0-9-]/g, "-");

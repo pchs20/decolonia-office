@@ -4,19 +4,12 @@ import { runPendingMigrations } from "@/infrastructure/persistence/postgres/migr
 let pool: Pool | null = null;
 let migrationInitPromise: Promise<void> | null = null;
 
-function shouldAutoRunMigrations(connectionString: string): boolean {
-  if (process.env.AUTO_RUN_MIGRATIONS === "true") {
-    return true;
-  }
-
+function shouldAutoRunMigrations(): boolean {
   if (process.env.AUTO_RUN_MIGRATIONS === "false") {
     return false;
   }
 
-  const isLocalConnection =
-    connectionString.includes("localhost") || connectionString.includes("127.0.0.1");
-
-  return isLocalConnection && !process.env.VERCEL;
+  return true;
 }
 
 export function getDbPool(): Pool {
@@ -41,9 +34,8 @@ export function getDbPool(): Pool {
 
 export async function ensureDatabaseReady(): Promise<void> {
   const activePool = getDbPool();
-  const connectionString = process.env.DATABASE_URL ?? "";
 
-  if (!shouldAutoRunMigrations(connectionString)) {
+  if (!shouldAutoRunMigrations()) {
     return;
   }
 
