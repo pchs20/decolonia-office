@@ -26,60 +26,72 @@ export const SQL_MIGRATIONS: SqlMigration[] = [
     id: "1718394400000",
     name: "CreateClientsTable",
     sql: createClientsTable
+    sql: createClientsTable
   },
   {
     id: "1718394500000",
     name: "AddStructuredAddressFieldsToClients",
+    sql: addStructuredAddressFieldsToClients
     sql: addStructuredAddressFieldsToClients
   },
   {
     id: "1718394600000",
     name: "CreateWorkersTable",
     sql: createWorkersTable
+    sql: createWorkersTable
   },
   {
     id: "1718394700000",
     name: "CreateBudgetsTable",
+    sql: createBudgetsTable
     sql: createBudgetsTable
   },
   {
     id: "1718394800000",
     name: "CreateInvoicesTable",
     sql: createInvoicesTable
+    sql: createInvoicesTable
   },
   {
     id: "1718394900000",
     name: "CreateJobItemsTable",
+    sql: createJobItemsTable
     sql: createJobItemsTable
   },
   {
     id: "1718395000000",
     name: "CreateTaxesTable",
     sql: createTaxesTable
+    sql: createTaxesTable
   },
   {
     id: "1718395100000",
     name: "CreateWorkTemplatesTable",
+    sql: createWorkTemplatesTable
     sql: createWorkTemplatesTable
   },
   {
     id: "1718395200000",
     name: "CreateDocumentSequencesTable",
     sql: createDocumentSequencesTable
+    sql: createDocumentSequencesTable
   },
   {
     id: "1718395300000",
     name: "AddPricingModesAndCommercialDocumentSettings",
+    sql: addPricingModesAndCommercialDocumentSettings
     sql: addPricingModesAndCommercialDocumentSettings
   },
   {
     id: "1718395400000",
     name: "PerDocumentTypePricingDefaults",
     sql: perDocumentTypePricingDefaults
+    sql: perDocumentTypePricingDefaults
   },
   {
     id: "1718395450000",
     name: "RenameTaxDefinitionsToTaxes",
+    sql: renameTaxDefinitionsToTaxes
     sql: renameTaxDefinitionsToTaxes
   },
   {
