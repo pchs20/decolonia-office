@@ -29,6 +29,8 @@
     "search": "Buscar",
     "clearFilter": "Quitar filtro",
     "actions": "Acciones",
+    "moveUp": "Mover arriba",
+    "moveDown": "Mover abajo",
     "errors": {
       "unknown": "Se ha producido un error"
     }

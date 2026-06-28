@@ -20,6 +20,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     const quantity = payload.quantity === null || payload.quantity === "" ? null : Number(payload.quantity);
     const unitPrice = payload.unitPrice === null || payload.unitPrice === "" ? null : Number(payload.unitPrice);
     const totalPrice = payload.totalPrice === null || payload.totalPrice === "" ? null : Number(payload.totalPrice);
+    const position = payload.position ? Number(payload.position) : undefined;
 
     if (quantity !== null && !Number.isFinite(quantity)) {
       throw new ApiError(400, "quantity must be a valid number or null");
@@ -33,11 +34,15 @@ export async function PATCH(request: NextRequest, { params }: Params) {
       throw new ApiError(400, "totalPrice must be a valid number or null");
     }
 
+    if (position !== undefined && !Number.isFinite(position)) {
+      throw new ApiError(400, "position must be a valid number");
+    }
+
     if (!title) {
       throw new ApiError(400, "title is required");
     }
 
-    const jobItem = await updateInvoiceItem(id, itemId, { title, description, quantity, unitPrice, totalPrice });
+    const jobItem = await updateInvoiceItem(id, itemId, { title, description, quantity, unitPrice, totalPrice, position });
 
     return NextResponse.json(mapJobItemToResponse(jobItem), { status: 200 });
   } catch (error) {

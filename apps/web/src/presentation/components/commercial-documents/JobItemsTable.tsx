@@ -19,6 +19,8 @@ interface JobItemsTableProps {
   manualSubtotalAmount?: number | null;
   onEdit?: (item: JobItemDisplay) => void;
   onDelete?: (id: string) => Promise<void>;
+  onMoveUp?: (id: string) => Promise<void>;
+  onMoveDown?: (id: string) => Promise<void>;
   editable?: boolean;
 }
 
@@ -26,10 +28,13 @@ export function JobItemsTable({
   items,
   onEdit,
   onDelete,
+  onMoveUp,
+  onMoveDown,
   editable = false
 }: JobItemsTableProps) {
   const { t } = useTranslation();
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [moving, setMoving] = useState<{ id: string; direction: "up" | "down" } | null>(null);
 
   const handleDelete = async (id: string) => {
     if (!window.confirm(t("common.confirmDelete") || "Are you sure?")) {
@@ -41,6 +46,24 @@ export function JobItemsTable({
       await onDelete?.(id);
     } finally {
       setDeleting(null);
+    }
+  };
+
+  const handleMoveUp = async (id: string) => {
+    setMoving({ id, direction: "up" });
+    try {
+      await onMoveUp?.(id);
+    } finally {
+      setMoving(null);
+    }
+  };
+
+  const handleMoveDown = async (id: string) => {
+    setMoving({ id, direction: "down" });
+    try {
+      await onMoveDown?.(id);
+    } finally {
+      setMoving(null);
     }
   };
 
@@ -77,7 +100,7 @@ export function JobItemsTable({
             </tr>
           </thead>
           <tbody>
-            {items.map(item => (
+            {items.map((item, index) => (
               <tr key={item.id} className="border-b hover:bg-gray-50">
                 <td className="px-3 py-2">{item.position}</td>
                 <td className="px-3 py-2">
@@ -96,7 +119,25 @@ export function JobItemsTable({
                         : "-")}
                 </td>
                 {editable && (
-                  <td className="text-center px-3 py-2 space-x-2">
+                  <td className="text-center px-3 py-2 space-x-1">
+                    <button
+                      type="button"
+                      onClick={() => handleMoveUp(item.id)}
+                      disabled={index === 0 || moving?.id === item.id}
+                      className="text-gray-600 hover:text-gray-900 disabled:text-gray-300 text-xs px-1 py-1"
+                      title={t("common.moveUp") || "Move up"}
+                    >
+                      ↑
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleMoveDown(item.id)}
+                      disabled={index === items.length - 1 || moving?.id === item.id}
+                      className="text-gray-600 hover:text-gray-900 disabled:text-gray-300 text-xs px-1 py-1"
+                      title={t("common.moveDown") || "Move down"}
+                    >
+                      ↓
+                    </button>
                     <button
                       type="button"
                       onClick={() => onEdit?.(item)}

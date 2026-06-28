@@ -24,6 +24,8 @@
     "search": "Cercar",
     "clearFilter": "Treure filtre",
     "actions": "Accions",
+    "moveUp": "Moure amunt",
+    "moveDown": "Moure avall",
     "notFoundInDropdown": "No apareix a la llista?",
     "createClient": "Crear client",
     "createWorker": "Crear treballador",

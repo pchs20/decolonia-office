@@ -152,7 +152,7 @@ export function createCommercialDocumentsUseCases(deps: CommercialDocumentDeps) 
     async updateBudgetItem(
       budgetId: string,
       itemId: string,
-      params: { title: string; description: string | null; quantity: number | null; unitPrice: number | null; totalPrice: number | null }
+      params: { title: string; description: string | null; quantity: number | null; unitPrice: number | null; totalPrice: number | null; position?: number }
     ): Promise<JobItem> {
       const item = await updateJobItem(
         itemId,
@@ -161,7 +161,8 @@ export function createCommercialDocumentsUseCases(deps: CommercialDocumentDeps) 
         params.quantity,
         params.unitPrice,
         params.totalPrice,
-        deps.jobItemRepository
+        deps.jobItemRepository,
+        params.position
       );
       await calculateBudgetTotals(budgetId, deps.jobItemRepository, deps.budgetRepository);
       return item;
@@ -278,7 +279,7 @@ export function createCommercialDocumentsUseCases(deps: CommercialDocumentDeps) 
     async updateInvoiceItem(
       invoiceId: string,
       itemId: string,
-      params: { title: string; description: string | null; quantity: number | null; unitPrice: number | null; totalPrice: number | null }
+      params: { title: string; description: string | null; quantity: number | null; unitPrice: number | null; totalPrice: number | null; position?: number }
     ): Promise<JobItem> {
       const item = await updateJobItem(
         itemId,
@@ -287,7 +288,8 @@ export function createCommercialDocumentsUseCases(deps: CommercialDocumentDeps) 
         params.quantity,
         params.unitPrice,
         params.totalPrice,
-        deps.jobItemRepository
+        deps.jobItemRepository,
+        params.position
       );
       await calculateInvoiceTotals(invoiceId, deps.jobItemRepository, deps.invoiceRepository);
       return item;

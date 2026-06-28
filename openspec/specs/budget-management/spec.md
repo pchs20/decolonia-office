@@ -27,7 +27,7 @@ The system SHALL allow users to edit the budget's client, worker (issuer), notes
 - **THEN** system stores the date (optional)
 
 ### Requirement: Add job items to budget
-The system SHALL allow users to add, edit, and remove job items (work line items) from a budget.
+The system SHALL allow users to add, edit, remove, and reorder job items (work line items) from a budget.
 
 #### Scenario: Add a job item
 - **WHEN** user clicks "Add Item" and enters title, description, optional quantity, optional unitPrice
@@ -40,6 +40,14 @@ The system SHALL allow users to add, edit, and remove job items (work line items
 #### Scenario: Remove job item
 - **WHEN** user clicks "Remove" on a job item
 - **THEN** system deletes the item and renumbers remaining positions
+
+#### Scenario: Move job item up within budget
+- **WHEN** user clicks "move up" on a job item that is not first in the list
+- **THEN** system swaps that item's position with the one above it and the table reflects the updated order
+
+#### Scenario: Move job item down within budget
+- **WHEN** user clicks "move down" on a job item that is not last in the list
+- **THEN** system swaps that item's position with the one below it and the table reflects the updated order
 
 ### Requirement: Apply optional tax to budget
 The system SHALL allow users to select a tax definition (e.g., IVA 21%) when creating or editing a budget.
