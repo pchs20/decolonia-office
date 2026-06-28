@@ -4,6 +4,7 @@ import type { Viewport } from "next";
 import type { ReactNode } from "react";
 import { cookies } from "next/headers";
 import { DEFAULT_LOCALE, LOCALE_COOKIE, SUPPORTED_LOCALES, type Locale } from "@/presentation/i18n/config";
+import { AuthSessionProvider } from "@/presentation/components/AuthSessionProvider";
 
 export const metadata: Metadata = {
   title: "Decolonia Office",
@@ -31,7 +32,9 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
 
   return (
     <html lang={locale}>
-      <body>{children}</body>
+      <body>
+        <AuthSessionProvider>{children}</AuthSessionProvider>
+      </body>
     </html>
   );
 }

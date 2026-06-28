@@ -103,6 +103,28 @@ Contract checks (app must be running):
 pnpm --filter @decolonia/web contract:check
 ```
 
+## Authentication
+
+The app is protected with Google OAuth via [Auth.js v5](https://authjs.dev). Only email addresses listed in `ALLOWED_EMAILS` can sign in. Sessions are stored in a signed HTTP-only cookie — no database table required.
+
+### Setting up Google OAuth credentials
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com) → APIs & Services → Credentials
+2. Create an **OAuth 2.0 Client ID** (Application type: Web application)
+3. Add authorised redirect URIs:
+   - `http://localhost:3000/api/auth/callback/google` (local dev)
+   - `https://<your-app>.vercel.app/api/auth/callback/google` (prod)
+4. Copy the **Client ID** → `AUTH_GOOGLE_ID`
+5. Copy the **Client Secret** → `AUTH_GOOGLE_SECRET`
+
+### Generating AUTH_SECRET
+
+```bash
+npx auth secret
+```
+
+Copy the output into `AUTH_SECRET` in your `.env` file.
+
 ## Managed Postgres and Environment Variables
 
 Selected free-tier provider: **Supabase Postgres (Free Plan)**.
@@ -113,8 +135,12 @@ Required environment variables:
 - `DEV_DIRECT_URL`: Direct Postgres connection for running migrations against the dev database (port 5432) — developer-machine-only secret, never set in Vercel
 - `PROD_DIRECT_URL`: Direct Postgres connection for running migrations against the prod database (port 5432) — developer-machine-only secret, never set in Vercel
 - `NEXT_PUBLIC_API_BASE_URL`: optional override for scripts and checks (defaults to `http://localhost:3000`)
+- `AUTH_SECRET`: secret used to sign session cookies — generate with `npx auth secret`
+- `AUTH_GOOGLE_ID`: Google OAuth client ID (from Google Cloud Console)
+- `AUTH_GOOGLE_SECRET`: Google OAuth client secret (from Google Cloud Console)
+- `ALLOWED_EMAILS`: comma-separated list of email addresses allowed to sign in (e.g. `alice@gmail.com,bob@gmail.com`)
 
-For local development, defaults are provided in `.env.example`.
+For local development, copy `.env.example` to `.env` and fill in the values.
 
 ## Free-Tier Deployment (Vercel + Supabase)
 
@@ -187,11 +213,9 @@ VERCEL_URL="https://<your-app>.vercel.app"  # for prod or the Preview URL for de
 
 curl "$VERCEL_URL/api/health"
 curl "$VERCEL_URL/api/health/connectivity"
-curl "$VERCEL_URL/api/clients"
-curl "$VERCEL_URL/api/docs"
 ```
 
-All should return HTTP 200.
+Both should return HTTP 200. Note: all other API routes (`/api/clients`, etc.) require authentication and will return 401 without a valid session cookie. Use the web app or Swagger UI at `/api/docs` after signing in to test them.
 
 ### Operational Constraints & Monitoring
 
