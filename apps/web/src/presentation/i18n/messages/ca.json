@@ -41,7 +41,13 @@
     "workers": "Treballadors",
     "budgets": "Pressupostos",
     "invoices": "Factures",
-    "settings": "Configuració"
+    "settings": "Configuració",
+    "signOut": "Tancar sessió"
+  },
+  "login": {
+    "signIn": "Entrar amb Google",
+    "tryDifferentAccount": "Prova amb un altre compte",
+    "accessDenied": "Aquest compte de Google no està autoritzat per accedir a aquesta aplicació."
   },
   "clients": {
     "title": "Clients",

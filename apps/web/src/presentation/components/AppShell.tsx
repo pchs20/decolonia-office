@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { LanguageToggle } from '@/presentation/components/LanguageToggle';
+import { SignOutButton } from '@/presentation/components/SignOutButton';
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation();
@@ -39,7 +40,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             {t('nav.settings')}
           </Link>
         </div>
-        <LanguageToggle />
+        <div className="flex items-center gap-4">
+          <LanguageToggle />
+          <SignOutButton />
+        </div>
       </nav>
       <main>{children}</main>
     </div>

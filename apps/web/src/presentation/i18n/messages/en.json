@@ -41,7 +41,13 @@
     "workers": "Workers",
     "budgets": "Budgets",
     "invoices": "Invoices",
-    "settings": "Settings"
+    "settings": "Settings",
+    "signOut": "Sign out"
+  },
+  "login": {
+    "signIn": "Sign in with Google",
+    "tryDifferentAccount": "Try a different account",
+    "accessDenied": "This Google account is not authorised to access this app."
   },
   "clients": {
     "title": "Clients",
