@@ -35,12 +35,13 @@ export async function updateJobItem(
   quantity: number | null,
   unitPrice: number | null,
   totalPrice: number | null,
-  jobItemRepo: JobItemRepository
+  jobItemRepo: JobItemRepository,
+  position?: number
 ): Promise<JobItem> {
   const jobItem: JobItem = {
     id: itemId,
-    commercialDocumentId: "", // will be updated from repository
-    position: 0, // will be updated from repository
+    commercialDocumentId: "",
+    position: position ?? 0,
     title,
     description,
     quantity,

@@ -57,12 +57,28 @@ export async function findJobItemsByDocumentId(commercialDocumentId: string): Pr
 
 export async function updateJobItemRecord(jobItem: JobItem): Promise<JobItem> {
   await ensureDatabaseReady();
+
+  // Fetch current item to preserve documentId and get current values
+  const currentResult = await getDbPool().query<JobItemRow>(
+    "SELECT * FROM job_items WHERE id = $1",
+    [jobItem.id]
+  );
+
+  if (currentResult.rows.length === 0) {
+    throw new EntityNotFoundError("Job item not found");
+  }
+
+  const current = currentResult.rows[0];
+
+  // Use provided values or fall back to current values
+  const position = jobItem.position > 0 ? jobItem.position : current.position;
+
   const result = await getDbPool().query<JobItemRow>(
     `
       UPDATE job_items SET
         title = $1, description = $2,
-        quantity = $3, unit_price = $4, total_price = $5, updated_at = $6
-      WHERE id = $7
+        quantity = $3, unit_price = $4, total_price = $5, position = $6, updated_at = $7
+      WHERE id = $8
       RETURNING id, commercial_document_id, position, title, description,
         quantity, unit_price, total_price, created_at, updated_at
     `,
@@ -72,6 +88,7 @@ export async function updateJobItemRecord(jobItem: JobItem): Promise<JobItem> {
       jobItem.quantity,
       jobItem.unitPrice,
       jobItem.totalPrice,
+      position,
       new Date(),
       jobItem.id
     ]

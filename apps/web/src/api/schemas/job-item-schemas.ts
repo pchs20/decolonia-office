@@ -24,4 +24,5 @@ export interface JobItemUpdateRequest {
   quantity?: number | null;
   unitPrice?: number | null;
   totalPrice?: number | null;
+  position?: number;
 }

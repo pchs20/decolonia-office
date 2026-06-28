@@ -431,6 +431,15 @@ export function InvoiceForm({ invoice, initialClientId, initialItems = [], onSuc
           );
         });
 
+        const positionChanges = existingCurrent.filter(item => {
+          const original = originalById.get(item.id);
+          if (!original) {
+            return false;
+          }
+
+          return item.position !== original.position;
+        });
+
         const newItems = formItems.filter(item => item.id.startsWith("new-"));
 
         for (const itemId of deletedIds) {
@@ -454,6 +463,18 @@ export function InvoiceForm({ invoice, initialClientId, initialItems = [], onSuc
             quantity: item.quantity ?? null,
             unitPrice: item.unitPrice ?? null,
             totalPrice: item.totalPrice ?? null
+          });
+        }
+
+        // Apply position changes by sending the new position directly
+        for (const item of positionChanges) {
+          await InvoiceService.updateItem(invoice.id, item.id, {
+            title: item.title,
+            description: item.description || null,
+            quantity: item.quantity ?? null,
+            unitPrice: item.unitPrice ?? null,
+            totalPrice: item.totalPrice ?? null,
+            position: item.position
           });
         }
 
@@ -539,6 +560,34 @@ export function InvoiceForm({ invoice, initialClientId, initialItems = [], onSuc
           position: index + 1
         }))
     );
+  };
+
+  const handleDraftItemMoveUp = async (itemId: string) => {
+    setFormItems(prev => {
+      const index = prev.findIndex(item => item.id === itemId);
+      if (index <= 0) return prev;
+
+      const newItems = [...prev];
+      [newItems[index], newItems[index - 1]] = [newItems[index - 1], newItems[index]];
+      return newItems.map((item, idx) => ({
+        ...item,
+        position: idx + 1
+      }));
+    });
+  };
+
+  const handleDraftItemMoveDown = async (itemId: string) => {
+    setFormItems(prev => {
+      const index = prev.findIndex(item => item.id === itemId);
+      if (index >= prev.length - 1) return prev;
+
+      const newItems = [...prev];
+      [newItems[index], newItems[index + 1]] = [newItems[index + 1], newItems[index]];
+      return newItems.map((item, idx) => ({
+        ...item,
+        position: idx + 1
+      }));
+    });
   };
 
   const handleCancel = () => {
@@ -842,6 +891,8 @@ export function InvoiceForm({ invoice, initialClientId, initialItems = [], onSuc
             setIsItemFormDirty(false);
           }}
           onDelete={handleDraftItemDelete}
+          onMoveUp={handleDraftItemMoveUp}
+          onMoveDown={handleDraftItemMoveDown}
         />
 
         {!showItemForm ? (
