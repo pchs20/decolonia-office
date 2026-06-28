@@ -4,7 +4,7 @@ import { getErrorResponse } from "@/api/errors/api-errors";
 import { validateWorkerUpdatePayload } from "@/api/schemas/worker-validator";
 import { toWorkerSchema } from "@/api/mappers/worker-mapper";
 
-const { deleteWorker, getWorkerById, updateWorker } = workerUseCases;
+const { deleteWorker, getWorkerById, updateWorker, setPrimaryWorker } = workerUseCases;
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -26,6 +26,13 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     const { id } = await params;
     const payload = await request.json();
     const input = validateWorkerUpdatePayload(payload);
+
+    // If setting as primary, use dedicated setPrimary use-case
+    if (input.isPrimary === true) {
+      const worker = await setPrimaryWorker(id);
+      return NextResponse.json(toWorkerSchema(worker), { status: 200 });
+    }
+
     const worker = await updateWorker(id, input);
 
     return NextResponse.json(toWorkerSchema(worker), { status: 200 });

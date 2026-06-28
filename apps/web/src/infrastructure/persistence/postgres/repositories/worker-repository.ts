@@ -35,11 +35,12 @@ export async function createWorkerRecord(worker: Worker): Promise<Worker> {
         email,
         bank_account,
         is_active,
+        is_primary,
         created_at,
         updated_at
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
-      RETURNING id, name, street, city, postal_code, billing_street, billing_city, billing_postal_code, tax_id, phone, email, bank_account, is_active, created_at, updated_at
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+      RETURNING id, name, street, city, postal_code, billing_street, billing_city, billing_postal_code, tax_id, phone, email, bank_account, is_active, is_primary, created_at, updated_at
     `,
     [
       worker.id,
@@ -55,6 +56,7 @@ export async function createWorkerRecord(worker: Worker): Promise<Worker> {
       worker.email,
       worker.bankAccount,
       worker.isActive,
+      worker.isPrimary,
       worker.createdAt,
       worker.updatedAt
     ]
@@ -64,7 +66,7 @@ export async function createWorkerRecord(worker: Worker): Promise<Worker> {
 export async function getActiveWorkerById(id: string): Promise<Worker> {
   return querySingleWorker(
     `
-      SELECT id, name, street, city, postal_code, billing_street, billing_city, billing_postal_code, tax_id, phone, email, bank_account, is_active, created_at, updated_at
+      SELECT id, name, street, city, postal_code, billing_street, billing_city, billing_postal_code, tax_id, phone, email, bank_account, is_active, is_primary, created_at, updated_at
       FROM workers
       WHERE id = $1 AND is_active = true
     `,
@@ -90,7 +92,7 @@ export async function listActiveWorkers(page: number, limit: number, search?: st
     const searchValue = `%${search.trim()}%`;
     listQuery = await getDbPool().query<WorkerRow>(
       `
-        SELECT id, name, street, city, postal_code, billing_street, billing_city, billing_postal_code, tax_id, phone, email, bank_account, is_active, created_at, updated_at
+        SELECT id, name, street, city, postal_code, billing_street, billing_city, billing_postal_code, tax_id, phone, email, bank_account, is_active, is_primary, created_at, updated_at
         FROM workers
         WHERE is_active = true AND (name ILIKE $1 OR city ILIKE $1)
         ORDER BY created_at DESC
@@ -110,7 +112,7 @@ export async function listActiveWorkers(page: number, limit: number, search?: st
   } else {
     listQuery = await getDbPool().query<WorkerRow>(
       `
-        SELECT id, name, street, city, postal_code, billing_street, billing_city, billing_postal_code, tax_id, phone, email, bank_account, is_active, created_at, updated_at
+        SELECT id, name, street, city, postal_code, billing_street, billing_city, billing_postal_code, tax_id, phone, email, bank_account, is_active, is_primary, created_at, updated_at
         FROM workers
         WHERE is_active = true
         ORDER BY created_at DESC
@@ -153,9 +155,10 @@ export async function updateWorkerRecord(worker: Worker): Promise<Worker> {
         email = $10,
         bank_account = $11,
         is_active = $12,
-        updated_at = $13
-      WHERE id = $14 AND is_active = true
-      RETURNING id, name, street, city, postal_code, billing_street, billing_city, billing_postal_code, tax_id, phone, email, bank_account, is_active, created_at, updated_at
+        is_primary = $13,
+        updated_at = $14
+      WHERE id = $15 AND is_active = true
+      RETURNING id, name, street, city, postal_code, billing_street, billing_city, billing_postal_code, tax_id, phone, email, bank_account, is_active, is_primary, created_at, updated_at
     `,
     [
       worker.name,
@@ -170,6 +173,7 @@ export async function updateWorkerRecord(worker: Worker): Promise<Worker> {
       worker.email,
       worker.bankAccount,
       worker.isActive,
+      worker.isPrimary,
       worker.updatedAt,
       worker.id
     ]
@@ -192,10 +196,67 @@ export async function softDeleteWorkerRecord(id: string): Promise<void> {
   }
 }
 
+export async function getPrimaryWorker(): Promise<Worker | null> {
+  await ensureDatabaseReady();
+  const result = await getDbPool().query<WorkerRow>(
+    `
+      SELECT id, name, street, city, postal_code, billing_street, billing_city, billing_postal_code, tax_id, phone, email, bank_account, is_active, is_primary, created_at, updated_at
+      FROM workers
+      WHERE is_primary = true AND is_active = true
+      LIMIT 1
+    `,
+    []
+  );
+
+  const row = result.rows[0];
+  return row ? mapWorkerRow(row) : null;
+}
+
+export async function setPrimaryWorker(id: string): Promise<Worker> {
+  await ensureDatabaseReady();
+  const client = await getDbPool().connect();
+
+  try {
+    await client.query('BEGIN');
+
+    // Unset all primary workers
+    await client.query(
+      `UPDATE workers SET is_primary = false WHERE is_primary = true`
+    );
+
+    // Set the target worker as primary
+    const result = await client.query<WorkerRow>(
+      `
+        UPDATE workers
+        SET is_primary = true, updated_at = NOW()
+        WHERE id = $1 AND is_active = true
+        RETURNING id, name, street, city, postal_code, billing_street, billing_city, billing_postal_code, tax_id, phone, email, bank_account, is_active, is_primary, created_at, updated_at
+      `,
+      [id]
+    );
+
+    await client.query('COMMIT');
+
+    const row = result.rows[0];
+    if (!row) {
+      throw new EntityNotFoundError("Worker not found");
+    }
+
+    return mapWorkerRow(row);
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 export const postgresWorkerRepository: WorkerRepository = {
   create: createWorkerRecord,
   getById: getActiveWorkerById,
+  getByPrimary: getPrimaryWorker,
   list: listActiveWorkers,
   update: updateWorkerRecord,
-  delete: softDeleteWorkerRecord
+  delete: softDeleteWorkerRecord,
+  setPrimary: setPrimaryWorker
 };

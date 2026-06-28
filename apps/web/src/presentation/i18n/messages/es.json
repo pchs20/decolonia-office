@@ -92,10 +92,14 @@
     "addButton": "Añadir trabajador",
     "searchPlaceholder": "Buscar por nombre o ciudad...",
     "noResultsSearch": "No se han encontrado trabajadores con ese nombre",
+    "noWorkers": "Todavía no hay trabajadores",
     "empty": "Todavía no hay trabajadores",
     "notFound": "Trabajador no encontrado",
     "backToList": "← Volver a trabajadores",
     "deleteConfirm": "¿Seguro que quieres eliminar este trabajador?",
+    "confirmDelete": "¿Seguro que quieres eliminar este trabajador?",
+    "setAsPrimary": "Establecer como principal",
+    "primaryBadge": "Principal",
     "fields": {
       "taxId": "NIF/NIE",
       "address": "Dirección",
@@ -254,6 +258,11 @@
       "pricingMode": "Modo de precio",
       "manualSubtotalAmount": "Subtotal manual",
       "calculatedTotal": "Total calculado"
+    },
+    "errors": {
+      "noPrimaryWorker": "No hay ningún trabajador principal configurado. Configura un trabajador como principal en",
+      "noPrimaryWorkerLink": "Configuración \u2192 Trabajadores",
+      "primaryWorkerFailed": "Error al cargar el trabajador principal. Asegúrate de que haya un trabajador configurado como principal en"
     }
   },
   "catalog": {
@@ -262,7 +271,8 @@
       "taxes": "Impuestos",
       "templates": "Plantillas de trabajo",
       "pricing": "Precios",
-      "numbering": "Numeración de documentos"
+      "numbering": "Numeración de documentos",
+      "workers": "Trabajadores"
     },
     "pricing": {
       "title": "Valores por defecto de precios",

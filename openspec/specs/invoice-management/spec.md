@@ -5,11 +5,15 @@ Define invoice lifecycle behavior for creation, editing, line items, totals, lis
 ## Requirements
 
 ### Requirement: Create a new invoice
-The system SHALL allow users to create a new invoice with a client, issuer (worker), optional notes, optional source budget linkage, and an empty job items list.
+The system SHALL allow users to create a new invoice with a client, optional notes, optional source budget linkage, and an empty job items list. The issuer (worker) SHALL be automatically resolved from the configured primary worker without user selection.
 
 #### Scenario: Successful invoice creation
-- **WHEN** user fills out the new invoice form with required fields (client, worker/issuer)
-- **THEN** system creates an invoice with auto-assigned year-scoped sequential number, empty job items, and current timestamp
+- **WHEN** user fills out the new invoice form with required fields (client) and a primary worker is configured
+- **THEN** system creates an invoice with auto-assigned year-scoped sequential number, the primary worker snapshot captured automatically, empty job items, and current timestamp
+
+#### Scenario: Invoice creation blocked with no primary worker
+- **WHEN** a user opens the new invoice form and no primary worker is configured in Settings
+- **THEN** the system displays a blocking message indicating a primary worker must be configured, and the submit action is disabled
 
 #### Scenario: Invoice assigned with year-scoped sequential number
 - **WHEN** a new invoice is created
@@ -20,10 +24,10 @@ The system SHALL allow users to create a new invoice with a client, issuer (work
 - **THEN** system sets sourceBudgetId reference and optionally pre-populates job items from the budget (optional behavior, not required)
 
 ### Requirement: Edit invoice header
-The system SHALL allow users to edit the invoice's client, worker (issuer), notes, and issued date after creation.
+The system SHALL allow users to edit the invoice's client and notes after creation. The worker (issuer) field SHALL NOT be editable on the invoice form.
 
 #### Scenario: Update invoice metadata
-- **WHEN** user modifies the invoice's client, worker, or notes fields in edit mode
+- **WHEN** user modifies the invoice's client or notes fields in edit mode
 - **THEN** system persists changes and updates the updatedAt timestamp
 
 #### Scenario: Set issued date

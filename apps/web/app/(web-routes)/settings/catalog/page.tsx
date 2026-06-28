@@ -1,9 +1,12 @@
+import { Suspense } from "react";
 import { CommercialDocumentCatalogAndSettings } from "@/presentation/components/settings/CommercialDocumentCatalogAndSettings";
 
 export default function SettingsCatalogPage() {
   return (
     <div className="p-6">
-      <CommercialDocumentCatalogAndSettings />
+      <Suspense fallback={null}>
+        <CommercialDocumentCatalogAndSettings />
+      </Suspense>
     </div>
   );
 }

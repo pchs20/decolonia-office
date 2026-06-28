@@ -33,6 +33,7 @@ function buildWorkerForCreate(params: CreateWorkerParams): Worker {
     email: toNullable(params.email),
     bankAccount: params.bankAccount ?? null,
     isActive: true,
+    isPrimary: false,
     createdAt: now,
     updatedAt: now
   };
@@ -85,6 +86,10 @@ export function createWorkersUseCases(repository: WorkerRepository) {
       return repository.getById(id);
     },
 
+    async getPrimaryWorker(): Promise<Worker | null> {
+      return repository.getByPrimary();
+    },
+
     async listWorkers(page: number, limit: number, search?: string): Promise<{
       workers: Worker[];
       total: number;
@@ -97,6 +102,10 @@ export function createWorkersUseCases(repository: WorkerRepository) {
     async updateWorker(id: string, params: UpdateWorkerParams): Promise<Worker> {
       const current = await repository.getById(id);
       return repository.update(mergeWorkerUpdate(current, params));
+    },
+
+    async setPrimaryWorker(id: string): Promise<Worker> {
+      return repository.setPrimary(id);
     },
 
     async deleteWorker(id: string): Promise<void> {

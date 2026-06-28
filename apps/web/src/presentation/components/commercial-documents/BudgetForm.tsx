@@ -8,7 +8,7 @@ import { ClientSchema } from "@/api/schemas/client-schema";
 import { WorkerSchema } from "@/api/schemas/worker-schema";
 import { useBudgets } from "@/presentation/hooks/commercial-document-hooks";
 import { useClients } from "@/presentation/hooks/clients-hook";
-import { useWorkers } from "@/presentation/hooks/workers-hook";
+import { WorkerService } from "@/presentation/api-clients/worker.service";
 import { useTaxesList } from "@/presentation/hooks/catalog-hooks";
 import { BudgetService } from "@/presentation/api-clients/budget.service";
 import { CommercialDocumentSettingsService } from "@/presentation/api-clients/commercial-document-settings.service";
@@ -114,12 +114,13 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
   const isEditing = !!budget;
   const { create: createBudget, loading: budgetLoading } = useBudgets();
   const { clients, loading: clientsLoading } = useClients();
-  const { workers, loading: workersLoading } = useWorkers();
   const { taxes, loading: taxesLoading, getAll: loadTaxes } = useTaxesList();
+  const [primaryWorker, setPrimaryWorker] = useState<WorkerSchema | null>(null);
+  const [primaryWorkerLoading, setPrimaryWorkerLoading] = useState(!isEditing);
+  const [primaryWorkerError, setPrimaryWorkerError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     clientId: budget?.client?.id || initialClientId || "",
-    workerId: budget?.worker?.id || "",
     notes: budget?.notes || "",
     taxId: "",
     pricingMode: budget?.pricingMode || "computed",
@@ -246,15 +247,29 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
   }, [clients, formData.clientId, isEditing]);
 
   useEffect(() => {
-    if (isEditing || !formData.workerId || workers.length === 0) {
+    // Fetch primary worker on mount (skip if editing - worker already captured)
+    if (isEditing) {
       return;
     }
 
-    const selected = workers.find(worker => worker.id === formData.workerId);
-    if (selected) {
-      setWorkerSnapshot(mapWorkerToSnapshot(selected));
-    }
-  }, [workers, formData.workerId, isEditing]);
+    const fetchPrimaryWorker = async () => {
+      setPrimaryWorkerLoading(true);
+      setPrimaryWorkerError(null);
+      try {
+        const worker = await WorkerService.getPrimary();
+        setPrimaryWorker(worker);
+        if (worker) {
+          setWorkerSnapshot(mapWorkerToSnapshot(worker));
+        }
+      } catch (err) {
+        setPrimaryWorkerError(err instanceof Error ? err.message : "Failed to fetch primary worker");
+      } finally {
+        setPrimaryWorkerLoading(false);
+      }
+    };
+
+    void fetchPrimaryWorker();
+  }, [isEditing]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -334,8 +349,8 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
       return;
     }
 
-    if (!formData.workerId) {
-      setError(t("budgets.errors.workerRequired"));
+    if (!isEditing && !primaryWorker) {
+      setError("No primary worker configured. Please configure a worker in Settings first.");
       return;
     }
 
@@ -354,7 +369,7 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
           })
         : await createBudget({
             clientId: formData.clientId,
-            workerId: formData.workerId,
+            workerId: primaryWorker!.id,
             clientSnapshot: toSnapshotPayload(clientSnapshot),
             workerSnapshot: toSnapshotPayload(workerSnapshot),
             notes: formData.notes || undefined,
@@ -578,7 +593,29 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
         </div>
       )}
 
-      {/* Client and Worker Selection */}
+      {!isEditing && primaryWorkerError && (
+        <div className="p-3 bg-yellow-50 border border-yellow-200 rounded">
+          <p className="text-sm text-yellow-800">
+            {t("commercialDocuments.errors.primaryWorkerFailed")}{" "}
+            <Link href="/settings/catalog" className="underline font-semibold">
+              {t("nav.settings")}
+            </Link>.
+          </p>
+        </div>
+      )}
+
+      {!isEditing && !primaryWorkerLoading && !primaryWorker && (
+        <div className="p-3 bg-yellow-50 border border-yellow-200 rounded">
+          <p className="text-sm text-yellow-800">
+            {t("commercialDocuments.errors.noPrimaryWorker")}{" "}
+            <Link href="/settings/catalog" className="underline font-semibold">
+              {t("commercialDocuments.errors.noPrimaryWorkerLink")}
+            </Link>.
+          </p>
+        </div>
+      )}
+
+      {/* Client Selection */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium mb-1">{t("budgets.fields.client")}</label>
@@ -614,46 +651,10 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
             </>
           )}
         </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-1">{t("budgets.fields.worker")}</label>
-          {isEditing ? (
-            <div className="w-full px-3 py-2 border rounded bg-gray-50">
-              {budget?.worker?.name || "-"}
-            </div>
-          ) : (
-            <>
-              <select
-                name="workerId"
-                value={formData.workerId}
-                onChange={handleChange}
-                disabled={workersLoading}
-                required
-                className="w-full px-3 py-2 border rounded disabled:bg-gray-100"
-              >
-                <option value="" disabled>
-                  {workersLoading ? t("common.loading") : t("budgets.fields.selectWorker")}
-                </option>
-                {workers?.map(worker => (
-                  <option key={worker.id} value={worker.id}>
-                    {worker.name}
-                  </option>
-                ))}
-              </select>
-              <div className="mt-1 text-xs text-gray-600">
-                {t("common.notFoundInDropdown")} {" "}
-                <Link href="/workers/new" className="text-blue-700 underline">
-                  {t("common.createWorker")}
-                </Link>
-              </div>
-            </>
-          )}
-        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-3 border rounded p-4 bg-gray-50">
-          <h3 className="text-base font-semibold">{t("commercialDocuments.fields.clientInfo")}</h3>
+      <div className="space-y-3 border rounded p-4 bg-gray-50">
+        <h3 className="text-base font-semibold">{t("commercialDocuments.fields.clientInfo")}</h3>
           <input
             type="text"
             value={clientSnapshot.name}
@@ -737,93 +738,6 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
             />
           </div>
         </div>
-
-        <div className="space-y-3 border rounded p-4 bg-gray-50">
-          <h3 className="text-base font-semibold">{t("commercialDocuments.fields.workerInfo")}</h3>
-          <input
-            type="text"
-            value={workerSnapshot.name}
-            onChange={event => handleSnapshotFieldChange("worker", "name", event.target.value)}
-            placeholder={t("profile.fields.name")}
-            required
-            className="w-full px-3 py-2 border rounded"
-          />
-          <input
-            type="text"
-            value={workerSnapshot.taxId}
-            onChange={event => handleSnapshotFieldChange("worker", "taxId", event.target.value)}
-            placeholder={t("profile.fields.taxId")}
-            required
-            className="w-full px-3 py-2 border rounded"
-          />
-          <input
-            type="text"
-            value={workerSnapshot.phone}
-            onChange={event => handleSnapshotFieldChange("worker", "phone", event.target.value)}
-            placeholder={t("profile.fields.phone")}
-            className="w-full px-3 py-2 border rounded"
-          />
-          <input
-            type="email"
-            value={workerSnapshot.email}
-            onChange={event => handleSnapshotFieldChange("worker", "email", event.target.value)}
-            placeholder={t("profile.fields.email")}
-            className="w-full px-3 py-2 border rounded"
-          />
-          <input
-            type="text"
-            value={workerSnapshot.workAddress.street}
-            onChange={event => handleSnapshotFieldChange("worker", "workStreet", event.target.value)}
-            placeholder={t("profile.fields.workStreet")}
-            required
-            className="w-full px-3 py-2 border rounded"
-          />
-          <div className="grid grid-cols-2 gap-2">
-            <input
-              type="text"
-              value={workerSnapshot.workAddress.city}
-              onChange={event => handleSnapshotFieldChange("worker", "workCity", event.target.value)}
-              placeholder={t("profile.fields.workCity")}
-              required
-              className="w-full px-3 py-2 border rounded"
-            />
-            <input
-              type="text"
-              value={workerSnapshot.workAddress.postalCode}
-              onChange={event => handleSnapshotFieldChange("worker", "workPostalCode", event.target.value)}
-              placeholder={t("profile.fields.workPostalCode")}
-              required
-              className="w-full px-3 py-2 border rounded"
-            />
-          </div>
-          <input
-            type="text"
-            value={workerSnapshot.billingAddress.street}
-            onChange={event => handleSnapshotFieldChange("worker", "billingStreet", event.target.value)}
-            placeholder={t("profile.fields.billingStreet")}
-            required
-            className="w-full px-3 py-2 border rounded"
-          />
-          <div className="grid grid-cols-2 gap-2">
-            <input
-              type="text"
-              value={workerSnapshot.billingAddress.city}
-              onChange={event => handleSnapshotFieldChange("worker", "billingCity", event.target.value)}
-              placeholder={t("profile.fields.billingCity")}
-              required
-              className="w-full px-3 py-2 border rounded"
-            />
-            <input
-              type="text"
-              value={workerSnapshot.billingAddress.postalCode}
-              onChange={event => handleSnapshotFieldChange("worker", "billingPostalCode", event.target.value)}
-              placeholder={t("profile.fields.billingPostalCode")}
-              required
-              className="w-full px-3 py-2 border rounded"
-            />
-          </div>
-        </div>
-      </div>
 
       <div className="space-y-3 border rounded p-4 bg-gray-50">
           <div className="flex items-center justify-between">
@@ -1008,7 +922,7 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
         </button>
         <button
           type="submit"
-          disabled={loading || budgetLoading}
+          disabled={loading || budgetLoading || (!isEditing && (!primaryWorker || primaryWorkerLoading))}
           className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400"
         >
           {loading ? t("common.saving") : t("common.save")}

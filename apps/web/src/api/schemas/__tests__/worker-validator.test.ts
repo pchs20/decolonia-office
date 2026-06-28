@@ -41,4 +41,18 @@ describe("worker payload validation", () => {
   it("rejects update payload with partial billing fields", () => {
     expect(() => validateWorkerUpdatePayload({ billingCity: "Barcelona" })).toThrow(ApiError);
   });
+
+  it("accepts update payload with isPrimary: true", () => {
+    const input = validateWorkerUpdatePayload({ isPrimary: true });
+    expect(input.isPrimary).toBe(true);
+  });
+
+  it("accepts update payload with isPrimary: false", () => {
+    const input = validateWorkerUpdatePayload({ isPrimary: false });
+    expect(input.isPrimary).toBe(false);
+  });
+
+  it("rejects update payload with non-boolean isPrimary", () => {
+    expect(() => validateWorkerUpdatePayload({ isPrimary: "yes" })).toThrow(ApiError);
+  });
 });
