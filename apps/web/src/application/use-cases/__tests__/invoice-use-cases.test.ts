@@ -37,9 +37,11 @@ describe("invoice use-cases", () => {
   const workerRepo: jest.Mocked<WorkerRepository> = {
     create: jest.fn(),
     getById: jest.fn(),
+    getByPrimary: jest.fn(),
     list: jest.fn(),
     update: jest.fn(),
-    delete: jest.fn()
+    delete: jest.fn(),
+    setPrimary: jest.fn()
   };
 
   const taxRepo: jest.Mocked<TaxRepository> = {
@@ -85,6 +87,7 @@ describe("invoice use-cases", () => {
       email: null,
       bankAccount: null,
       isActive: true,
+      isPrimary: false,
       createdAt: new Date(),
       updatedAt: new Date()
     });

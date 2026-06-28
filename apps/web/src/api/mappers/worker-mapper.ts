@@ -19,6 +19,7 @@ export function toWorkerSchema(worker: Worker): WorkerSchema {
     email: worker.email,
     bankAccount: worker.bankAccount,
     isActive: worker.isActive,
+    isPrimary: worker.isPrimary,
     createdAt: worker.createdAt.toISOString(),
     updatedAt: worker.updatedAt.toISOString()
   };

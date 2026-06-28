@@ -92,10 +92,14 @@
     "addButton": "Add Worker",
     "searchPlaceholder": "Search by name or city...",
     "noResultsSearch": "No workers found matching your search",
+    "noWorkers": "No workers yet",
     "empty": "No workers yet",
     "notFound": "Worker not found",
     "backToList": "← Back to Workers",
     "deleteConfirm": "Are you sure you want to delete this worker?",
+    "confirmDelete": "Are you sure you want to delete this worker?",
+    "setAsPrimary": "Set as primary",
+    "primaryBadge": "Primary",
     "fields": {
       "taxId": "Tax ID",
       "address": "Address",
@@ -254,6 +258,11 @@
       "pricingMode": "Pricing mode",
       "manualSubtotalAmount": "Manual subtotal",
       "calculatedTotal": "Calculated total"
+    },
+    "errors": {
+      "noPrimaryWorker": "No primary worker configured. Please configure a worker as primary in",
+      "noPrimaryWorkerLink": "Settings \u2192 Workers",
+      "primaryWorkerFailed": "Failed to load primary worker. Please ensure a worker is configured as primary in"
     }
   },
   "catalog": {
@@ -262,7 +271,8 @@
       "taxes": "Tax Definitions",
       "templates": "Work Templates",
       "pricing": "Pricing",
-      "numbering": "Document Numbering"
+      "numbering": "Document Numbering",
+      "workers": "Workers"
     },
     "pricing": {
       "title": "Pricing defaults",

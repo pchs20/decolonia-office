@@ -1,15 +1,22 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { TaxCatalogManager } from "./TaxCatalogManager";
 import { WorkTemplateCatalogManager } from "./WorkTemplateCatalogManager";
 import { DocumentSequenceSettings } from "./DocumentSequenceSettings";
 import { CommercialDocumentPricingSettings } from "./CommercialDocumentPricingSettings";
+import { WorkerCatalogManager } from "./WorkerCatalogManager";
 
 export function CommercialDocumentCatalogAndSettings() {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<"taxes" | "templates" | "pricing" | "numbering">("taxes");
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get("tab");
+  const validTabs = ["taxes", "templates", "pricing", "numbering", "workers"] as const;
+  type Tab = (typeof validTabs)[number];
+  const initialTab: Tab = validTabs.includes(tabParam as Tab) ? (tabParam as Tab) : "taxes";
+  const [activeTab, setActiveTab] = useState<Tab>(initialTab);
 
   return (
     <div className="space-y-6">
@@ -57,6 +64,16 @@ export function CommercialDocumentCatalogAndSettings() {
           >
             {t("catalog.tabs.pricing")}
           </button>
+          <button
+            onClick={() => setActiveTab("workers")}
+            className={`px-4 py-2 border-b-2 font-medium ${
+              activeTab === "workers"
+                ? "border-blue-600 text-blue-600"
+                : "border-transparent text-gray-600 hover:text-gray-800"
+            }`}
+          >
+            {t("catalog.tabs.workers")}
+          </button>
         </div>
       </div>
 
@@ -65,6 +82,7 @@ export function CommercialDocumentCatalogAndSettings() {
         {activeTab === "templates" && <WorkTemplateCatalogManager />}
         {activeTab === "pricing" && <CommercialDocumentPricingSettings />}
         {activeTab === "numbering" && <DocumentSequenceSettings />}
+        {activeTab === "workers" && <WorkerCatalogManager />}
       </div>
     </div>
   );

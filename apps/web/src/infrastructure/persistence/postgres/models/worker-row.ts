@@ -12,6 +12,7 @@ export type WorkerRow = {
   email: string | null;
   bank_account: string | null;
   is_active: boolean;
+  is_primary: boolean;
   created_at: Date | string;
   updated_at: Date | string;
 };

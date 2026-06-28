@@ -23,6 +23,7 @@ export function mapWorkerRow(row: WorkerRow): Worker {
     email: row.email,
     bankAccount: row.bank_account,
     isActive: row.is_active,
+    isPrimary: row.is_primary,
     createdAt: new Date(row.created_at),
     updatedAt: new Date(row.updated_at)
   };

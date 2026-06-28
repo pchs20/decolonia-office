@@ -21,12 +21,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             {t('nav.clients')}
           </Link>
           <Link
-            href="/workers"
-            className="text-sm text-gray-600 hover:text-gray-900"
-          >
-            {t('nav.workers')}
-          </Link>
-          <Link
             href="/budgets"
             className="text-sm text-gray-600 hover:text-gray-900"
           >

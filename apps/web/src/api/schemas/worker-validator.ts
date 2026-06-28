@@ -59,6 +59,7 @@ export interface WorkerUpdatePayload {
   phone?: string;
   email?: string;
   bankAccount?: string;
+  isPrimary?: boolean;
 }
 
 export function validateWorkerCreatePayload(payload: unknown): WorkerCreatePayload {
@@ -183,6 +184,13 @@ export function validateWorkerUpdatePayload(payload: unknown): WorkerUpdatePaylo
 
   if ("bankAccount" in data) {
     output.bankAccount = normalizeString(data.bankAccount);
+  }
+
+  if ("isPrimary" in data) {
+    if (typeof data.isPrimary !== "boolean") {
+      throw new ApiError(400, "isPrimary must be a boolean");
+    }
+    output.isPrimary = data.isPrimary;
   }
 
   validateBillingCompleteness(

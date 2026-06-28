@@ -59,6 +59,14 @@ The system SHALL provide REST endpoints to create, retrieve, update, archive, an
 - **WHEN** a valid `DELETE /api/workers/:id` request is submitted for an active worker profile
 - **THEN** the system marks the profile inactive and returns HTTP 204
 
+#### Scenario: Set worker as primary via API
+- **WHEN** a valid `PATCH /api/workers/:id` request includes `isPrimary: true` for an active worker profile
+- **THEN** the system atomically unsets the current primary worker (if any), sets the target worker as primary, and returns HTTP 200 with the updated profile payload
+
+#### Scenario: Retrieve primary worker
+- **WHEN** a valid `GET /api/workers` request is made with a `primary=true` query parameter
+- **THEN** the system returns HTTP 200 with the single primary worker profile, or an empty result if none is configured
+
 #### Scenario: List active worker profiles with pagination and search
 - **WHEN** a `GET /api/workers?page=1&limit=10&search=<name>` request is submitted
 - **THEN** the system returns HTTP 200 with paginated active worker profiles filtered by case-insensitive name match when search is provided
@@ -74,20 +82,28 @@ The worker profile capability SHALL preserve fields and contracts suitable for f
 - **WHEN** a later change introduces authentication
 - **THEN** existing worker identity/contact fields remain compatible and do not require breaking field renames
 
-### Requirement: Frontend provides worker management section reusing client patterns
-The web app SHALL provide a workers management section for list/create/edit/archive operations and SHALL reuse client-management UI components and interaction patterns where semantics are shared.
+### Requirement: Worker profile management UI
+The system SHALL provide a management interface for worker profiles accessible from the Settings page under a dedicated Workers tab. The Workers tab SHALL be the fifth tab in the Settings catalog screen.
 
-#### Scenario: Workers section supports CRUD flows
-- **WHEN** a user navigates to the workers section
-- **THEN** they can list active workers, create worker records, edit worker records, and archive worker records
+#### Scenario: Navigate to workers via Settings
+- **WHEN** a user navigates to Settings and selects the Workers tab
+- **THEN** the system displays the list of active worker profiles with an option to add, edit, delete, and set primary
 
-#### Scenario: Shared form/address components are reused
-- **WHEN** worker forms are implemented
-- **THEN** shared address and common profile field UI components are reused from existing client-management patterns where behavior is equivalent
+#### Scenario: Workers tab absent from main navigation
+- **WHEN** a user views the main application navigation bar
+- **THEN** no Workers link is visible; Workers is only accessible via Settings
 
-#### Scenario: Worker-specific differences remain explicit
-- **WHEN** worker and client forms diverge in domain-specific fields
-- **THEN** those differences are implemented explicitly without breaking shared component behavior
+#### Scenario: Create worker from settings
+- **WHEN** a user clicks the add worker action from the Workers settings tab
+- **THEN** the system navigates to `/settings/workers/new` where the worker creation form is displayed
+
+#### Scenario: Edit worker from settings
+- **WHEN** a user clicks the edit action on a worker in the Workers settings tab
+- **THEN** the system navigates to `/settings/workers/:id/edit` where the worker edit form is displayed
+
+#### Scenario: Delete worker from settings
+- **WHEN** a user clicks the delete action on a non-primary worker
+- **THEN** the system soft-deletes the worker profile and removes it from the list
 
 ### Requirement: Worker bank account materializes into worker snapshot
 The system SHALL include `bankAccount` from the worker profile when materializing a `WorkerSnapshot` at document creation time.

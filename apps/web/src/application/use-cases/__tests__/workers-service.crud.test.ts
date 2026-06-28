@@ -6,20 +6,24 @@ describe("workers-service CRUD", () => {
   const repository: jest.Mocked<WorkerRepository> = {
     create: jest.fn(),
     getById: jest.fn(),
+    getByPrimary: jest.fn(),
     list: jest.fn(),
     update: jest.fn(),
-    delete: jest.fn()
+    delete: jest.fn(),
+    setPrimary: jest.fn()
   };
 
-  const { createWorker, deleteWorker, getWorkerById, listWorkers, updateWorker } =
+  const { createWorker, deleteWorker, getWorkerById, listWorkers, updateWorker, getPrimaryWorker, setPrimaryWorker } =
     createWorkersUseCases(repository);
 
   beforeEach(() => {
     repository.create.mockReset();
     repository.getById.mockReset();
+    repository.getByPrimary.mockReset();
     repository.list.mockReset();
     repository.update.mockReset();
     repository.delete.mockReset();
+    repository.setPrimary.mockReset();
   });
 
   it("creates and maps a worker", async () => {
@@ -52,6 +56,7 @@ describe("workers-service CRUD", () => {
       email: null,
       bankAccount: null,
       isActive: true,
+      isPrimary: false,
       createdAt: new Date("2026-01-01T00:00:00.000Z"),
       updatedAt: new Date("2026-01-01T00:00:00.000Z")
     });
@@ -76,6 +81,7 @@ describe("workers-service CRUD", () => {
           email: null,
           bankAccount: null,
           isActive: true,
+      isPrimary: false,
           createdAt: new Date("2026-01-01T00:00:00.000Z"),
           updatedAt: new Date("2026-01-01T00:00:00.000Z")
         }
@@ -101,6 +107,7 @@ describe("workers-service CRUD", () => {
       email: null,
       bankAccount: null,
       isActive: true,
+      isPrimary: false,
       createdAt: new Date("2026-01-01T00:00:00.000Z"),
       updatedAt: new Date("2026-01-01T00:00:00.000Z")
     });
@@ -122,5 +129,57 @@ describe("workers-service CRUD", () => {
 
     repository.delete.mockRejectedValueOnce(new EntityNotFoundError("Worker not found"));
     await expect(deleteWorker("missing")).rejects.toThrow(EntityNotFoundError);
+  });
+
+  it("returns the primary worker when one is configured", async () => {
+    const primaryWorker = {
+      id: "w-1",
+      name: "Worker A",
+      workAddress: { street: "Carrer 1", city: "Barcelona", postalCode: "08001" },
+      billingAddress: { street: "Carrer 1", city: "Barcelona", postalCode: "08001" },
+      taxId: "12345678X",
+      phone: null,
+      email: null,
+      bankAccount: null,
+      isActive: true,
+      isPrimary: true,
+      createdAt: new Date("2026-01-01T00:00:00.000Z"),
+      updatedAt: new Date("2026-01-01T00:00:00.000Z")
+    };
+    repository.getByPrimary.mockResolvedValueOnce(primaryWorker);
+
+    const result = await getPrimaryWorker();
+    expect(result?.id).toBe("w-1");
+    expect(result?.isPrimary).toBe(true);
+    expect(repository.getByPrimary).toHaveBeenCalledTimes(1);
+  });
+
+  it("returns null when no primary worker is configured", async () => {
+    repository.getByPrimary.mockResolvedValueOnce(null);
+
+    const result = await getPrimaryWorker();
+    expect(result).toBeNull();
+  });
+
+  it("sets a worker as primary and delegates to repository", async () => {
+    const updatedWorker = {
+      id: "w-1",
+      name: "Worker A",
+      workAddress: { street: "Carrer 1", city: "Barcelona", postalCode: "08001" },
+      billingAddress: { street: "Carrer 1", city: "Barcelona", postalCode: "08001" },
+      taxId: "12345678X",
+      phone: null,
+      email: null,
+      bankAccount: null,
+      isActive: true,
+      isPrimary: true,
+      createdAt: new Date("2026-01-01T00:00:00.000Z"),
+      updatedAt: new Date("2026-01-01T00:00:00.000Z")
+    };
+    repository.setPrimary.mockResolvedValueOnce(updatedWorker);
+
+    const result = await setPrimaryWorker("w-1");
+    expect(result.isPrimary).toBe(true);
+    expect(repository.setPrimary).toHaveBeenCalledWith("w-1");
   });
 });

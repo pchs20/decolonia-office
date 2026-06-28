@@ -62,7 +62,7 @@ export function WorkerDetailPage({ workerId, startInEditMode = false }: WorkerDe
     }
 
     if (startInEditMode) {
-      router.push(`/workers/${workerId}`);
+      router.push(`/settings/workers/${workerId}`);
       return;
     }
 
@@ -72,7 +72,7 @@ export function WorkerDetailPage({ workerId, startInEditMode = false }: WorkerDe
 
   const handleCancelEdit = () => {
     if (startInEditMode) {
-      router.push(`/workers/${workerId}`);
+      router.push(`/settings/workers/${workerId}`);
       return;
     }
     setHasUnsavedChanges(false);
@@ -87,7 +87,7 @@ export function WorkerDetailPage({ workerId, startInEditMode = false }: WorkerDe
     return (
       <div className="p-6">
         <div className="p-3 bg-red-100 text-red-700 rounded">{error}</div>
-        <Link href="/workers" className="mt-4 inline-block text-blue-600">
+        <Link href="/settings/catalog?tab=workers" className="mt-4 inline-block text-blue-600">
           {t('workers.backToList')}
         </Link>
       </div>
@@ -98,7 +98,7 @@ export function WorkerDetailPage({ workerId, startInEditMode = false }: WorkerDe
     return (
       <div className="p-6">
         <div>{t('workers.notFound')}</div>
-        <Link href="/workers" className="mt-4 inline-block text-blue-600">
+        <Link href="/settings/catalog?tab=workers" className="mt-4 inline-block text-blue-600">
           {t('workers.backToList')}
         </Link>
       </div>
@@ -124,7 +124,7 @@ export function WorkerDetailPage({ workerId, startInEditMode = false }: WorkerDe
   return (
     <div className="p-6">
       <div className="flex justify-between items-start mb-6">
-        <Link href="/workers" className="text-blue-600">
+        <Link href="/settings/catalog?tab=workers" className="text-blue-600">
           {t('workers.backToList')}
         </Link>
         <button

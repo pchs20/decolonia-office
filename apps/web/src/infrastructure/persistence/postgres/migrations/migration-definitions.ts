@@ -14,6 +14,7 @@ import mergeDocumentSequencesIntoCommercialDocumentSettings from "./171839550000
 import addBankAccountToWorkers from "./1719316800000-AddBankAccountToWorkers.sql";
 import addWorkerSnapshotBankAccountToBudgets from "./1719316801000-AddWorkerSnapshotBankAccountToBudgets.sql";
 import addWorkerSnapshotBankAccountToInvoices from "./1719316802000-AddWorkerSnapshotBankAccountToInvoices.sql";
+import addIsPrimaryToWorkers from "./1719316803000-AddIsPrimaryToWorkers.sql";
 
 export type SqlMigration = {
   id: string;
@@ -101,5 +102,10 @@ export const SQL_MIGRATIONS: SqlMigration[] = [
     id: "1719316802000",
     name: "AddWorkerSnapshotBankAccountToInvoices",
     sql: addWorkerSnapshotBankAccountToInvoices
+  },
+  {
+    id: "1719316803000",
+    name: "AddIsPrimaryToWorkers",
+    sql: addIsPrimaryToWorkers
   }
 ];

@@ -82,4 +82,31 @@ export class WorkerService {
       throw new Error("Failed to delete worker");
     }
   }
+
+  static async setPrimary(id: string): Promise<WorkerSchema> {
+    const response = await fetch(`${API_ENDPOINT}/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ isPrimary: true })
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Failed to set worker as primary");
+    }
+
+    return response.json();
+  }
+
+  static async getPrimary(): Promise<WorkerSchema | null> {
+    const response = await fetch(`${API_ENDPOINT}?primary=true`);
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch primary worker");
+    }
+
+    return response.json();
+  }
 }

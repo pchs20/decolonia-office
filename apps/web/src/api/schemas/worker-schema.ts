@@ -2,6 +2,7 @@ import { ProfileSchema, CreateProfileInput, UpdateProfileInput } from "@/api/sch
 
 export interface WorkerSchema extends ProfileSchema {
   bankAccount: string | null;
+  isPrimary: boolean;
 }
 
 export interface CreateWorkerInput extends CreateProfileInput {
@@ -10,6 +11,7 @@ export interface CreateWorkerInput extends CreateProfileInput {
 
 export interface UpdateWorkerInput extends UpdateProfileInput {
   bankAccount?: string;
+  isPrimary?: boolean;
 }
 
 export interface WorkerListResponseSchema {
