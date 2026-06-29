@@ -809,7 +809,7 @@ export function InvoiceForm({ invoice, initialClientId, initialItems = [], onSuc
           <div className="flex justify-end">
             <button
               type="button"
-              className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+              className="px-3 py-1 text-sm bg-invoices text-white rounded hover:bg-invoices/90"
               onClick={() => {
                 if (showItemForm && isItemFormDirty) {
                   const shouldDiscard = window.confirm(t("common.unsavedChanges"));
@@ -981,7 +981,7 @@ export function InvoiceForm({ invoice, initialClientId, initialItems = [], onSuc
         <button
           type="submit"
           disabled={loading || invoiceLoading || (!isEditing && (!primaryWorker || primaryWorkerLoading))}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400"
+          className="px-4 py-2 bg-invoices text-white rounded hover:bg-invoices/90 disabled:bg-gray-400"
         >
           {loading ? t("common.saving") : t("common.save")}
         </button>

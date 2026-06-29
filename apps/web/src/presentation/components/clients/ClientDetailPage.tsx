@@ -80,14 +80,14 @@ export function ClientDetailPage({ clientId, startInEditMode = false }: ClientDe
   };
 
   if (loading) {
-    return <div className="p-6 text-center">{t('common.loading')}</div>;
+    return <div className="p-4 md:p-6 text-center">{t('common.loading')}</div>;
   }
 
   if (error) {
     return (
-      <div className="p-6">
+      <div className="p-4 md:p-6">
         <div className="p-3 bg-red-100 text-red-700 rounded">{error}</div>
-        <Link href="/clients" className="mt-4 inline-block text-blue-600">
+        <Link href="/clients" className="mt-4 inline-block text-gray-500 hover:text-gray-700">
           {t('clients.backToList')}
         </Link>
       </div>
@@ -96,9 +96,9 @@ export function ClientDetailPage({ clientId, startInEditMode = false }: ClientDe
 
   if (!client) {
     return (
-      <div className="p-6">
+      <div className="p-4 md:p-6">
         <div>{t('clients.notFound')}</div>
-        <Link href="/clients" className="mt-4 inline-block text-blue-600">
+        <Link href="/clients" className="mt-4 inline-block text-gray-500 hover:text-gray-700">
           {t('clients.backToList')}
         </Link>
       </div>
@@ -107,11 +107,11 @@ export function ClientDetailPage({ clientId, startInEditMode = false }: ClientDe
 
   if (editing) {
     return (
-      <div className="p-6">
+      <div className="p-4 md:p-6">
         <button
           type="button"
           onClick={handleBackFromEdit}
-          className="text-blue-600 mb-4 inline-block"
+          className="text-gray-500 hover:text-gray-700 mb-4 inline-block"
         >
           {t('common.back')}
         </button>
@@ -126,14 +126,14 @@ export function ClientDetailPage({ clientId, startInEditMode = false }: ClientDe
   }
 
   return (
-    <div className="p-6">
+    <div className="p-4 md:p-6">
       <div className="flex justify-between items-start mb-6">
-        <Link href="/clients" className="text-blue-600">
+        <Link href="/clients" className="text-gray-500 hover:text-gray-700">
           {t('clients.backToList')}
         </Link>
         <button
           onClick={() => setEditing(true)}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          className="px-4 py-2 bg-clients text-white rounded hover:bg-clients/90"
         >
           {t('common.edit')}
         </button>
@@ -148,28 +148,28 @@ export function ClientDetailPage({ clientId, startInEditMode = false }: ClientDe
       <div className="bg-white rounded-lg border p-6 max-w-2xl">
         <h1 className="text-3xl font-bold mb-6">{client.name}</h1>
 
-        <div className="mb-6 flex gap-3">
+        <div className="mb-6 flex gap-3 flex-wrap">
           <Link
             href={`/budgets?clientId=${client.id}`}
-            className="px-3 py-2 rounded border border-blue-300 text-blue-700 hover:bg-blue-50 text-sm"
+            className="px-3 py-2 rounded border border-budgets/40 text-budgets hover:bg-budgets/10 text-sm"
           >
             {t('clients.links.viewBudgets')}
           </Link>
           <Link
             href={`/budgets/new?clientId=${client.id}`}
-            className="px-3 py-2 rounded border border-emerald-300 text-emerald-700 hover:bg-emerald-50 text-sm"
+            className="px-3 py-2 rounded border border-budgets text-budgets hover:bg-budgets/10 text-sm"
           >
             + {t('budgets.addButton')}
           </Link>
           <Link
             href={`/invoices?clientId=${client.id}`}
-            className="px-3 py-2 rounded border border-blue-300 text-blue-700 hover:bg-blue-50 text-sm"
+            className="px-3 py-2 rounded border border-invoices/40 text-invoices hover:bg-invoices/10 text-sm"
           >
             {t('clients.links.viewInvoices')}
           </Link>
           <Link
             href={`/invoices/new?clientId=${client.id}`}
-            className="px-3 py-2 rounded border border-emerald-300 text-emerald-700 hover:bg-emerald-50 text-sm"
+            className="px-3 py-2 rounded border border-invoices text-invoices hover:bg-invoices/10 text-sm"
           >
             + {t('invoices.addButton')}
           </Link>

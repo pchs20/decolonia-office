@@ -22,13 +22,13 @@ export function CommercialDocumentCatalogAndSettings() {
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">{t("catalog.title")}</h1>
 
-      <div className="border-b">
-        <div className="flex gap-4">
+      <div className="border-b overflow-x-auto">
+        <div className="flex gap-1 min-w-max">
           <button
             onClick={() => setActiveTab("taxes")}
-            className={`px-4 py-2 border-b-2 font-medium ${
+            className={`px-3 py-2 border-b-2 text-sm font-medium whitespace-nowrap ${
               activeTab === "taxes"
-                ? "border-blue-600 text-blue-600"
+                ? "border-settings text-settings"
                 : "border-transparent text-gray-600 hover:text-gray-800"
             }`}
           >
@@ -36,9 +36,9 @@ export function CommercialDocumentCatalogAndSettings() {
           </button>
           <button
             onClick={() => setActiveTab("templates")}
-            className={`px-4 py-2 border-b-2 font-medium ${
+            className={`px-3 py-2 border-b-2 text-sm font-medium whitespace-nowrap ${
               activeTab === "templates"
-                ? "border-blue-600 text-blue-600"
+                ? "border-settings text-settings"
                 : "border-transparent text-gray-600 hover:text-gray-800"
             }`}
           >
@@ -46,9 +46,9 @@ export function CommercialDocumentCatalogAndSettings() {
           </button>
           <button
             onClick={() => setActiveTab("numbering")}
-            className={`px-4 py-2 border-b-2 font-medium ${
+            className={`px-3 py-2 border-b-2 text-sm font-medium whitespace-nowrap ${
               activeTab === "numbering"
-                ? "border-blue-600 text-blue-600"
+                ? "border-settings text-settings"
                 : "border-transparent text-gray-600 hover:text-gray-800"
             }`}
           >
@@ -56,9 +56,9 @@ export function CommercialDocumentCatalogAndSettings() {
           </button>
           <button
             onClick={() => setActiveTab("pricing")}
-            className={`px-4 py-2 border-b-2 font-medium ${
+            className={`px-3 py-2 border-b-2 text-sm font-medium whitespace-nowrap ${
               activeTab === "pricing"
-                ? "border-blue-600 text-blue-600"
+                ? "border-settings text-settings"
                 : "border-transparent text-gray-600 hover:text-gray-800"
             }`}
           >
@@ -66,9 +66,9 @@ export function CommercialDocumentCatalogAndSettings() {
           </button>
           <button
             onClick={() => setActiveTab("workers")}
-            className={`px-4 py-2 border-b-2 font-medium ${
+            className={`px-3 py-2 border-b-2 text-sm font-medium whitespace-nowrap ${
               activeTab === "workers"
-                ? "border-blue-600 text-blue-600"
+                ? "border-settings text-settings"
                 : "border-transparent text-gray-600 hover:text-gray-800"
             }`}
           >

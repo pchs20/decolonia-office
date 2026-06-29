@@ -122,13 +122,13 @@ export function DocumentSequenceSettings({ sequences = [] }: DocumentSequenceSet
                       <>
                         <button
                           onClick={() => handleSave(`${seq.documentType}-${seq.scopeYear}`)}
-                          className="text-green-600 hover:underline text-xs mr-2"
+                          className="px-2 py-1 bg-settings text-white text-xs rounded hover:bg-settings/90 mr-2"
                         >
                           {t("common.save")}
                         </button>
                         <button
                           onClick={() => setEditingId(null)}
-                          className="text-gray-600 hover:underline text-xs"
+                          className="px-2 py-1 border rounded text-xs hover:bg-gray-100"
                         >
                           {t("common.cancel")}
                         </button>
@@ -136,7 +136,7 @@ export function DocumentSequenceSettings({ sequences = [] }: DocumentSequenceSet
                     ) : (
                       <button
                         onClick={() => handleEdit(`${seq.documentType}-${seq.scopeYear}`, seq.nextNumber)}
-                        className="text-blue-600 hover:underline text-xs"
+                        className="px-2 py-1 bg-settings/10 text-settings text-xs rounded hover:bg-settings/20"
                       >
                         {t("catalog.numbering.adjust")}
                       </button>
@@ -149,7 +149,7 @@ export function DocumentSequenceSettings({ sequences = [] }: DocumentSequenceSet
         </div>
       )}
 
-      <div className="p-4 bg-blue-50 rounded text-sm text-blue-900">
+      <div className="p-4 bg-settings/10 rounded text-sm text-settings">
         <strong>{t("catalog.numbering.noteLabel")}</strong> {t("catalog.numbering.note")}
       </div>
     </div>

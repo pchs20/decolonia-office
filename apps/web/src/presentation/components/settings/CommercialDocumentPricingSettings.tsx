@@ -77,7 +77,7 @@ export function CommercialDocumentPricingSettings() {
         type="button"
         onClick={() => void onSave()}
         disabled={loading}
-        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400"
+        className="px-4 py-2 bg-settings text-white rounded hover:bg-settings/90 disabled:bg-gray-400"
       >
         {loading ? t("common.saving") : t("common.save")}
       </button>

@@ -45,12 +45,12 @@ export function BudgetListPage({ clientId }: BudgetListPageProps) {
   const totalPages = Math.max(1, Math.ceil(total / limit));
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">{t("budgets.title")}</h1>
         <Link
           href={clientId ? `/budgets/new?clientId=${clientId}` : "/budgets/new"}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          className="px-4 py-2 bg-budgets text-white rounded hover:bg-budgets/90"
         >
           + {t("budgets.addButton")}
         </Link>
@@ -85,7 +85,7 @@ export function BudgetListPage({ clientId }: BudgetListPageProps) {
         <div className="text-center py-8">{t("common.loading")}</div>
       ) : budgets.length === 0 ? (
         <div className="text-center py-8 text-gray-500">
-          {search ? t("budgets.noResultsSearch") : t("budgets.empty")} <Link href={clientId ? `/budgets/new?clientId=${clientId}` : "/budgets/new"} className="text-blue-600 hover:underline">{t("budgets.addButton")}</Link>
+          {search ? t("budgets.noResultsSearch") : t("budgets.empty")} <Link href={clientId ? `/budgets/new?clientId=${clientId}` : "/budgets/new"} className="text-budgets hover:underline">{t("budgets.addButton")}</Link>
         </div>
       ) : (
         <>
@@ -108,10 +108,10 @@ export function BudgetListPage({ clientId }: BudgetListPageProps) {
                     className="border-b hover:bg-gray-50 cursor-pointer"
                     onClick={() => router.push(`/budgets/${budget.id}`)}
                   >
-                    <td className="px-4 py-2 font-mono text-sm">
+                    <td className="px-4 py-2 font-mono font-medium">
                       <Link
                         href={`/budgets/${budget.id}`}
-                        className="text-blue-700 hover:underline"
+                        className="text-gray-900 hover:underline"
                         onClick={event => event.stopPropagation()}
                       >
                         {formatDocumentNumber(budget.number, "budget", t)}
@@ -126,14 +126,14 @@ export function BudgetListPage({ clientId }: BudgetListPageProps) {
                     <td className="px-4 py-2 space-x-3">
                       <Link
                         href={`/budgets/${budget.id}`}
-                        className="px-2 py-1 text-sm bg-emerald-100 text-emerald-800 rounded hover:bg-emerald-200"
+                        className="px-2 py-1 text-sm bg-budgets/10 text-budgets rounded hover:bg-budgets/20"
                         onClick={event => event.stopPropagation()}
                       >
                         {t("common.view")}
                       </Link>
                       <Link
                         href={`/budgets/${budget.id}?edit=1`}
-                        className="px-2 py-1 text-sm bg-sky-100 text-sky-800 rounded hover:bg-sky-200"
+                        className="px-2 py-1 text-sm bg-budgets/10 text-budgets rounded hover:bg-budgets/20"
                         onClick={event => event.stopPropagation()}
                       >
                         {t("common.edit")}

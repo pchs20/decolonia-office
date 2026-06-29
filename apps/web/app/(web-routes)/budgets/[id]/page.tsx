@@ -96,13 +96,13 @@ export default function BudgetDetailPage({ params }: BudgetDetailPageProps) {
   };
 
   if (loading) {
-    return <div className="p-6">{t("common.loading")}</div>;
+    return <div className="p-4 md:p-6">{t("common.loading")}</div>;
   }
 
   if (error || !budget) {
     return (
-      <div className="p-6 space-y-6">
-        <Link href="/budgets" className="text-blue-600">
+      <div className="p-4 md:p-6 space-y-6">
+        <Link href="/budgets" className="text-gray-500 hover:text-gray-700">
           {t("budgets.backToList")}
         </Link>
         <div className="bg-red-50 p-4 rounded border border-red-200 text-sm text-red-700">
@@ -113,14 +113,14 @@ export default function BudgetDetailPage({ params }: BudgetDetailPageProps) {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 md:p-6 space-y-6">
       <div className="flex justify-between items-center">
         {editing ? (
-          <button type="button" onClick={handleBackFromEdit} className="text-blue-600">
+          <button type="button" onClick={handleBackFromEdit} className="text-gray-500 hover:text-gray-700">
             {t("budgets.backToList")}
           </button>
         ) : (
-          <Link href="/budgets" className="text-blue-600">
+          <Link href="/budgets" className="text-gray-500 hover:text-gray-700">
             {t("budgets.backToList")}
           </Link>
         )}
@@ -141,14 +141,14 @@ export default function BudgetDetailPage({ params }: BudgetDetailPageProps) {
                   a.click();
                   URL.revokeObjectURL(url);
                 }}
-                className="px-3 py-1 text-sm bg-green-100 text-green-800 rounded hover:bg-green-200"
+                className="px-3 py-1 text-sm bg-budgets/10 text-budgets rounded hover:bg-budgets/20"
               >
                 {t("budgets.exportPdf")}
               </button>
               <button
                 type="button"
                 onClick={() => setEditing(true)}
-                className="px-3 py-1 text-sm bg-sky-100 text-sky-800 rounded hover:bg-sky-200"
+                className="px-3 py-1 text-sm bg-budgets/10 text-budgets rounded hover:bg-budgets/20"
               >
                 {t("common.edit")}
               </button>

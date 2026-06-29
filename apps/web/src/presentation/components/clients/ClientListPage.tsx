@@ -55,12 +55,12 @@ export function ClientListPage() {
   const totalPages = Math.ceil(total / limit);
 
   return (
-    <div className="p-6">
+    <div className="p-4 md:p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">{t('clients.title')}</h1>
         <Link
           href="/clients/new"
-          className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+          className="px-4 py-2 bg-clients text-white rounded hover:bg-clients/90"
         >
           {t('clients.addButton')}
         </Link>
@@ -120,7 +120,7 @@ export function ClientListPage() {
                       <td className="px-4 py-3 font-medium">
                         <Link
                           href={`/clients/${client.id}`}
-                          className="text-blue-600 hover:underline"
+                          className="text-gray-900 hover:underline"
                           onClick={event => event.stopPropagation()}
                         >
                           {client.name}
@@ -132,28 +132,28 @@ export function ClientListPage() {
                       <td className="px-4 py-3 space-x-2">
                         <Link
                           href={`/clients/${client.id}`}
-                          className="px-2 py-1 text-sm bg-emerald-100 text-emerald-800 rounded hover:bg-emerald-200"
+                          className="px-2 py-1 text-sm bg-clients/10 text-clients rounded hover:bg-clients/20"
                           onClick={event => event.stopPropagation()}
                         >
                           {t('common.view')}
                         </Link>
                         <Link
                           href={`/budgets?clientId=${client.id}`}
-                          className="px-2 py-1 text-sm bg-amber-100 text-amber-800 rounded hover:bg-amber-200"
+                          className="px-2 py-1 text-sm bg-budgets/10 text-budgets rounded hover:bg-budgets/20"
                           onClick={event => event.stopPropagation()}
                         >
                           {t('clients.links.budgets')}
                         </Link>
                         <Link
                           href={`/invoices?clientId=${client.id}`}
-                          className="px-2 py-1 text-sm bg-violet-100 text-violet-800 rounded hover:bg-violet-200"
+                          className="px-2 py-1 text-sm bg-invoices/10 text-invoices rounded hover:bg-invoices/20"
                           onClick={event => event.stopPropagation()}
                         >
                           {t('clients.links.invoices')}
                         </Link>
                         <Link
                           href={`/clients/${client.id}/edit`}
-                          className="px-2 py-1 text-sm bg-sky-100 text-sky-800 rounded hover:bg-sky-200"
+                          className="px-2 py-1 text-sm bg-clients/10 text-clients rounded hover:bg-clients/20"
                           onClick={event => event.stopPropagation()}
                         >
                           {t('common.edit')}
@@ -163,7 +163,7 @@ export function ClientListPage() {
                             event.stopPropagation();
                             setDeleteConfirm(client.id);
                           }}
-                          className="px-2 py-1 text-sm bg-rose-100 text-rose-800 rounded hover:bg-rose-200"
+                          className="px-2 py-1 text-sm bg-danger/10 text-danger rounded hover:bg-danger/20"
                         >
                           {t('common.delete')}
                         </button>

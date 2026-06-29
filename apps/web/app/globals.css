@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+@theme {
+  --color-budgets: #2563EB;
+  --color-invoices: #16A34A;
+  --color-clients: #F59E0B;
+  --color-settings: #7C3AED;
+  --color-danger: #EF4444;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -14,7 +22,6 @@ body {
 main {
   max-width: 880px;
   margin: 0 auto;
-  padding: 32px 20px;
 }
 
 h1 {
