@@ -47,6 +47,16 @@ export async function deactivateWorkTemplate(
   return templateRepo.update(template);
 }
 
+export async function reactivateWorkTemplate(
+  templateId: string,
+  templateRepo: WorkTemplateRepository
+): Promise<WorkTemplate> {
+  const template = await templateRepo.getById(templateId);
+  template.isActive = true;
+  template.updatedAt = new Date();
+  return templateRepo.update(template);
+}
+
 export async function archiveWorkTemplate(
   templateId: string,
   templateRepo: WorkTemplateRepository

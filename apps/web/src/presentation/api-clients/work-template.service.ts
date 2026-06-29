@@ -1,5 +1,6 @@
 import {
   WorkTemplateCreateRequest,
+  WorkTemplateUpdateRequest,
   WorkTemplateListResponse,
   WorkTemplateResponse
 } from "@/api/schemas/work-template-schemas";
@@ -21,6 +22,24 @@ export class WorkTemplateService {
     }
 
     return response.json();
+  }
+
+  static async update(id: string, data: WorkTemplateUpdateRequest): Promise<WorkTemplateResponse> {
+    const response = await fetch(`${API_ENDPOINT}/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to update work template");
+    }
+
+    return response.json();
+  }
+
+  static async toggleActive(id: string, isActive: boolean): Promise<WorkTemplateResponse> {
+    return WorkTemplateService.update(id, { isActive });
   }
 
   static async getAll(

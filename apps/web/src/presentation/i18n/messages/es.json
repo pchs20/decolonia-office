@@ -29,6 +29,8 @@
     "search": "Buscar",
     "clearFilter": "Quitar filtro",
     "actions": "Acciones",
+    "deactivate": "Desactivar",
+    "reactivate": "Reactivar",
     "moveUp": "Mover arriba",
     "moveDown": "Mover abajo",
     "errors": {
@@ -303,7 +305,7 @@
       },
       "status": {
         "active": "Activo",
-        "archived": "Archivado"
+        "inactive": "Inactivo"
       }
     },
     "templates": {
@@ -313,7 +315,12 @@
       "fields": {
         "title": "Título",
         "description": "Descripción",
-        "defaultUnitPrice": "Precio unitario"
+        "defaultUnitPrice": "Precio unitario",
+        "status": "Estado"
+      },
+      "status": {
+        "active": "Activo",
+        "inactive": "Inactivo"
       }
     },
     "numbering": {

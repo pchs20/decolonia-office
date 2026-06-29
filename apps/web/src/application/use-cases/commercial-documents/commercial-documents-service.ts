@@ -27,12 +27,14 @@ import {
   createTax as createTaxUseCase,
   updateTax as updateTaxUseCase,
   deactivateTax as deactivateTaxUseCase,
+  reactivateTax as reactivateTaxUseCase,
   archiveTax as archiveTaxUseCase
 } from "@/application/use-cases/tax-use-cases";
 import {
   createWorkTemplate,
   updateWorkTemplate,
   deactivateWorkTemplate,
+  reactivateWorkTemplate,
   archiveWorkTemplate
 } from "@/application/use-cases/work-template-use-cases";
 import { ClientSnapshot } from "@/domain/value-objects/client-snapshot";
@@ -319,6 +321,8 @@ export function createCommercialDocumentsUseCases(deps: CommercialDocumentDeps) 
       let tax = await updateTaxUseCase(id, params.name, params.rate, deps.taxRepository);
       if (params.isActive === false) {
         tax = await deactivateTaxUseCase(id, deps.taxRepository);
+      } else if (params.isActive === true) {
+        tax = await reactivateTaxUseCase(id, deps.taxRepository);
       }
       return tax;
     },
@@ -356,6 +360,8 @@ export function createCommercialDocumentsUseCases(deps: CommercialDocumentDeps) 
       );
       if (params.isActive === false) {
         template = await deactivateWorkTemplate(id, deps.templateRepository);
+      } else if (params.isActive === true) {
+        template = await reactivateWorkTemplate(id, deps.templateRepository);
       }
       return template;
     },

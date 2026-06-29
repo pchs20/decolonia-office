@@ -24,6 +24,8 @@
     "search": "Cercar",
     "clearFilter": "Treure filtre",
     "actions": "Accions",
+    "deactivate": "Desactivar",
+    "reactivate": "Reactivar",
     "moveUp": "Moure amunt",
     "moveDown": "Moure avall",
     "notFoundInDropdown": "No apareix a la llista?",
@@ -293,7 +295,7 @@
       },
       "status": {
         "active": "Actiu",
-        "archived": "Arxivat"
+        "inactive": "Inactiu"
       }
     },
     "templates": {
@@ -303,7 +305,12 @@
       "fields": {
         "title": "Títol",
         "description": "Descripció",
-        "defaultUnitPrice": "Preu unitari"
+        "defaultUnitPrice": "Preu unitari",
+        "status": "Estat"
+      },
+      "status": {
+        "active": "Actiu",
+        "inactive": "Inactiu"
       }
     },
     "numbering": {
