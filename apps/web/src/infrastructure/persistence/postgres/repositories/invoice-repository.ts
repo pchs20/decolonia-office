@@ -204,7 +204,7 @@ export async function listInvoices(
   const listResult = await pool.query<InvoiceRow>(query, params);
 
   const countQuery = query.replace(
-    /SELECT.*?FROM/,
+    /SELECT.*?FROM/s,
     "SELECT COUNT(*)::text AS total FROM"
   ).replace(/ORDER BY.*?OFFSET.*/, "");
   const countParams = params.slice(0, -2);

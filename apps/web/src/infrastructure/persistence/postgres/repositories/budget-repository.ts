@@ -202,7 +202,7 @@ export async function listBudgets(
   const listResult = await pool.query<BudgetRow>(query, params);
 
   const countQuery = query.replace(
-    /SELECT.*?FROM/,
+    /SELECT.*?FROM/s,
     "SELECT COUNT(*)::text AS total FROM"
   ).replace(/ORDER BY.*?OFFSET.*/, "");
   const countParams = params.slice(0, -2);
