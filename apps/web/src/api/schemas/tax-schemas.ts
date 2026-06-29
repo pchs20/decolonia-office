@@ -17,6 +17,7 @@ export interface TaxCreateRequest {
 export interface TaxUpdateRequest {
   name?: string;
   rate?: number;
+  isActive?: boolean;
 }
 
 export interface TaxListResponse {

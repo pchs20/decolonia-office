@@ -6,10 +6,13 @@ import { useWorkTemplatesList } from "@/presentation/hooks/catalog-hooks";
 
 export function WorkTemplateCatalogManager() {
   const { t } = useTranslation();
-  const { getAll, create, templates, loading } = useWorkTemplatesList();
+  const { getAll, create, update, toggleActive, templates, loading } = useWorkTemplatesList();
   const [showForm, setShowForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editFormData, setEditFormData] = useState({ title: "", description: "", defaultUnitPrice: "" });
+  const [editError, setEditError] = useState<string | null>(null);
 
   useEffect(() => {
     getAll(1, 100, true);
@@ -58,6 +61,58 @@ export function WorkTemplateCatalogManager() {
       setError(err instanceof Error ? err.message : t("common.errors.unknown"));
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleEditClick = (template: { id: string; title: string; description: string | null; defaultUnitPrice: number | null }) => {
+    setEditingId(template.id);
+    setEditFormData({
+      title: template.title,
+      description: template.description || "",
+      defaultUnitPrice: template.defaultUnitPrice !== null ? String(template.defaultUnitPrice) : ""
+    });
+    setEditError(null);
+    setShowForm(false);
+    setError(null);
+  };
+
+  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setEditFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleEditSave = async (id: string) => {
+    setEditError(null);
+    if (!editFormData.title.trim()) {
+      setEditError(t("common.errors.unknown"));
+      return;
+    }
+    const parsedPrice = editFormData.defaultUnitPrice.trim() ? Number(editFormData.defaultUnitPrice) : null;
+    if (parsedPrice !== null && (!Number.isFinite(parsedPrice) || parsedPrice < 0)) {
+      setEditError(t("common.errors.unknown"));
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await update(id, {
+        title: editFormData.title.trim(),
+        description: editFormData.description.trim() || null,
+        defaultUnitPrice: parsedPrice
+      });
+      setEditingId(null);
+    } catch (err) {
+      setEditError(err instanceof Error ? err.message : t("common.errors.unknown"));
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleToggleActive = async (id: string, isActive: boolean) => {
+    setEditError(null);
+    try {
+      await toggleActive(id, isActive);
+    } catch (err) {
+      setEditError(err instanceof Error ? err.message : t("common.errors.unknown"));
     }
   };
 
@@ -134,23 +189,108 @@ export function WorkTemplateCatalogManager() {
                 <th className="px-3 py-2 text-left font-semibold">{t("common.name")}</th>
                 <th className="px-3 py-2 text-left font-semibold">{t("catalog.templates.fields.description")}</th>
                 <th className="px-3 py-2 text-right font-semibold">{t("catalog.templates.fields.defaultUnitPrice")}</th>
-                <th className="px-3 py-2 text-left font-semibold">{t("catalog.taxes.fields.status")}</th>
+                <th className="px-3 py-2 text-left font-semibold">{t("catalog.templates.fields.status")}</th>
+                <th className="px-3 py-2 text-left font-semibold"></th>
               </tr>
             </thead>
             <tbody>
               {templates.map(template => (
-                <tr key={template.id} className="border-b hover:bg-gray-50">
-                  <td className="px-3 py-2 font-medium">{template.title}</td>
-                  <td className="px-3 py-2 text-gray-600">{template.description || "-"}</td>
-                  <td className="px-3 py-2 text-right">
-                    {template.defaultUnitPrice === null ? "-" : `$${template.defaultUnitPrice.toFixed(2)}`}
-                  </td>
-                  <td className="px-3 py-2">
-                    <span className={`text-xs px-2 py-1 rounded ${template.isActive ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}`}>
-                      {template.isActive ? t("catalog.templates.title") : "Archived"}
-                    </span>
-                  </td>
-                </tr>
+                editingId === template.id ? (
+                  <tr key={template.id} className="border-b bg-blue-50">
+                    <td className="px-3 py-2">
+                      <input
+                        type="text"
+                        name="title"
+                        value={editFormData.title}
+                        onChange={handleEditChange}
+                        className="w-full px-2 py-1 border rounded text-sm"
+                      />
+                    </td>
+                    <td className="px-3 py-2">
+                      <input
+                        type="text"
+                        name="description"
+                        value={editFormData.description}
+                        onChange={handleEditChange}
+                        className="w-full px-2 py-1 border rounded text-sm"
+                      />
+                    </td>
+                    <td className="px-3 py-2">
+                      <input
+                        type="number"
+                        name="defaultUnitPrice"
+                        step="0.01"
+                        value={editFormData.defaultUnitPrice}
+                        onChange={handleEditChange}
+                        className="w-full px-2 py-1 border rounded text-sm text-right"
+                      />
+                    </td>
+                    <td className="px-3 py-2">
+                      <span className={`text-xs px-2 py-1 rounded ${template.isActive ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}`}>
+                        {template.isActive ? t("catalog.templates.status.active") : t("catalog.templates.status.inactive")}
+                      </span>
+                    </td>
+                    <td className="px-3 py-2">
+                      <div className="flex flex-col gap-1">
+                        <div className="flex gap-1">
+                          <button
+                            onClick={() => handleEditSave(template.id)}
+                            disabled={submitting}
+                            className="px-2 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700"
+                          >
+                            {submitting ? t("common.saving") : t("common.save")}
+                          </button>
+                          <button
+                            onClick={() => setEditingId(null)}
+                            disabled={submitting}
+                            className="px-2 py-1 border rounded text-xs hover:bg-gray-100"
+                          >
+                            {t("common.cancel")}
+                          </button>
+                        </div>
+                        {editError && <div className="text-xs text-red-700">{editError}</div>}
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  <tr key={template.id} className="border-b hover:bg-gray-50">
+                    <td className="px-3 py-2 font-medium">{template.title}</td>
+                    <td className="px-3 py-2 text-gray-600">{template.description || "-"}</td>
+                    <td className="px-3 py-2 text-right">
+                      {template.defaultUnitPrice === null ? "-" : `$${template.defaultUnitPrice.toFixed(2)}`}
+                    </td>
+                    <td className="px-3 py-2">
+                      <span className={`text-xs px-2 py-1 rounded ${template.isActive ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}`}>
+                        {template.isActive ? t("catalog.templates.status.active") : t("catalog.templates.status.inactive")}
+                      </span>
+                    </td>
+                    <td className="px-3 py-2">
+                      <div className="flex gap-1">
+                        <button
+                          onClick={() => handleEditClick(template)}
+                          className="px-2 py-1 border rounded text-xs hover:bg-gray-100"
+                        >
+                          {t("common.edit")}
+                        </button>
+                        {template.isActive ? (
+                          <button
+                            onClick={() => handleToggleActive(template.id, false)}
+                            className="px-2 py-1 border rounded text-xs text-red-600 hover:bg-red-50"
+                          >
+                            {t("common.deactivate")}
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleToggleActive(template.id, true)}
+                            className="px-2 py-1 border rounded text-xs text-green-600 hover:bg-green-50"
+                          >
+                            {t("common.reactivate")}
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                )
               ))}
             </tbody>
           </table>

@@ -44,6 +44,16 @@ export async function deactivateTax(
   return taxRepo.update(tax);
 }
 
+export async function reactivateTax(
+  taxId: string,
+  taxRepo: TaxRepository
+): Promise<Tax> {
+  const tax = await taxRepo.getById(taxId);
+  tax.isActive = true;
+  tax.updatedAt = new Date();
+  return taxRepo.update(tax);
+}
+
 export async function archiveTax(
   taxId: string,
   taxRepo: TaxRepository

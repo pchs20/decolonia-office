@@ -19,6 +19,7 @@ export interface WorkTemplateUpdateRequest {
   title?: string;
   description?: string | null;
   defaultUnitPrice?: number | null;
+  isActive?: boolean;
 }
 
 export interface WorkTemplateListResponse {

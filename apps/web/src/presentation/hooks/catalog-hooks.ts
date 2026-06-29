@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
-import { TaxCreateRequest } from "@/api/schemas/tax-schemas";
+import { TaxCreateRequest, TaxUpdateRequest } from "@/api/schemas/tax-schemas";
 import { TaxResponse } from "@/api/schemas/tax-schemas";
-import { WorkTemplateCreateRequest } from "@/api/schemas/work-template-schemas";
+import { WorkTemplateCreateRequest, WorkTemplateUpdateRequest } from "@/api/schemas/work-template-schemas";
 import { WorkTemplateResponse } from "@/api/schemas/work-template-schemas";
 import { CommercialDocumentSettingsResponse } from "@/api/schemas/commercial-document-settings-schemas";
 import { TaxService } from "@/presentation/api-clients/tax.service";
@@ -45,7 +45,39 @@ export function useTaxesList() {
     }
   }, []);
 
-  return { getAll, create, taxes, loading, error };
+  const update = useCallback(async (id: string, data: TaxUpdateRequest) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const updated = await TaxService.update(id, data);
+      setTaxes(prev => prev.map(t => t.id === id ? updated : t));
+      return updated;
+    } catch (err) {
+      const message = (err as Error).message;
+      setError(message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const toggleActive = useCallback(async (id: string, isActive: boolean) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const updated = await TaxService.toggleActive(id, isActive);
+      setTaxes(prev => prev.map(t => t.id === id ? updated : t));
+      return updated;
+    } catch (err) {
+      const message = (err as Error).message;
+      setError(message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  return { getAll, create, update, toggleActive, taxes, loading, error };
 }
 
 export function useWorkTemplatesList() {
@@ -85,7 +117,39 @@ export function useWorkTemplatesList() {
     }
   }, []);
 
-  return { getAll, create, templates, loading, error };
+  const update = useCallback(async (id: string, data: WorkTemplateUpdateRequest) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const updated = await WorkTemplateService.update(id, data);
+      setTemplates(prev => prev.map(t => t.id === id ? updated : t));
+      return updated;
+    } catch (err) {
+      const message = (err as Error).message;
+      setError(message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const toggleActive = useCallback(async (id: string, isActive: boolean) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const updated = await WorkTemplateService.toggleActive(id, isActive);
+      setTemplates(prev => prev.map(t => t.id === id ? updated : t));
+      return updated;
+    } catch (err) {
+      const message = (err as Error).message;
+      setError(message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  return { getAll, create, update, toggleActive, templates, loading, error };
 }
 
 export function useCommercialDocumentSettings() {

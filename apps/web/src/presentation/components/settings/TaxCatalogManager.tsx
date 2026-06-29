@@ -6,10 +6,13 @@ import { useTaxesList } from "@/presentation/hooks/catalog-hooks";
 
 export function TaxCatalogManager() {
   const { t } = useTranslation();
-  const { getAll, create, taxes, loading } = useTaxesList();
+  const { getAll, create, update, toggleActive, taxes, loading } = useTaxesList();
   const [showForm, setShowForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editFormData, setEditFormData] = useState({ name: "", rate: "" });
+  const [editError, setEditError] = useState<string | null>(null);
 
   useEffect(() => {
     void getAll(1, 100, true).catch(err => {
@@ -22,8 +25,6 @@ export function TaxCatalogManager() {
     rate: "",
     behavior: "added"
   });
-  const activeStatusLabel = t("catalog.taxes.status.active" as any);
-  const archivedStatusLabel = t("catalog.taxes.status.archived" as any);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -56,6 +57,46 @@ export function TaxCatalogManager() {
       setError(err instanceof Error ? err.message : t("common.errors.unknown"));
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleEditClick = (tax: { id: string; name: string; rate: number }) => {
+    setEditingId(tax.id);
+    setEditFormData({ name: tax.name, rate: String(tax.rate) });
+    setEditError(null);
+    setShowForm(false);
+    setError(null);
+  };
+
+  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setEditFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleEditSave = async (id: string) => {
+    setEditError(null);
+    const rate = Number(editFormData.rate);
+    if (!editFormData.name.trim() || !Number.isFinite(rate) || rate < 0 || rate > 100) {
+      setEditError(t("common.errors.unknown"));
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await update(id, { name: editFormData.name.trim(), rate });
+      setEditingId(null);
+    } catch (err) {
+      setEditError(err instanceof Error ? err.message : t("common.errors.unknown"));
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleToggleActive = async (id: string, isActive: boolean) => {
+    setEditError(null);
+    try {
+      await toggleActive(id, isActive);
+    } catch (err) {
+      setEditError(err instanceof Error ? err.message : t("common.errors.unknown"));
     }
   };
 
@@ -137,20 +178,97 @@ export function TaxCatalogManager() {
                 <th className="px-3 py-2 text-left font-semibold">{t("catalog.taxes.fields.rate")}</th>
                 <th className="px-3 py-2 text-left font-semibold">{t("catalog.taxes.fields.behavior")}</th>
                 <th className="px-3 py-2 text-left font-semibold">{t("catalog.taxes.fields.status")}</th>
+                <th className="px-3 py-2 text-left font-semibold"></th>
               </tr>
             </thead>
             <tbody>
               {taxes.map(tax => (
-                <tr key={tax.id} className="border-b hover:bg-gray-50">
-                  <td className="px-3 py-2">{tax.name}</td>
-                  <td className="px-3 py-2">{tax.rate}%</td>
-                  <td className="px-3 py-2">{tax.behavior}</td>
-                  <td className="px-3 py-2">
-                    <span className={`text-xs px-2 py-1 rounded ${tax.isActive ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}`}>
-                      {tax.isActive ? activeStatusLabel : archivedStatusLabel}
-                    </span>
-                  </td>
-                </tr>
+                editingId === tax.id ? (
+                  <tr key={tax.id} className="border-b bg-blue-50">
+                    <td className="px-3 py-2">
+                      <input
+                        type="text"
+                        name="name"
+                        value={editFormData.name}
+                        onChange={handleEditChange}
+                        className="w-full px-2 py-1 border rounded text-sm"
+                      />
+                    </td>
+                    <td className="px-3 py-2">
+                      <input
+                        type="number"
+                        name="rate"
+                        step="0.01"
+                        value={editFormData.rate}
+                        onChange={handleEditChange}
+                        className="w-full px-2 py-1 border rounded text-sm"
+                      />
+                    </td>
+                    <td className="px-3 py-2">{tax.behavior}</td>
+                    <td className="px-3 py-2">
+                      <span className={`text-xs px-2 py-1 rounded ${tax.isActive ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}`}>
+                        {tax.isActive ? t("catalog.taxes.status.active") : t("catalog.taxes.status.inactive")}
+                      </span>
+                    </td>
+                    <td className="px-3 py-2">
+                      <div className="flex flex-col gap-1">
+                        <div className="flex gap-1">
+                          <button
+                            onClick={() => handleEditSave(tax.id)}
+                            disabled={submitting}
+                            className="px-2 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700"
+                          >
+                            {submitting ? t("common.saving") : t("common.save")}
+                          </button>
+                          <button
+                            onClick={() => setEditingId(null)}
+                            disabled={submitting}
+                            className="px-2 py-1 border rounded text-xs hover:bg-gray-100"
+                          >
+                            {t("common.cancel")}
+                          </button>
+                        </div>
+                        {editError && <div className="text-xs text-red-700">{editError}</div>}
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  <tr key={tax.id} className="border-b hover:bg-gray-50">
+                    <td className="px-3 py-2">{tax.name}</td>
+                    <td className="px-3 py-2">{tax.rate}%</td>
+                    <td className="px-3 py-2">{tax.behavior}</td>
+                    <td className="px-3 py-2">
+                      <span className={`text-xs px-2 py-1 rounded ${tax.isActive ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}`}>
+                        {tax.isActive ? t("catalog.taxes.status.active") : t("catalog.taxes.status.inactive")}
+                      </span>
+                    </td>
+                    <td className="px-3 py-2">
+                      <div className="flex gap-1">
+                        <button
+                          onClick={() => handleEditClick(tax)}
+                          className="px-2 py-1 border rounded text-xs hover:bg-gray-100"
+                        >
+                          {t("common.edit")}
+                        </button>
+                        {tax.isActive ? (
+                          <button
+                            onClick={() => handleToggleActive(tax.id, false)}
+                            className="px-2 py-1 border rounded text-xs text-red-600 hover:bg-red-50"
+                          >
+                            {t("common.deactivate")}
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleToggleActive(tax.id, true)}
+                            className="px-2 py-1 border rounded text-xs text-green-600 hover:bg-green-50"
+                          >
+                            {t("common.reactivate")}
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                )
               ))}
             </tbody>
           </table>

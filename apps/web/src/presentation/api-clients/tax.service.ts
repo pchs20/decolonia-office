@@ -1,5 +1,6 @@
 import {
   TaxCreateRequest,
+  TaxUpdateRequest,
   TaxListResponse,
   TaxResponse
 } from "@/api/schemas/tax-schemas";
@@ -21,6 +22,24 @@ export class TaxService {
     }
 
     return response.json();
+  }
+
+  static async update(id: string, data: TaxUpdateRequest): Promise<TaxResponse> {
+    const response = await fetch(`${API_ENDPOINT}/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to update tax definition");
+    }
+
+    return response.json();
+  }
+
+  static async toggleActive(id: string, isActive: boolean): Promise<TaxResponse> {
+    return TaxService.update(id, { isActive });
   }
 
   static async getAll(
