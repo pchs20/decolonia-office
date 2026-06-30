@@ -39,6 +39,7 @@
   },
   "nav": {
     "appName": "Decolonia Office",
+    "home": "Inici",
     "clients": "Clients",
     "workers": "Treballadors",
     "budgets": "Pressupostos",
@@ -265,7 +266,7 @@
     }
   },
   "catalog": {
-    "title": "Configuració de documents comercials",
+    "title": "Configuració",
     "tabs": {
       "taxes": "Impostos",
       "templates": "Plantilles de treball",

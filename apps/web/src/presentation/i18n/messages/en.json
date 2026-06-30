@@ -39,6 +39,7 @@
   },
   "nav": {
     "appName": "Decolonia Office",
+    "home": "Home",
     "clients": "Clients",
     "workers": "Workers",
     "budgets": "Budgets",
@@ -274,7 +275,7 @@
     }
   },
   "catalog": {
-    "title": "Commercial Documents Settings",
+    "title": "Settings",
     "tabs": {
       "taxes": "Tax Definitions",
       "templates": "Work Templates",

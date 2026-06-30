@@ -52,7 +52,7 @@ export function WorkerCatalogManager() {
         <h3 className="text-lg font-semibold">{t("catalog.tabs.workers")}</h3>
         <button
           onClick={() => router.push("/settings/workers/new")}
-          className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+          className="px-3 py-1 bg-settings text-white text-sm rounded hover:bg-settings/90"
         >
           + {t("workers.addButton")}
         </button>
@@ -100,7 +100,7 @@ export function WorkerCatalogManager() {
                     )}
                     <Link
                       href={`/settings/workers/${worker.id}`}
-                      className="text-blue-600 hover:underline"
+                      className="text-gray-900 hover:underline"
                       onClick={event => event.stopPropagation()}
                     >
                       {worker.name}
@@ -113,14 +113,14 @@ export function WorkerCatalogManager() {
                       <button
                         onClick={() => handleSetPrimary(worker.id)}
                         disabled={processingId === worker.id}
-                        className="text-blue-600 hover:text-blue-800 text-xs disabled:opacity-50"
+                        className="px-2 py-1 bg-settings/10 text-settings text-xs rounded hover:bg-settings/20 disabled:opacity-50"
                       >
                         {processingId === worker.id ? t("common.loading") : t("workers.setAsPrimary")}
                       </button>
                     )}
                     <button
                       onClick={() => handleEdit(worker.id)}
-                      className="text-blue-600 hover:text-blue-800 text-xs"
+                      className="px-2 py-1 bg-settings/10 text-settings text-xs rounded hover:bg-settings/20"
                     >
                       {t("common.edit")}
                     </button>
@@ -128,7 +128,7 @@ export function WorkerCatalogManager() {
                       <button
                         onClick={() => handleDelete(worker.id)}
                         disabled={processingId === worker.id}
-                        className="text-red-600 hover:text-red-800 text-xs disabled:opacity-50"
+                        className="px-2 py-1 bg-danger/10 text-danger text-xs rounded hover:bg-danger/20 disabled:opacity-50"
                       >
                         {t("common.delete")}
                       </button>

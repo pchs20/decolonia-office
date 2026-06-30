@@ -770,7 +770,7 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
             <div className="flex justify-end">
               <button
                 type="button"
-                className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+                className="px-3 py-1 text-sm bg-budgets text-white rounded hover:bg-budgets/90"
                 onClick={() => {
                   if (showItemForm && isItemFormDirty) {
                     const shouldDiscard = window.confirm(t("common.unsavedChanges"));
@@ -923,7 +923,7 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
         <button
           type="submit"
           disabled={loading || budgetLoading || (!isEditing && (!primaryWorker || primaryWorkerLoading))}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400"
+          className="px-4 py-2 bg-budgets text-white rounded hover:bg-budgets/90 disabled:bg-gray-400"
         >
           {loading ? t("common.saving") : t("common.save")}
         </button>

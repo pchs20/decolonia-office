@@ -8,6 +8,7 @@ import { JobItemsTable } from "@/presentation/components/pdf/JobItemsTable";
 import { TotalsBlock } from "@/presentation/components/pdf/TotalsBlock";
 import { PaymentBlock } from "@/presentation/components/pdf/PaymentBlock";
 import { PdfLabels } from "@/presentation/i18n/pdf-translations";
+import { brandColors } from "@/lib/brand-colors";
 
 const styles = StyleSheet.create({
   page: {
@@ -50,7 +51,7 @@ const styles = StyleSheet.create({
   },
   accentBar: {
     height: 6,
-    backgroundColor: "#2E7D32",
+    backgroundColor: brandColors.invoices.DEFAULT,
     marginTop: -40,
     marginLeft: -48,
     marginRight: -48,

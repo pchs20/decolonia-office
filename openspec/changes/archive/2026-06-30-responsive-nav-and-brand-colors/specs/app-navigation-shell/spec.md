@@ -1,8 +1,4 @@
-## Purpose
-
-Provide a persistent navigation shell wrapping all app pages (clients, workers, budgets, invoices, settings, and the home page dashboard), containing app branding, route navigation, and language toggle controls.
-
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: App navigation shell layout
 The system SHALL provide a `(web-routes)/layout.tsx` server component that wraps all app route pages (clients, workers, budgets, invoices, settings, and the home page dashboard) with an `<I18nProvider>` and an `<AppShell>` component. On large screens (`md` breakpoint and above) the shell SHALL render a persistent top navigation bar. On small screens (below `md`) the shell SHALL render a minimal top bar and a fixed bottom tab bar. The root route (`/`) SHALL resolve inside this group. This layout SHALL NOT apply to `/api/*` or `/api/docs` routes.
@@ -59,20 +55,20 @@ The system SHALL render a fixed bottom navigation bar on small screens (below `m
 
 ---
 
-### Requirement: Main navigation menu
-The system SHALL display navigation to all available features via both the top bar (desktop) and the bottom tab bar (mobile). The nav items SHALL cover: Home (`/`), Clients (`/clients`), Budgets (`/budgets`), Invoices (`/invoices`), and Settings (`/settings/catalog`).
+### Requirement: Language toggle dropdown
+The system SHALL provide a `<LanguageToggle>` client component in `src/presentation/components/LanguageToggle.tsx` that renders a Globe icon followed by the current locale code and a dropdown chevron. On interaction it SHALL display a dropdown listing all supported locales. On selection it SHALL update the react-i18next language in memory and write the `locale` cookie. On large screens the toggle SHALL display the Globe icon and the current locale code; on small screens the Globe icon alone MAY be used if space is constrained.
 
-#### Scenario: Budgets nav item navigates to budgets list
-- **WHEN** the user activates the Budgets nav item (top or bottom)
-- **THEN** the system SHALL navigate to `/budgets`
+#### Scenario: Toggle shows Globe icon and current locale on desktop
+- **WHEN** the active locale is `es` and the viewport is `md` or above
+- **THEN** the toggle SHALL display a Globe icon and the text `ES`
 
-#### Scenario: Invoices nav item navigates to invoices list
-- **WHEN** the user activates the Invoices nav item (top or bottom)
-- **THEN** the system SHALL navigate to `/invoices`
+#### Scenario: Dropdown opens on click
+- **WHEN** the user clicks the language toggle
+- **THEN** a dropdown SHALL appear listing `CA`, `ES`, and `EN`
 
-#### Scenario: Settings nav item navigates to settings
-- **WHEN** the user activates the Settings nav item (top or bottom)
-- **THEN** the system SHALL navigate to `/settings/catalog`
+#### Scenario: User can switch locale via dropdown
+- **WHEN** the user selects `ca` from the dropdown
+- **THEN** the UI text SHALL switch to Catalan without a full page reload
 
 ---
 
@@ -89,17 +85,23 @@ The system SHALL provide a `<SignOutButton>` client component in `src/presentati
 
 ---
 
-### Requirement: Language toggle dropdown
-The system SHALL provide a `<LanguageToggle>` client component in `src/presentation/components/LanguageToggle.tsx` that renders a Globe icon followed by the current locale code and a dropdown chevron. On interaction it SHALL display a dropdown listing all supported locales. On selection it SHALL update the react-i18next language in memory and write the `locale` cookie. On large screens the toggle SHALL display the Globe icon and the current locale code; on small screens the Globe icon alone MAY be used if space is constrained.
+### Requirement: Main navigation menu
+The system SHALL display navigation to all available features via both the top bar (desktop) and the bottom tab bar (mobile). The nav items SHALL cover: Home (`/`), Clients (`/clients`), Budgets (`/budgets`), Invoices (`/invoices`), and Settings (`/settings/catalog`).
 
-#### Scenario: Toggle shows Globe icon and current locale on desktop
-- **WHEN** the active locale is `es` and the viewport is `md` or above
-- **THEN** the toggle SHALL display a Globe icon and the text `ES`
+#### Scenario: Budgets nav item navigates to budgets list
+- **WHEN** the user activates the Budgets nav item (top or bottom)
+- **THEN** the system SHALL navigate to `/budgets`
 
-#### Scenario: Dropdown opens on click
-- **WHEN** the user clicks the language toggle
-- **THEN** a dropdown SHALL appear listing `CA`, `ES`, and `EN`
+#### Scenario: Invoices nav item navigates to invoices list
+- **WHEN** the user activates the Invoices nav item (top or bottom)
+- **THEN** the system SHALL navigate to `/invoices`
 
-#### Scenario: User can switch locale via dropdown
-- **WHEN** the user selects `ca` from the dropdown
-- **THEN** the UI text SHALL switch to Catalan without a full page reload
+#### Scenario: Settings nav item navigates to settings
+- **WHEN** the user activates the Settings nav item (top or bottom)
+- **THEN** the system SHALL navigate to `/settings/catalog`
+
+## REMOVED Requirements
+
+### Requirement: Quick action buttons
+**Reason**: Removed from the nav shell. Quick-action buttons (New Budget / New Invoice) are adequately surfaced on the home page dashboard and within each section's list page. A persistent nav-level shortcut adds clutter on the now-compact mobile nav.
+**Migration**: Users reach the new-document forms from the dashboard quick-action cards or the section "New" buttons on list pages.

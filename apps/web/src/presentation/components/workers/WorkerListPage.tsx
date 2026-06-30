@@ -115,7 +115,7 @@ export function WorkerListPage() {
                       <td className="px-4 py-3 font-medium">
                         <Link
                           href={`/workers/${worker.id}`}
-                          className="text-blue-600 hover:underline"
+                          className="text-gray-900 hover:underline"
                           onClick={event => event.stopPropagation()}
                         >
                           {worker.name}

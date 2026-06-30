@@ -122,7 +122,7 @@ export function WorkTemplateCatalogManager() {
         <h3 className="text-lg font-semibold">{t("catalog.templates.title")}</h3>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+          className="px-3 py-1 bg-settings text-white text-sm rounded hover:bg-settings/90"
         >
           + {t("catalog.templates.addButton")}
         </button>
@@ -169,7 +169,7 @@ export function WorkTemplateCatalogManager() {
             <button
               type="submit"
               disabled={submitting}
-              className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+              className="px-3 py-1 bg-settings text-white text-sm rounded hover:bg-settings/90"
             >
               {submitting ? t("common.saving") : t("common.add")}
             </button>
@@ -196,7 +196,7 @@ export function WorkTemplateCatalogManager() {
             <tbody>
               {templates.map(template => (
                 editingId === template.id ? (
-                  <tr key={template.id} className="border-b bg-blue-50">
+                  <tr key={template.id} className="border-b bg-settings/10">
                     <td className="px-3 py-2">
                       <input
                         type="text"
@@ -236,7 +236,7 @@ export function WorkTemplateCatalogManager() {
                           <button
                             onClick={() => handleEditSave(template.id)}
                             disabled={submitting}
-                            className="px-2 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700"
+                            className="px-2 py-1 bg-settings text-white text-xs rounded hover:bg-settings/90"
                           >
                             {submitting ? t("common.saving") : t("common.save")}
                           </button>
@@ -268,21 +268,21 @@ export function WorkTemplateCatalogManager() {
                       <div className="flex gap-1">
                         <button
                           onClick={() => handleEditClick(template)}
-                          className="px-2 py-1 border rounded text-xs hover:bg-gray-100"
+                          className="px-2 py-1 bg-settings/10 text-settings text-xs rounded hover:bg-settings/20"
                         >
                           {t("common.edit")}
                         </button>
                         {template.isActive ? (
                           <button
                             onClick={() => handleToggleActive(template.id, false)}
-                            className="px-2 py-1 border rounded text-xs text-red-600 hover:bg-red-50"
+                            className="px-2 py-1 bg-danger/10 text-danger text-xs rounded hover:bg-danger/20"
                           >
                             {t("common.deactivate")}
                           </button>
                         ) : (
                           <button
                             onClick={() => handleToggleActive(template.id, true)}
-                            className="px-2 py-1 border rounded text-xs text-green-600 hover:bg-green-50"
+                            className="px-2 py-1 bg-invoices/10 text-invoices text-xs rounded hover:bg-invoices/20"
                           >
                             {t("common.reactivate")}
                           </button>
