@@ -8,27 +8,84 @@ The goal is to reduce manual paperwork, avoid duplicated effort, and make it sim
 
 The system is designed to be easy to use, even for non-technical users, and works smoothly on both laptop and tablet devices.
 
-## Client Management Foundation
+## Features
 
-The platform includes a complete client management foundation:
+### Home Dashboard
 
-- Create, view, edit, and soft-delete clients
-- Search clients by name (case-insensitive)
-- Paginated client listing in the web app
-- API documentation for client endpoints in Swagger UI
+Overview of recent activity — latest budgets and invoices at a glance, with quick-access links to each section.
 
-Main routes:
+### Client Management
 
-- Web: `http://localhost:3000/clients`
-- API: `http://localhost:3000/api/clients`
-- Swagger: `http://localhost:3000/api/docs`
+- Create, view, edit, and soft-delete clients (individual or company)
+- Separate address fields: street, city, postal code
+- Case-insensitive name search, paginated listing
 
-## Bootstrap Stack
+### Worker Profiles
+
+- Manage workers (issuers of documents) with full address, tax ID, phone, email, and bank account details
+- Bank account is materialized into invoice PDFs as a payment block
+- Designate a **primary worker** in Settings — automatically assigned as issuer when creating new budgets and invoices
+
+### Budget Management
+
+- Create budgets linked to a client; primary worker is auto-assigned as issuer
+- Auto-assigned global sequential number (Budget #1, #2, …)
+- Add, edit, remove, and reorder line items (job items): title, description, quantity, unit price
+- Two pricing modes: **computed** (unit price × quantity) or **manual subtotal override**
+- Apply an optional tax from the catalog (e.g., IVA 21%); tax snapshot is materialized at creation
+- Recalculated subtotal, tax, and total on every item change
+- Track delivered date
+- **Export as PDF** — professional document with issuer block, client block, line items table, and totals
+
+### Invoice Management
+
+- Create invoices independently or **from a budget** (pre-fills client, job items, and notes)
+- Auto-assigned year-scoped sequential number (e.g., 2026/1, 2026/2, …)
+- Same line item and pricing mode capabilities as budgets
+- Track issued date
+- **Export as PDF** — includes payment block with bank account when available
+
+### Document Catalog & Settings
+
+- **Taxes** — define reusable tax entries (name, rate, behavior); applied as snapshots on documents
+- **Work Templates** — reusable line item presets (title, description, default unit price)
+- **Commercial Document Settings** — configure default pricing mode and sequence numbers
+- **Primary Worker** — select which worker is auto-assigned as issuer on new documents
+
+### Multi-language UI
+
+Full interface in **Catalan**, **Spanish**, and **English** — switchable at any time via the language toggle.
+
+### PWA — Installable on iPad & Mobile
+
+- `manifest.json` + iOS meta tags for Safari "Add to Home Screen" install
+- Launches in standalone mode (no browser chrome) on iPad and mobile
+- Responsive layout: desktop top navigation bar, mobile fixed bottom tab bar with section icons and brand colours
+
+---
+
+## App Routes (local dev)
+
+| Section | URL |
+|---|---|
+| Home dashboard | `http://localhost:3000/` |
+| Clients | `http://localhost:3000/clients` |
+| Budgets | `http://localhost:3000/budgets` |
+| Invoices | `http://localhost:3000/invoices` |
+| Settings | `http://localhost:3000/settings` |
+| Swagger UI | `http://localhost:3000/api/docs` |
+
+---
+
+## Tech Stack
 
 - Monorepo: `pnpm` workspaces + `turbo`
-- Frontend: Next.js (TypeScript)
+- Frontend: Next.js 15 (TypeScript, App Router)
 - API runtime: Next.js Route Handlers (serverless-compatible REST)
-- Database: PostgreSQL (Docker Compose)
+- Database: PostgreSQL (Docker Compose locally, Supabase in deployment)
+- PDF generation: `@react-pdf/renderer`
+- Icons: `lucide-react`
+- Auth: Auth.js v5 (Google OAuth)
 
 ## Repository Layout
 
