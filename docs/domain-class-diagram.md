@@ -36,6 +36,7 @@ classDiagram
 
   class Worker {
     <<current>>
+    +string? bankAccount
   }
 
   class CommercialDocument {
@@ -125,6 +126,7 @@ classDiagram
     +string taxId
     +string? phone
     +string? email
+    +string? bankAccount
     +Address workAddress
     +Address billingAddress
   }
