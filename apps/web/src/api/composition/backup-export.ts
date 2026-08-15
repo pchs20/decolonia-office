@@ -37,13 +37,16 @@ export async function getCloudSyncCredentials(
 
 export async function getCloudSyncAuthorizationStatus(
   request: NextRequest
-): Promise<{ authorized: boolean }> {
+): Promise<{ authorized: boolean; reason?: string }> {
   try {
     await getGoogleDriveOAuthCredentials(request);
     return { authorized: true };
   } catch (error) {
-    if (error instanceof GoogleDriveAuthorizationError || error instanceof ApiError) {
-      return { authorized: false };
+    if (error instanceof GoogleDriveAuthorizationError) {
+      return { authorized: false, reason: error.reason };
+    }
+    if (error instanceof ApiError) {
+      return { authorized: false, reason: "authorization_unavailable" };
     }
     throw error instanceof Error ? error : new Error(String(error));
   }
