@@ -290,6 +290,7 @@ export function getOpenApiDocument() {
       { name: "CommercialDocumentSettings", description: "Commercial document pricing settings endpoints" },
       { name: "Health", description: "Health and connectivity endpoints" },
       { name: "Invoices", description: "Invoice management endpoints" },
+      { name: "Backup", description: "Backup and export endpoints" },
       { name: "Taxes", description: "Tax definition management endpoints" },
       { name: "Workers", description: "Worker management endpoints" },
       { name: "WorkTemplates", description: "Work template management endpoints" }
@@ -741,6 +742,75 @@ export function getOpenApiDocument() {
                 }
               }
             }
+          }
+        }
+      },
+      "/api/backup/cloud": {
+        post: {
+          tags: ["Backup"],
+          summary: "Synchronize backup data to Google Drive",
+          requestBody: {
+            required: false,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    cursor: { type: "integer", minimum: 0, default: 0 },
+                    batchSize: { type: "integer", minimum: 1, maximum: 20, default: 5 }
+                  }
+                }
+              }
+            }
+          },
+          responses: {
+            "200": {
+              description: "Cloud synchronization batch progress",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      cursor: { type: "integer" },
+                      nextCursor: { type: "integer", nullable: true },
+                      processed: { type: "integer" },
+                      skipped: { type: "integer" },
+                      remaining: { type: "integer" },
+                      spreadsheetUpdated: { type: "boolean" },
+                      failures: { type: "array", items: { type: "object" } }
+                    },
+                    required: ["cursor", "nextCursor", "processed", "skipped", "remaining", "spreadsheetUpdated", "failures"]
+                  }
+                }
+              }
+            },
+            "400": { description: "Invalid batch request" },
+            "401": { description: "Unauthorized" },
+            "500": { description: "Cloud synchronization failed" }
+          }
+        }
+      },
+      "/api/backup/cloud/authorize": {
+        get: {
+          tags: ["Backup"],
+          summary: "Start Google Drive authorization",
+          responses: {
+            "302": { description: "Redirect to Google authorization" },
+            "401": { description: "Unauthorized" }
+          }
+        }
+      },
+      "/api/backup/download": {
+        get: {
+          tags: ["Backup"],
+          summary: "Download a complete backup ZIP",
+          responses: {
+            "200": {
+              description: "Backup ZIP archive",
+              content: { "application/zip": { schema: { type: "string", format: "binary" } } }
+            },
+            "401": { description: "Unauthorized" },
+            "500": { description: "Backup generation failed" }
           }
         }
       },

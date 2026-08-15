@@ -271,7 +271,22 @@
       "taxes": "Impostos",
       "templates": "Plantilles de treball",
       "pricing": "Preus",
-      "numbering": "Numeració de documents"
+      "numbering": "Numeració de documents",
+      "backup": "Còpia i exportació"
+    },
+    "backup": {
+      "title": "Còpia i exportació",
+      "description": "Crea una còpia a Google Drive o descarrega un fitxer ZIP complet.",
+      "syncButton": "Sincronitzar amb Google Drive",
+      "authorizeButton": "Autoritzar Google Drive",
+      "downloadButton": "Descarregar còpia ZIP",
+      "syncing": "Sincronitzant...",
+      "inProgress": "Sincronitzant... queden {{remaining}} documents.",
+      "completed": "Sincronització completada: {{processed}} pujats, {{skipped}} omesos, {{failed}} fallits.",
+      "failedDocuments": "Documents amb errors",
+      "errors": {
+        "syncFailed": "La sincronització amb Google Drive ha fallat"
+      }
     },
     "pricing": {
       "title": "Valors per defecte de preus",

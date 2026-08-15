@@ -8,12 +8,13 @@ import { WorkTemplateCatalogManager } from "./WorkTemplateCatalogManager";
 import { DocumentSequenceSettings } from "./DocumentSequenceSettings";
 import { CommercialDocumentPricingSettings } from "./CommercialDocumentPricingSettings";
 import { WorkerCatalogManager } from "./WorkerCatalogManager";
+import { BackupExportPanel } from "./BackupExportPanel";
 
 export function CommercialDocumentCatalogAndSettings() {
   const { t } = useTranslation();
   const searchParams = useSearchParams();
   const tabParam = searchParams.get("tab");
-  const validTabs = ["taxes", "templates", "pricing", "numbering", "workers"] as const;
+  const validTabs = ["taxes", "templates", "pricing", "numbering", "workers", "backup"] as const;
   type Tab = (typeof validTabs)[number];
   const initialTab: Tab = validTabs.includes(tabParam as Tab) ? (tabParam as Tab) : "taxes";
   const [activeTab, setActiveTab] = useState<Tab>(initialTab);
@@ -74,6 +75,16 @@ export function CommercialDocumentCatalogAndSettings() {
           >
             {t("catalog.tabs.workers")}
           </button>
+          <button
+            onClick={() => setActiveTab("backup")}
+            className={`px-3 py-2 border-b-2 text-sm font-medium whitespace-nowrap ${
+              activeTab === "backup"
+                ? "border-settings text-settings"
+                : "border-transparent text-gray-600 hover:text-gray-800"
+            }`}
+          >
+            {t("catalog.tabs.backup")}
+          </button>
         </div>
       </div>
 
@@ -83,6 +94,7 @@ export function CommercialDocumentCatalogAndSettings() {
         {activeTab === "pricing" && <CommercialDocumentPricingSettings />}
         {activeTab === "numbering" && <DocumentSequenceSettings />}
         {activeTab === "workers" && <WorkerCatalogManager />}
+        {activeTab === "backup" && <BackupExportPanel />}
       </div>
     </div>
   );

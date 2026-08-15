@@ -281,7 +281,22 @@
       "templates": "Work Templates",
       "pricing": "Pricing",
       "numbering": "Document Numbering",
-      "workers": "Workers"
+      "workers": "Workers",
+      "backup": "Backup & Export"
+    },
+    "backup": {
+      "title": "Backup & Export",
+      "description": "Create a Google Drive backup or download a complete ZIP archive.",
+      "syncButton": "Sync to Google Drive",
+      "authorizeButton": "Authorize Google Drive",
+      "downloadButton": "Download backup ZIP",
+      "syncing": "Syncing...",
+      "inProgress": "Syncing... {{remaining}} documents remaining.",
+      "completed": "Sync complete: {{processed}} uploaded, {{skipped}} skipped, {{failed}} failed.",
+      "failedDocuments": "Documents that failed",
+      "errors": {
+        "syncFailed": "Google Drive synchronization failed"
+      }
     },
     "pricing": {
       "title": "Pricing defaults",

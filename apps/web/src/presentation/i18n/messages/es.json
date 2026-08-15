@@ -281,7 +281,22 @@
       "templates": "Plantillas de trabajo",
       "pricing": "Precios",
       "numbering": "Numeración de documentos",
-      "workers": "Trabajadores"
+      "workers": "Trabajadores",
+      "backup": "Copia y exportación"
+    },
+    "backup": {
+      "title": "Copia y exportación",
+      "description": "Crea una copia en Google Drive o descarga un archivo ZIP completo.",
+      "syncButton": "Sincronizar con Google Drive",
+      "authorizeButton": "Autorizar Google Drive",
+      "downloadButton": "Descargar copia ZIP",
+      "syncing": "Sincronizando...",
+      "inProgress": "Sincronizando... quedan {{remaining}} documentos.",
+      "completed": "Sincronización completada: {{processed}} subidos, {{skipped}} omitidos, {{failed}} fallidos.",
+      "failedDocuments": "Documentos con errores",
+      "errors": {
+        "syncFailed": "La sincronización con Google Drive ha fallado"
+      }
     },
     "pricing": {
       "title": "Valores por defecto de precios",
