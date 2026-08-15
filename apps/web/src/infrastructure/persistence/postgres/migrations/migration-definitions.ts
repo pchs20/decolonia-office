@@ -15,6 +15,8 @@ import addBankAccountToWorkers from "./1719316800000-AddBankAccountToWorkers.sql
 import addWorkerSnapshotBankAccountToBudgets from "./1719316801000-AddWorkerSnapshotBankAccountToBudgets.sql";
 import addWorkerSnapshotBankAccountToInvoices from "./1719316802000-AddWorkerSnapshotBankAccountToInvoices.sql";
 import addIsPrimaryToWorkers from "./1719316803000-AddIsPrimaryToWorkers.sql";
+import createDocumentExportStatesTable from "./2026081500000-CreateDocumentExportStatesTable.sql";
+import addDestinationReferenceToDocumentExportStates from "./2026081500001-AddDestinationReferenceToDocumentExportStates.sql";
 
 export type SqlMigration = {
   id: string;
@@ -107,5 +109,15 @@ export const SQL_MIGRATIONS: SqlMigration[] = [
     id: "1719316803000",
     name: "AddIsPrimaryToWorkers",
     sql: addIsPrimaryToWorkers
+  },
+  {
+    id: "2026081500000",
+    name: "CreateDocumentExportStatesTable",
+    sql: createDocumentExportStatesTable
+  },
+  {
+    id: "2026081500001",
+    name: "AddDestinationReferenceToDocumentExportStates",
+    sql: addDestinationReferenceToDocumentExportStates
   }
 ];

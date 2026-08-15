@@ -51,6 +51,7 @@ Overview of recent activity — latest budgets and invoices at a glance, with qu
 - **Work Templates** — reusable line item presets (title, description, default unit price)
 - **Commercial Document Settings** — configure default pricing mode and sequence numbers
 - **Primary Worker** — select which worker is auto-assigned as issuer on new documents
+- **Backup & Export** — synchronize a complete backup to Google Drive or download it as a ZIP archive
 
 ### Multi-language UI
 
@@ -160,6 +161,26 @@ Contract checks (app must be running):
 pnpm --filter @decolonia/web contract:check
 ```
 
+## Testing and Checks
+
+Run the complete web test suite from the repository root:
+
+```bash
+pnpm test
+```
+
+Run TypeScript validation:
+
+```bash
+pnpm check
+```
+
+Run one Jest file directly:
+
+```bash
+pnpm --filter @decolonia/web exec jest src/path/to/file.test.ts --runInBand
+```
+
 ## Authentication
 
 The app is protected with Google OAuth via [Auth.js v5](https://authjs.dev). Only email addresses listed in `ALLOWED_EMAILS` can sign in. Sessions are stored in a signed HTTP-only cookie — no database table required.
@@ -182,6 +203,57 @@ npx auth secret
 
 Copy the output into `AUTH_SECRET` in your `.env` file.
 
+### Google Drive backup configuration
+
+The cloud backup uses the logged-in worker's Google OAuth authorization and one shared folder in a normal personal Google Drive. Choose one canonical worker to create the folder; share it with the other authorized worker. Both workers authorize Drive access with their own Google accounts, but synchronization always targets the same folder and files.
+
+#### Create the Google Cloud project and APIs
+
+1. Open the [Google Cloud Console](https://console.cloud.google.com/), create or select a project, and note its project ID.
+2. Enable the [Google Drive API](https://console.cloud.google.com/apis/library/drive.googleapis.com).
+3. Enable the [Google Sheets API](https://console.cloud.google.com/apis/library/sheets.googleapis.com).
+
+#### Configure Google OAuth Drive access
+
+1. In Google Cloud Console, open **APIs & Services → Credentials**.
+2. Create an OAuth 2.0 Client ID for a Web application if one does not already exist.
+3. Add these authorized redirect URIs:
+   - `http://localhost:3000/api/auth/callback/google`
+   - `https://<your-app>.vercel.app/api/auth/callback/google`
+4. Ensure the Google OAuth consent configuration includes the Drive scope requested by the application.
+5. Keep the OAuth client ID and secret in `AUTH_GOOGLE_ID` and `AUTH_GOOGLE_SECRET`; never expose the client secret in the browser.
+
+#### Create and share the personal Drive folder
+
+1. In the canonical worker's normal **My Drive**, create a folder named `Decolonia`.
+2. Share that folder with the other authorized worker's Google email, granting Editor access.
+3. Open the folder and copy its ID from the URL. For a URL such as `https://drive.google.com/drive/folders/ABC123`, the folder ID is `ABC123`.
+
+The application creates this structure inside the configured folder:
+
+```text
+Decolonia/                    # the folder referenced by GOOGLE_DRIVE_SHARED_FOLDER_ID
+├── Decolonia-data.xlsx
+├── Budgets/<year>/Q1-Q4/
+└── Invoices/<year>/Q1-Q4/
+```
+
+#### Set the environment variables
+
+Set these values in `apps/web/.env` locally and in the matching Vercel environment:
+
+- `GOOGLE_DRIVE_SHARED_FOLDER_ID` with the shared `Decolonia` folder ID
+
+Example format:
+
+```dotenv
+GOOGLE_DRIVE_SHARED_FOLDER_ID=ABC123
+```
+
+When a worker clicks **Authorize Google Drive** in Settings, Google grants that worker Drive access. Access tokens are refreshed server-side; provider tokens are not returned in the browser session. If access is revoked or expires, authorize that worker again.
+
+Official references: [Google OAuth web server flow](https://developers.google.com/identity/protocols/oauth2/web-server), [Drive API authorization](https://developers.google.com/drive/api/guides/api-specific-auth), and [Drive sharing](https://support.google.com/drive/answer/2494822).
+
 ## Managed Postgres and Environment Variables
 
 Selected free-tier provider: **Supabase Postgres (Free Plan)**.
@@ -196,6 +268,7 @@ Required environment variables:
 - `AUTH_GOOGLE_ID`: Google OAuth client ID (from Google Cloud Console)
 - `AUTH_GOOGLE_SECRET`: Google OAuth client secret (from Google Cloud Console)
 - `ALLOWED_EMAILS`: comma-separated list of email addresses allowed to sign in (e.g. `alice@gmail.com,bob@gmail.com`)
+- `GOOGLE_DRIVE_SHARED_FOLDER_ID`: ID of the canonical personal Drive folder shared with the other worker
 
 For local development, copy `.env.example` to `.env` and fill in the values.
 

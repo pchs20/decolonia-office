@@ -10,6 +10,7 @@
     "stop:infra": "docker compose down",
     "dev:apps": "turbo run dev --parallel --filter=@decolonia/web",
     "build": "turbo run build --filter=@decolonia/web",
+    "test": "turbo run test --filter=@decolonia/web",
     "check": "turbo run check --filter=@decolonia/web",
     "verify:connectivity": "pnpm --filter @decolonia/web health:check"
   },
