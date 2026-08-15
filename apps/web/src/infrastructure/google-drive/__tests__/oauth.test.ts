@@ -61,4 +61,22 @@ describe("Google Drive OAuth", () => {
       getGoogleDriveOAuthCredentials(new NextRequest("http://localhost/api/backup/cloud"))
     ).rejects.toBeInstanceOf(GoogleDriveAuthorizationError);
   });
+
+  it("classifies rejected token refresh without exposing provider details", async () => {
+    mockedGetToken.mockResolvedValue({
+      googleAccessToken: "expired",
+      googleRefreshToken: "refresh",
+      googleAccessTokenExpiresAt: Math.floor(Date.now() / 1000) - 60,
+      googleSubject: "google-subject"
+    } as never);
+    mockedOAuth2.mockImplementation(() => ({
+      credentials: {},
+      setCredentials: jest.fn(),
+      getAccessToken: jest.fn().mockRejectedValue(new Error("provider secret"))
+    }));
+
+    await expect(
+      getGoogleDriveOAuthCredentials(new NextRequest("http://localhost/api/backup/cloud"))
+    ).rejects.toMatchObject({ reason: "refresh_failed" });
+  });
 });

@@ -10,7 +10,10 @@ export interface GoogleDriveOAuthCredentials {
 }
 
 export class GoogleDriveAuthorizationError extends Error {
-  constructor(message: string) {
+  constructor(
+    message: string,
+    public readonly reason: "missing_refresh_token" | "missing_subject" | "refresh_failed"
+  ) {
     super(message);
     this.name = "GoogleDriveAuthorizationError";
   }
@@ -28,12 +31,12 @@ export async function getGoogleDriveOAuthCredentials(
     : undefined;
 
   if (!refreshToken) {
-    throw new GoogleDriveAuthorizationError("Google Drive access has not been granted. Authorize Drive access and try again.");
+    throw new GoogleDriveAuthorizationError("Google Drive access has not been granted. Authorize Drive access and try again.", "missing_refresh_token");
   }
 
   const googleSubject = typeof token?.googleSubject === "string" ? token.googleSubject : token?.sub;
   if (!googleSubject) {
-    throw new GoogleDriveAuthorizationError("Google subject is missing. Authorize Drive access again.");
+    throw new GoogleDriveAuthorizationError("Google subject is missing. Authorize Drive access again.", "missing_subject");
   }
 
   const expiresAt = typeof token?.googleAccessTokenExpiresAt === "number"
@@ -48,11 +51,16 @@ export async function getGoogleDriveOAuthCredentials(
       process.env.AUTH_GOOGLE_SECRET
     );
     oauth.setCredentials({ access_token: accessToken, refresh_token: refreshToken });
-    const refreshed = await oauth.getAccessToken();
+    let refreshed: { token?: string | null };
+    try {
+      refreshed = await oauth.getAccessToken();
+    } catch {
+      throw new GoogleDriveAuthorizationError("Google Drive authorization must be granted again.", "refresh_failed");
+    }
     accessToken = refreshed.token ?? undefined;
     refreshedExpiresAt = oauth.credentials.expiry_date ?? undefined;
     if (!accessToken) {
-      throw new GoogleDriveAuthorizationError("Google Drive access token could not be refreshed. Authorize Drive again.");
+      throw new GoogleDriveAuthorizationError("Google Drive access token could not be refreshed. Authorize Drive again.", "refresh_failed");
     }
   }
 
