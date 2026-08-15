@@ -1,0 +1,69 @@
+## ADDED Requirements
+
+### Requirement: Read and validate the reviewed client CSV
+
+The importer SHALL read UTF-8 `clients.csv` output from the historical invoice extraction and SHALL validate every row before any database mutation.
+
+#### Scenario: Read an import-ready row
+- **WHEN** a CSV row contains name, type, work address, postal code, and tax ID
+- **THEN** the importer represents it as an eligible client payload and ignores `sourceFiles` for persistence
+
+#### Scenario: Reject an invalid row
+- **WHEN** a row is missing a required field or has an invalid type, phone, or email
+- **THEN** the importer excludes the row from insertion and reports a stable validation reason with its row context
+
+#### Scenario: Use work address for billing
+- **WHEN** billing fields are empty in an otherwise valid row
+- **THEN** the importer fills billing street, city, and postal code from the work address before validation and insertion
+
+### Requirement: Provide a safe dry-run
+
+The importer SHALL run without database writes by default and SHALL require an explicit `--write` flag before inserting any client.
+
+#### Scenario: Default execution
+- **WHEN** the importer is run without `--write`
+- **THEN** it reports eligible inserts, duplicate skips, and invalid rows without changing the database
+
+#### Scenario: Explicit write execution
+- **WHEN** the importer is run with `--write` and valid new rows exist
+- **THEN** it inserts those rows and reports their generated identifiers and outcomes
+
+### Requirement: Skip duplicate clients
+
+The importer SHALL compare normalized tax IDs against existing database clients and duplicate tax IDs within the CSV, skipping duplicates without modifying existing rows.
+
+#### Scenario: Existing database client
+- **WHEN** a valid CSV row has a normalized tax ID already present in the clients table
+- **THEN** the importer skips the row and reports it as an existing duplicate
+
+#### Scenario: Duplicate rows in the CSV
+- **WHEN** multiple valid CSV rows have the same normalized tax ID
+- **THEN** the importer retains one deterministic candidate and reports the remaining rows as duplicates
+
+#### Scenario: Rerun after import
+- **WHEN** the same CSV is imported again after a successful write
+- **THEN** all previously inserted clients are skipped and no duplicate rows are created
+
+### Requirement: Use transactional writes and deterministic reporting
+
+The importer SHALL insert eligible rows in a single PostgreSQL transaction and SHALL produce deterministic counts and row-level outcomes.
+
+#### Scenario: Successful batch
+- **WHEN** all eligible inserts succeed
+- **THEN** the transaction commits and the report lists inserted, skipped, and invalid rows
+
+#### Scenario: Unexpected database failure
+- **WHEN** an insert fails unexpectedly during write mode
+- **THEN** the importer rolls back the transaction and reports the failure without leaving a partial batch
+
+#### Scenario: Repeatable dry-run
+- **WHEN** dry-run is run twice against the same CSV and database state
+- **THEN** the outcome ordering and counts are equivalent
+
+### Requirement: Exclude unresolved review records
+
+The importer SHALL consume only `clients.csv` and SHALL not import rows from `clients-review.csv` until required fields and classification have been resolved.
+
+#### Scenario: Review CSV is present
+- **WHEN** both output CSV files exist
+- **THEN** the importer reads only `clients.csv` and leaves review records untouched
