@@ -1,6 +1,6 @@
 import { google } from "googleapis";
-import { getToken } from "next-auth/jwt";
 import { NextRequest } from "next/server";
+import { readSessionToken } from "@/lib/session-token";
 
 export interface GoogleDriveOAuthCredentials {
   accessToken?: string;
@@ -22,10 +22,7 @@ export class GoogleDriveAuthorizationError extends Error {
 export async function getGoogleDriveOAuthCredentials(
   request: NextRequest
 ): Promise<GoogleDriveOAuthCredentials> {
-  const token = await getToken({
-    req: request,
-    secret: process.env.AUTH_SECRET
-  });
+  const token = await readSessionToken(request);
   const refreshToken = typeof token?.googleRefreshToken === "string"
     ? token.googleRefreshToken
     : undefined;
