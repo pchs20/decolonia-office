@@ -8,7 +8,9 @@ interface SyncResult {
   nextCursor: number | null;
   processed: number;
   skipped: number;
+  skippedCount: number;
   remaining: number;
+  uploadedDocuments: { type: string; path: string }[];
   failures: { documentType: string; documentId: string; message: string }[];
 }
 
@@ -39,7 +41,9 @@ export function BackupExportPanel() {
         nextCursor: null,
         processed: 0,
         skipped: 0,
+        skippedCount: 0,
         remaining: 0,
+        uploadedDocuments: [],
         failures: []
       };
 
@@ -58,7 +62,9 @@ export function BackupExportPanel() {
           nextCursor: body.nextCursor,
           processed: (latest.processed ?? 0) + body.processed,
           skipped: (latest.skipped ?? 0) + body.skipped,
+          skippedCount: (latest.skippedCount ?? 0) + body.skippedCount,
           remaining: body.remaining,
+          uploadedDocuments: [...(latest.uploadedDocuments ?? []), ...(body.uploadedDocuments ?? [])],
           failures: [...latest.failures, ...body.failures]
         };
         setProgress(latest);
@@ -117,13 +123,25 @@ export function BackupExportPanel() {
       </div>
 
       {progress && !syncing && (
-        <p className="text-sm text-green-700" role="status">
-          {t("catalog.backup.completed", {
-            processed: progress.processed,
-            skipped: progress.skipped,
-            failed: progress.failures.length
-          })}
-        </p>
+        <div className="space-y-4">
+          <p className="text-sm text-green-700" role="status">
+            ✅ {t("catalog.backup.syncCompleted", {
+              uploaded: progress.uploadedDocuments.length,
+              skipped: progress.skippedCount,
+              failed: progress.failures.length
+            })}
+          </p>
+          {progress.uploadedDocuments.length > 0 && (
+            <div className="rounded border border-green-200 bg-green-50 p-3">
+              <p className="text-sm font-medium text-green-800">{t("catalog.backup.uploadedDocuments")}</p>
+              <ul className="mt-2 list-disc pl-5 text-sm text-green-700">
+                {progress.uploadedDocuments.map((doc, index) => (
+                  <li key={index}>{doc.path}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
       )}
       {progress && syncing && (
         <p className="text-sm text-gray-700" role="status">
