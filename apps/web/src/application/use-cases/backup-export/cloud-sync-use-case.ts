@@ -42,8 +42,10 @@ export interface CloudSyncBatchResult {
   nextCursor: number | null;
   processed: number;
   skipped: number;
+  skippedCount: number;
   remaining: number;
   spreadsheetUpdated: boolean;
+  uploadedDocuments: { type: ExportDocumentType; path: string }[];
   failures: { documentType: ExportDocumentType; documentId: string; message: string }[];
 }
 
@@ -118,6 +120,7 @@ export async function synchronizeCloudBatch(
   const batch = documents.slice(cursor, cursor + batchSize);
   let processed = 0;
   let skipped = 0;
+  const uploadedDocuments: CloudSyncBatchResult["uploadedDocuments"] = [];
   const failures: CloudSyncBatchResult["failures"] = [];
 
   for (const document of batch) {
@@ -164,6 +167,10 @@ export async function synchronizeCloudBatch(
         externalReference: uploaded.externalReference,
         sourceUpdatedAt
       });
+      const folderType = document.type === "budget" ? "Budgets" : "Invoices";
+      const datePathInfo = getDatePath(date);
+      const path = `${folderType}/${datePathInfo.year}/${datePathInfo.period}/${fileName(document.type, document.record)}`;
+      uploadedDocuments.push({ type: document.type, path });
       processed += 1;
     } catch (error) {
       const message = error instanceof Error ? error.message : "Cloud export failed";
@@ -184,8 +191,10 @@ export async function synchronizeCloudBatch(
     nextCursor,
     processed,
     skipped,
+    skippedCount: skipped,
     remaining: nextCursor === null ? 0 : documents.length - nextCursor,
     spreadsheetUpdated,
+    uploadedDocuments,
     failures
   };
 }

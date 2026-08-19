@@ -293,6 +293,8 @@
       "syncing": "Syncing...",
       "inProgress": "Syncing... {{remaining}} documents remaining.",
       "completed": "Sync complete: {{processed}} uploaded, {{skipped}} skipped, {{failed}} failed.",
+      "syncCompleted": "Sync completed ({{uploaded}} uploaded, {{skipped}} skipped, {{failed}} failed)",
+      "uploadedDocuments": "Uploaded documents",
       "failedDocuments": "Documents that failed",
       "errors": {
         "syncFailed": "Google Drive synchronization failed"

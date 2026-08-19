@@ -283,6 +283,8 @@
       "syncing": "Sincronitzant...",
       "inProgress": "Sincronitzant... queden {{remaining}} documents.",
       "completed": "Sincronització completada: {{processed}} pujats, {{skipped}} omesos, {{failed}} fallits.",
+      "syncCompleted": "Sincronització completada ({{uploaded}} pujats, {{skipped}} omesos, {{failed}} fallits)",
+      "uploadedDocuments": "Documents pujats",
       "failedDocuments": "Documents amb errors",
       "errors": {
         "syncFailed": "La sincronització amb Google Drive ha fallat"
