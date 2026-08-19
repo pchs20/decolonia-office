@@ -1,20 +1,20 @@
 import { NextRequest } from "next/server";
-import { getToken } from "next-auth/jwt";
 import { google } from "googleapis";
+import { readSessionToken } from "@/lib/session-token";
 import {
   GoogleDriveAuthorizationError,
   getGoogleDriveOAuthCredentials
 } from "@/infrastructure/google-drive/oauth";
 import { getGoogleDriveConfig } from "@/infrastructure/google-drive/config";
 
-jest.mock("next-auth/jwt", () => ({ getToken: jest.fn() }));
+jest.mock("@/lib/session-token", () => ({ readSessionToken: jest.fn() }));
 jest.mock("googleapis", () => ({
   google: {
     auth: { OAuth2: jest.fn() }
   }
 }));
 
-const mockedGetToken = getToken as jest.MockedFunction<typeof getToken>;
+const mockedReadSessionToken = readSessionToken as jest.MockedFunction<typeof readSessionToken>;
 const mockedOAuth2 = google.auth.OAuth2 as unknown as jest.Mock;
 
 describe("Google Drive OAuth", () => {
@@ -28,7 +28,7 @@ describe("Google Drive OAuth", () => {
   });
 
   it("refreshes an expired access token without exposing provider credentials", async () => {
-    mockedGetToken.mockResolvedValue({
+    mockedReadSessionToken.mockResolvedValue({
       googleAccessToken: "expired",
       googleRefreshToken: "refresh",
       googleAccessTokenExpiresAt: Math.floor(Date.now() / 1000) - 60,
@@ -55,7 +55,7 @@ describe("Google Drive OAuth", () => {
   });
 
   it("rejects missing Drive authorization", async () => {
-    mockedGetToken.mockResolvedValue({} as never);
+    mockedReadSessionToken.mockResolvedValue({} as never);
 
     await expect(
       getGoogleDriveOAuthCredentials(new NextRequest("http://localhost/api/backup/cloud"))
@@ -63,7 +63,7 @@ describe("Google Drive OAuth", () => {
   });
 
   it("classifies rejected token refresh without exposing provider details", async () => {
-    mockedGetToken.mockResolvedValue({
+    mockedReadSessionToken.mockResolvedValue({
       googleAccessToken: "expired",
       googleRefreshToken: "refresh",
       googleAccessTokenExpiresAt: Math.floor(Date.now() / 1000) - 60,
