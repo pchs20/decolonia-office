@@ -21,7 +21,8 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 8
+    marginBottom: 8,
+    textAlign: "right"
   },
   image: {
     width: 110,
