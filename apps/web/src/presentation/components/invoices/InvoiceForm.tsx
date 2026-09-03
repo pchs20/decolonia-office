@@ -831,6 +831,7 @@ export function InvoiceForm({ invoice, initialClientId, initialItems = [], onSuc
         {showItemForm ? (
           <JobItemForm
             embedded
+            brandColor="invoices"
             initialData={
               editingItemId
                 ? {
