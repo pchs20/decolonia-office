@@ -243,7 +243,6 @@
   "commercialDocuments": {
     "jobItems": "Conceptos",
     "noJobItems": "Sin conceptos",
-    "noTemplate": "Sin plantilla",
     "addItem": "Añadir concepto",
     "quantity": "Cantidad",
     "unitPrice": "Precio unitario",
@@ -268,7 +267,6 @@
       "taxId": "NIF/CIF",
       "workAddress": "Dirección de trabajo",
       "billingAddress": "Dirección de facturación",
-      "workTemplate": "Plantilla de trabajo",
       "pricingMode": "Modo de precio",
       "manualSubtotalAmount": "Subtotal manual",
       "calculatedTotal": "Total calculado"
@@ -283,7 +281,6 @@
     "title": "Configuración",
     "tabs": {
       "taxes": "Impuestos",
-      "templates": "Plantillas de trabajo",
       "pricing": "Precios",
       "numbering": "Numeración de documentos",
       "workers": "Trabajadores",
@@ -325,21 +322,6 @@
       "behaviors": {
         "added": "Añadido al subtotal",
         "included": "Incluido en el precio"
-      },
-      "status": {
-        "active": "Activo",
-        "inactive": "Inactivo"
-      }
-    },
-    "templates": {
-      "title": "Plantillas de trabajo",
-      "addButton": "Añadir plantilla",
-      "empty": "Sin plantillas definidas",
-      "fields": {
-        "title": "Título",
-        "description": "Descripción",
-        "defaultUnitPrice": "Precio unitario",
-        "status": "Estado"
       },
       "status": {
         "active": "Activo",

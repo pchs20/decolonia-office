@@ -5,7 +5,6 @@ import { postgresJobItemRepository } from "@/infrastructure/persistence/postgres
 import { postgresClientRepository } from "@/infrastructure/persistence/postgres/repositories/client-repository";
 import { postgresWorkerRepository } from "@/infrastructure/persistence/postgres/repositories/worker-repository";
 import { postgresTaxRepository } from "@/infrastructure/persistence/postgres/repositories/tax-repository";
-import { postgresWorkTemplateRepository } from "@/infrastructure/persistence/postgres/repositories/work-template-repository";
 import { postgresCommercialDocumentSettingsRepository } from "@/infrastructure/persistence/postgres/repositories/commercial-document-settings-repository";
 
 export const commercialDocumentsUseCases = createCommercialDocumentsUseCases({
@@ -15,6 +14,5 @@ export const commercialDocumentsUseCases = createCommercialDocumentsUseCases({
   clientRepository: postgresClientRepository,
   workerRepository: postgresWorkerRepository,
   taxRepository: postgresTaxRepository,
-  templateRepository: postgresWorkTemplateRepository,
   settingsRepository: postgresCommercialDocumentSettingsRepository
 });

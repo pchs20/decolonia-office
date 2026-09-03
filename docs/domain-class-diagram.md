@@ -81,17 +81,6 @@ classDiagram
     +decimal? totalPrice
   }
 
-  class WorkTemplate {
-    <<current>>
-    +string id
-    +string title
-    +string? description
-    +decimal? defaultUnitPrice
-    +bool isActive
-    +Date createdAt
-    +Date updatedAt
-  }
-
   class Tax {
     <<current>>
     +string id
@@ -188,5 +177,4 @@ classDiagram
 - **Snapshot classes** (`ClientSnapshot`, `WorkerSnapshot`, `TaxSnapshot`) are value objects embedded directly in budget/invoice documents as flat fields.
   - They preserve historical correctness: data materialized at document creation time remains unchanged even if source definitions later change.
   - In persistence, snapshots are stored as flat columns or document-owned sub-rows, not as independent reusable tables.
-- `WorkTemplate` is part of the document catalog for reuse, but line items do not maintain references to templates (materialized content only).
 - `TaxBehavior` is currently `added` only in this phase and can be extended later.

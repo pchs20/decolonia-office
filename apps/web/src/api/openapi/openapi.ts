@@ -114,20 +114,6 @@ const taxSchema = {
   required: ["id", "name", "rate", "behavior", "isActive", "createdAt", "updatedAt"]
 };
 
-const workTemplateSchema = {
-  type: "object",
-  properties: {
-    id: { type: "string", format: "uuid" },
-    title: { type: "string" },
-    description: { type: "string" },
-    defaultUnitPrice: { type: "number" },
-    isActive: { type: "boolean" },
-    createdAt: { type: "string", format: "date-time" },
-    updatedAt: { type: "string", format: "date-time" }
-  },
-  required: ["id", "title", "description", "defaultUnitPrice", "isActive", "createdAt", "updatedAt"]
-};
-
 const jobItemSchema = {
   type: "object",
   properties: {
@@ -249,25 +235,6 @@ const taxListSchema = {
   }
 };
 
-const workTemplateListSchema = {
-  type: "object",
-  properties: {
-    data: {
-      type: "array",
-      items: { $ref: "#/components/schemas/WorkTemplate" }
-    },
-    pagination: {
-      type: "object",
-      properties: {
-        page: { type: "number" },
-        limit: { type: "number" },
-        total: { type: "number" },
-        pages: { type: "number" }
-      }
-    }
-  }
-};
-
 const errorSchema = {
   type: "object",
   properties: {
@@ -293,7 +260,6 @@ export function getOpenApiDocument() {
       { name: "Backup", description: "Backup and export endpoints" },
       { name: "Taxes", description: "Tax definition management endpoints" },
       { name: "Workers", description: "Worker management endpoints" },
-      { name: "WorkTemplates", description: "Work template management endpoints" }
     ],
     paths: {
       "/api/health": {
@@ -1534,127 +1500,6 @@ export function getOpenApiDocument() {
           }
         }
       },
-      "/api/work-templates": {
-        get: {
-          tags: ["WorkTemplates"],
-          summary: "List work templates",
-          parameters: [
-            {
-              name: "page",
-              in: "query",
-              schema: { type: "number", default: 1 }
-            },
-            {
-              name: "limit",
-              in: "query",
-              schema: { type: "number", default: 100 }
-            },
-            {
-              name: "includeInactive",
-              in: "query",
-              schema: { type: "boolean" }
-            }
-          ],
-          responses: {
-            "200": {
-              description: "List of work templates",
-              content: {
-                "application/json": {
-                  schema: { $ref: "#/components/schemas/WorkTemplateList" }
-                }
-              }
-            }
-          }
-        },
-        post: {
-          tags: ["WorkTemplates"],
-          summary: "Create work template",
-          requestBody: {
-            required: true,
-            content: {
-              "application/json": {
-                schema: {
-                  type: "object",
-                  required: ["title", "description", "defaultUnitPrice"],
-                  properties: {
-                    title: { type: "string" },
-                    description: { type: "string" },
-                    defaultUnitPrice: { type: "number" }
-                  }
-                }
-              }
-            }
-          },
-          responses: {
-            "201": {
-              description: "Work template created",
-              content: {
-                "application/json": {
-                  schema: { $ref: "#/components/schemas/WorkTemplate" }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/api/work-templates/{id}": {
-        patch: {
-          tags: ["WorkTemplates"],
-          summary: "Update work template",
-          parameters: [
-            {
-              name: "id",
-              in: "path",
-              required: true,
-              schema: { type: "string", format: "uuid" }
-            }
-          ],
-          requestBody: {
-            required: true,
-            content: {
-              "application/json": {
-                schema: {
-                  type: "object",
-                  properties: {
-                    title: { type: "string" },
-                    description: { type: "string" },
-                    defaultUnitPrice: { type: "number" }
-                  }
-                }
-              }
-            }
-          },
-          responses: {
-            "200": {
-              description: "Work template updated",
-              content: {
-                "application/json": {
-                  schema: { $ref: "#/components/schemas/WorkTemplate" }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/api/work-templates/{id}/archive": {
-        post: {
-          tags: ["WorkTemplates"],
-          summary: "Archive work template",
-          parameters: [
-            {
-              name: "id",
-              in: "path",
-              required: true,
-              schema: { type: "string", format: "uuid" }
-            }
-          ],
-          responses: {
-            "204": {
-              description: "Work template archived"
-            }
-          }
-        }
-      },
       "/api/commercial-document-settings/sequences": {
         get: {
           tags: ["CommercialDocumentSettings"],
@@ -1778,14 +1623,12 @@ export function getOpenApiDocument() {
         Worker: workerSchema,
         WorkerListResponse: workerListSchema,
         Tax: taxSchema,
-        WorkTemplate: workTemplateSchema,
         JobItem: jobItemSchema,
         Budget: budgetSchema,
         Invoice: invoiceSchema,
         BudgetList: budgetListSchema,
         InvoiceList: invoiceListSchema,
         TaxList: taxListSchema,
-        WorkTemplateList: workTemplateListSchema,
         ErrorResponse: errorSchema
       }
     }

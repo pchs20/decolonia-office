@@ -48,7 +48,6 @@ Overview of recent activity — latest budgets and invoices at a glance, with qu
 ### Document Catalog & Settings
 
 - **Taxes** — define reusable tax entries (name, rate, behavior); applied as snapshots on documents
-- **Work Templates** — reusable line item presets (title, description, default unit price)
 - **Commercial Document Settings** — configure default pricing mode and sequence numbers
 - **Primary Worker** — select which worker is auto-assigned as issuer on new documents
 - **Backup & Export** — synchronize a complete backup to Google Drive or download it as a ZIP archive

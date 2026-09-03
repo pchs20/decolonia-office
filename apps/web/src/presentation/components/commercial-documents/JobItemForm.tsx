@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useWorkTemplatesList } from "@/presentation/hooks/catalog-hooks";
 
 interface JobItemFormData {
   title: string;
@@ -40,7 +39,6 @@ export function JobItemForm({
   onDirtyChange
 }: JobItemFormProps) {
   const { t } = useTranslation();
-  const { templates, loading: templatesLoading, getAll: loadTemplates } = useWorkTemplatesList();
   const initialTitle = initialData?.title || "";
   const initialDescription = initialData?.description || "";
   const initialQuantity = initialData?.quantity ?? null;
@@ -56,7 +54,6 @@ export function JobItemForm({
       totalPrice: initialTotalPrice
     })
   );
-  const [selectedTemplateId, setSelectedTemplateId] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -75,7 +72,6 @@ export function JobItemForm({
 
   useEffect(() => {
     setFormData(initialFormData);
-    setSelectedTemplateId("");
   }, [initialFormData]);
 
   useEffect(() => {
@@ -88,10 +84,6 @@ export function JobItemForm({
       onDirtyChange?.(false);
     };
   }, [onDirtyChange]);
-
-  useEffect(() => {
-    void loadTemplates(1, 100, false);
-  }, [loadTemplates]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -147,27 +139,6 @@ export function JobItemForm({
       : 0
   );
 
-  const handleTemplateChange = (templateId: string) => {
-    setSelectedTemplateId(templateId);
-
-    if (!templateId) {
-      return;
-    }
-
-    const selectedTemplate = templates.find(template => template.id === templateId);
-    if (!selectedTemplate) {
-      return;
-    }
-
-    setFormData(prev => ({
-      ...prev,
-      title: selectedTemplate.title,
-      description: selectedTemplate.description ?? "",
-      unitPrice: selectedTemplate.defaultUnitPrice ?? prev.unitPrice,
-      totalPrice: null
-    }));
-  };
-
   const formContent = (
     <>
       {error && (
@@ -175,25 +146,6 @@ export function JobItemForm({
           {error}
         </div>
       )}
-
-      <div>
-        <label className="block text-sm font-medium mb-1">{t("commercialDocuments.fields.workTemplate")}</label>
-        <select
-          value={selectedTemplateId}
-          onChange={e => handleTemplateChange(e.target.value)}
-          disabled={templatesLoading}
-          className="w-full px-3 py-2 border rounded text-sm"
-        >
-          <option value="">
-            {templatesLoading ? t("common.loading") : t("commercialDocuments.noTemplate")}
-          </option>
-          {templates.map(template => (
-            <option key={template.id} value={template.id}>
-              {template.title}
-            </option>
-          ))}
-        </select>
-      </div>
 
       <div>
         <label className="block text-sm font-medium mb-1">{t("commercialDocuments.title")}</label>

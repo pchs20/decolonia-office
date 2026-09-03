@@ -239,7 +239,6 @@
   "commercialDocuments": {
     "jobItems": "Conceptes",
     "noJobItems": "Sense conceptes",
-    "noTemplate": "Sense plantilla",
     "addItem": "Afegir concepte",
     "quantity": "Quantitat",
     "unitPrice": "Preu unitari",
@@ -264,7 +263,6 @@
       "taxId": "NIF/CIF",
       "workAddress": "Adreça de treball",
       "billingAddress": "Adreça de facturació",
-      "workTemplate": "Plantilla de treball",
       "pricingMode": "Mode de preu",
       "manualSubtotalAmount": "Subtotal manual",
       "calculatedTotal": "Total calculat"
@@ -274,7 +272,6 @@
     "title": "Configuració",
     "tabs": {
       "taxes": "Impostos",
-      "templates": "Plantilles de treball",
       "pricing": "Preus",
       "numbering": "Numeració de documents",
       "backup": "Còpia i exportació"
@@ -315,21 +312,6 @@
       "behaviors": {
         "added": "Afegit al subtotal",
         "included": "Inclòs en el preu"
-      },
-      "status": {
-        "active": "Actiu",
-        "inactive": "Inactiu"
-      }
-    },
-    "templates": {
-      "title": "Plantilles de treball",
-      "addButton": "Afegir plantilla",
-      "empty": "Sense plantilles definides",
-      "fields": {
-        "title": "Títol",
-        "description": "Descripció",
-        "defaultUnitPrice": "Preu unitari",
-        "status": "Estat"
       },
       "status": {
         "active": "Actiu",
