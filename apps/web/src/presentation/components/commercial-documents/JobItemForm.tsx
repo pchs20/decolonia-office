@@ -17,9 +17,15 @@ interface JobItemFormProps {
   onCancel: () => void;
   initialData?: JobItemFormData;
   submitLabel?: string;
+  brandColor?: "budgets" | "invoices";
   embedded?: boolean;
   onDirtyChange?: (isDirty: boolean) => void;
 }
+
+const submitButtonClasses = {
+  budgets: "bg-budgets hover:bg-budgets/90",
+  invoices: "bg-invoices hover:bg-invoices/90"
+} as const;
 
 function normalizeFormData(data?: JobItemFormData): Required<JobItemFormData> {
   return {
@@ -36,6 +42,7 @@ export function JobItemForm({
   onCancel,
   initialData,
   submitLabel,
+  brandColor = "budgets",
   embedded = false,
   onDirtyChange
 }: JobItemFormProps) {
@@ -271,7 +278,7 @@ export function JobItemForm({
           type={embedded ? "button" : "submit"}
           onClick={embedded ? () => void submitItem() : undefined}
           disabled={loading}
-          className="px-3 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 disabled:bg-gray-400"
+          className={`px-3 py-2 ${submitButtonClasses[brandColor]} text-white text-sm rounded disabled:bg-gray-400`}
         >
           {loading ? t("common.saving") : (submitLabel || t("common.add"))}
         </button>

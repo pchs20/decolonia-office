@@ -792,6 +792,7 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
           {showItemForm ? (
             <JobItemForm
               embedded
+              brandColor="budgets"
               initialData={
                 editingItemId
                   ? {
