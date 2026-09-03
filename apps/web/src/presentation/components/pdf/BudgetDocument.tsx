@@ -1,8 +1,8 @@
 /** @jsxImportSource . */
-import { Document, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
+import { Document, Page, StyleSheet, View } from "@react-pdf/renderer";
 import { BudgetResponse } from "@/api/schemas/budget-schemas";
 import { JobItemResponse } from "@/api/schemas/job-item-schemas";
-import { IssuerBlock } from "@/presentation/components/pdf/IssuerBlock";
+import { DocumentHeader } from "@/presentation/components/pdf/DocumentHeader";
 import { ClientBlock } from "@/presentation/components/pdf/ClientBlock";
 import { JobItemsTable } from "@/presentation/components/pdf/JobItemsTable";
 import { TotalsBlock } from "@/presentation/components/pdf/TotalsBlock";
@@ -17,31 +17,6 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
     paddingHorizontal: 48,
     color: "#222"
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 24
-  },
-  docMeta: {
-    alignItems: "flex-end"
-  },
-  docTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 8
-  },
-  metaRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: 180
-  },
-  metaLabel: {
-    fontSize: 9,
-    color: "#888"
-  },
-  metaValue: {
-    fontSize: 9
   },
   divider: {
     borderBottomWidth: 1,
@@ -67,27 +42,23 @@ interface BudgetDocumentProps {
   budget: BudgetResponse;
   items: JobItemResponse[];
   labels: PdfLabels;
+  imageSource: string;
 }
 
-export function BudgetDocument({ budget, items, labels }: BudgetDocumentProps) {
+export function BudgetDocument({ budget, items, labels, imageSource }: BudgetDocumentProps) {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={styles.accentBar} />
-        <View style={styles.header}>
-          <IssuerBlock worker={budget.worker} />
-          <View style={styles.docMeta}>
-            <Text style={styles.docTitle}>{labels.budget.toUpperCase()}</Text>
-            <View style={styles.metaRow}>
-              <Text style={styles.metaLabel}>{labels.number}</Text>
-              <Text style={styles.metaValue}>{budget.number}</Text>
-            </View>
-            <View style={styles.metaRow}>
-              <Text style={styles.metaLabel}>{labels.date}</Text>
-              <Text style={styles.metaValue}>{formatDate(budget.deliveredAt ?? budget.createdAt)}</Text>
-            </View>
-          </View>
-        </View>
+        <DocumentHeader
+          worker={budget.worker}
+          title={labels.budget.toUpperCase()}
+          number={budget.number}
+          date={formatDate(budget.deliveredAt ?? budget.createdAt)}
+          numberLabel={labels.number}
+          dateLabel={labels.date}
+          imageSource={imageSource}
+        />
 
         <View style={styles.divider} />
 
@@ -108,4 +79,3 @@ export function BudgetDocument({ budget, items, labels }: BudgetDocumentProps) {
     </Document>
   );
 }
-

@@ -10,7 +10,7 @@ import { mapJobItemToResponse } from "@/api/mappers/job-item-mapper";
 import { BudgetDocument } from "@/presentation/components/pdf/BudgetDocument";
 import { InvoiceDocument } from "@/presentation/components/pdf/InvoiceDocument";
 import { getPdfLabels } from "@/presentation/i18n/pdf-translations";
-
+import { loadPdfImage } from "@/infrastructure/pdf/pdf-image-assets";
 export interface DocumentPdfRendererDependencies {
   budgetRepository: Pick<BudgetRepository, "getById">;
   invoiceRepository: Pick<InvoiceRepository, "getById">;
@@ -30,29 +30,33 @@ export function createDocumentPdfRenderer(
       return invoice.number;
     },
     async renderBudgetPdf(documentId, locale) {
-      const [budget, items] = await Promise.all([
+      const [budget, items, imageSource] = await Promise.all([
         dependencies.budgetRepository.getById(documentId),
-        dependencies.jobItemRepository.findByDocumentId(documentId)
+        dependencies.jobItemRepository.findByDocumentId(documentId),
+        loadPdfImage("budget")
       ]);
       const buffer = await renderToBuffer(
         React.createElement(BudgetDocument, {
           budget: mapBudgetToResponse(budget),
           items: items.map(mapJobItemToResponse),
-          labels: getPdfLabels(locale)
+          labels: getPdfLabels(locale),
+          imageSource
         }) as React.ReactElement
       );
       return new Uint8Array(buffer);
     },
     async renderInvoicePdf(documentId, locale) {
-      const [invoice, items] = await Promise.all([
+      const [invoice, items, imageSource] = await Promise.all([
         dependencies.invoiceRepository.getById(documentId),
-        dependencies.jobItemRepository.findByDocumentId(documentId)
+        dependencies.jobItemRepository.findByDocumentId(documentId),
+        loadPdfImage("invoice")
       ]);
       const buffer = await renderToBuffer(
         React.createElement(InvoiceDocument, {
           invoice: mapInvoiceToResponse(invoice),
           items: items.map(mapJobItemToResponse),
-          labels: getPdfLabels(locale)
+          labels: getPdfLabels(locale),
+          imageSource
         }) as React.ReactElement
       );
       return new Uint8Array(buffer);

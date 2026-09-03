@@ -1,8 +1,8 @@
 /** @jsxImportSource . */
-import { Document, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
+import { Document, Page, StyleSheet, View } from "@react-pdf/renderer";
 import { InvoiceResponse } from "@/api/schemas/invoice-schemas";
 import { JobItemResponse } from "@/api/schemas/job-item-schemas";
-import { IssuerBlock } from "@/presentation/components/pdf/IssuerBlock";
+import { DocumentHeader } from "@/presentation/components/pdf/DocumentHeader";
 import { ClientBlock } from "@/presentation/components/pdf/ClientBlock";
 import { JobItemsTable } from "@/presentation/components/pdf/JobItemsTable";
 import { TotalsBlock } from "@/presentation/components/pdf/TotalsBlock";
@@ -18,31 +18,6 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
     paddingHorizontal: 48,
     color: "#222"
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 24
-  },
-  docMeta: {
-    alignItems: "flex-end"
-  },
-  docTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 8
-  },
-  metaRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: 180
-  },
-  metaLabel: {
-    fontSize: 9,
-    color: "#888"
-  },
-  metaValue: {
-    fontSize: 9
   },
   divider: {
     borderBottomWidth: 1,
@@ -68,27 +43,23 @@ interface InvoiceDocumentProps {
   invoice: InvoiceResponse;
   items: JobItemResponse[];
   labels: PdfLabels;
+  imageSource: string;
 }
 
-export function InvoiceDocument({ invoice, items, labels }: InvoiceDocumentProps) {
+export function InvoiceDocument({ invoice, items, labels, imageSource }: InvoiceDocumentProps) {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={styles.accentBar} />
-        <View style={styles.header}>
-          <IssuerBlock worker={invoice.worker} />
-          <View style={styles.docMeta}>
-            <Text style={styles.docTitle}>{labels.invoice}</Text>
-            <View style={styles.metaRow}>
-              <Text style={styles.metaLabel}>{labels.number}</Text>
-              <Text style={styles.metaValue}>{invoice.number}</Text>
-            </View>
-            <View style={styles.metaRow}>
-              <Text style={styles.metaLabel}>{labels.date}</Text>
-              <Text style={styles.metaValue}>{formatDate(invoice.issuedAt ?? invoice.createdAt)}</Text>
-            </View>
-          </View>
-        </View>
+        <DocumentHeader
+          worker={invoice.worker}
+          title={labels.invoice}
+          number={invoice.number}
+          date={formatDate(invoice.issuedAt ?? invoice.createdAt)}
+          numberLabel={labels.number}
+          dateLabel={labels.date}
+          imageSource={imageSource}
+        />
 
         <View style={styles.divider} />
 
