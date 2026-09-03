@@ -13,5 +13,5 @@
 ## 3. Verification
 
 - [x] 3.1 Add or update focused PDF rendering tests to verify budget and invoice PDFs use their corresponding image assets.
-- [ ] 3.2 Verify PDFs render successfully with minimal and complete worker information and that the issuer image does not disrupt the header layout.
-- [ ] 3.3 Run `pnpm test`, `pnpm check`, and `pnpm build` from the task worktree.
+- [x] 3.2 Verify PDFs render successfully with minimal and complete worker information and that the issuer image does not disrupt the header layout.
+- [x] 3.3 Run `pnpm test`, `pnpm check`, and `pnpm build` from the task worktree.

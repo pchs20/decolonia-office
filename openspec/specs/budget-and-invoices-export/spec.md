@@ -13,6 +13,10 @@ The system SHALL generate a PDF representation of a budget using a server-side t
 - **WHEN** a budget PDF is generated
 - **THEN** the PDF includes the issuer's name, tax identifier, phone, email, and billing address from the materialized `WorkerSnapshot`
 
+#### Scenario: Budget PDF contains the budget issuer image
+- **WHEN** a budget PDF is generated
+- **THEN** the PDF includes the fixed budget image in the issuer header, with the worker information in the left column and the image in the right document column
+
 #### Scenario: Budget PDF contains client block
 - **WHEN** a budget PDF is generated
 - **THEN** the PDF includes the client's name, tax identifier, and billing address from the materialized `ClientSnapshot`
@@ -39,6 +43,14 @@ The system SHALL generate a PDF representation of an invoice using a server-side
 #### Scenario: Invoice PDF contains issuer block
 - **WHEN** an invoice PDF is generated
 - **THEN** the PDF includes the issuer's name, tax identifier, phone, email, and billing address from the materialized `WorkerSnapshot`
+
+#### Scenario: Invoice PDF contains the invoice issuer image
+- **WHEN** an invoice PDF is generated
+- **THEN** the PDF includes the fixed invoice image in the issuer header, with the worker information in the left column and the image in the right document column
+
+#### Scenario: Document header aligns metadata with issuer image
+- **WHEN** a budget or invoice PDF is generated
+- **THEN** the document title, image, number, and date are presented in the right document column, with the number and date labels aligned to the image's left edge and their values aligned to its right edge
 
 #### Scenario: Invoice PDF contains client block with document metadata
 - **WHEN** an invoice PDF is generated
