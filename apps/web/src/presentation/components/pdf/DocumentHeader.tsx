@@ -15,6 +15,9 @@ const styles = StyleSheet.create({
     width: 150,
     alignItems: "flex-end"
   },
+  documentContent: {
+    width: 110
+  },
   title: {
     fontSize: 18,
     fontWeight: "bold",
@@ -29,7 +32,7 @@ const styles = StyleSheet.create({
   metaRow: {
     flexDirection: "row",
     alignItems: "baseline",
-    width: 150
+    width: 110
   },
   metaLabel: {
     fontSize: 9,
@@ -68,15 +71,17 @@ export function DocumentHeader({
         <IssuerBlock worker={worker} />
       </View>
       <View style={styles.document}>
-        <Text style={styles.title}>{title}</Text>
-        <Image src={imageSource} style={styles.image} />
-        <View style={styles.metaRow}>
-          <Text style={styles.metaLabel}>{numberLabel}:</Text>
-          <Text style={styles.metaValue}>{number}</Text>
-        </View>
-        <View style={styles.metaRow}>
-          <Text style={styles.metaLabel}>{dateLabel}:</Text>
-          <Text style={styles.metaValue}>{date}</Text>
+        <View style={styles.documentContent}>
+          <Text style={styles.title}>{title}</Text>
+          <Image src={imageSource} style={styles.image} />
+          <View style={styles.metaRow}>
+            <Text style={styles.metaLabel}>{numberLabel}:</Text>
+            <Text style={styles.metaValue}>{number}</Text>
+          </View>
+          <View style={styles.metaRow}>
+            <Text style={styles.metaLabel}>{dateLabel}:</Text>
+            <Text style={styles.metaValue}>{date}</Text>
+          </View>
         </View>
       </View>
     </View>
