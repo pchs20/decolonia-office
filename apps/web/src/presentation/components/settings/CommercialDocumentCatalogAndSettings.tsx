@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { TaxCatalogManager } from "./TaxCatalogManager";
-import { WorkTemplateCatalogManager } from "./WorkTemplateCatalogManager";
 import { DocumentSequenceSettings } from "./DocumentSequenceSettings";
 import { CommercialDocumentPricingSettings } from "./CommercialDocumentPricingSettings";
 import { WorkerCatalogManager } from "./WorkerCatalogManager";
@@ -14,7 +13,7 @@ export function CommercialDocumentCatalogAndSettings() {
   const { t } = useTranslation();
   const searchParams = useSearchParams();
   const tabParam = searchParams.get("tab");
-  const validTabs = ["taxes", "templates", "pricing", "numbering", "workers", "backup"] as const;
+  const validTabs = ["taxes", "pricing", "numbering", "workers", "backup"] as const;
   type Tab = (typeof validTabs)[number];
   const initialTab: Tab = validTabs.includes(tabParam as Tab) ? (tabParam as Tab) : "taxes";
   const [activeTab, setActiveTab] = useState<Tab>(initialTab);
@@ -34,16 +33,6 @@ export function CommercialDocumentCatalogAndSettings() {
             }`}
           >
             {t("catalog.tabs.taxes")}
-          </button>
-          <button
-            onClick={() => setActiveTab("templates")}
-            className={`px-3 py-2 border-b-2 text-sm font-medium whitespace-nowrap ${
-              activeTab === "templates"
-                ? "border-settings text-settings"
-                : "border-transparent text-gray-600 hover:text-gray-800"
-            }`}
-          >
-            {t("catalog.tabs.templates")}
           </button>
           <button
             onClick={() => setActiveTab("numbering")}
@@ -90,7 +79,6 @@ export function CommercialDocumentCatalogAndSettings() {
 
       <div className="bg-white rounded-lg border p-6">
         {activeTab === "taxes" && <TaxCatalogManager />}
-        {activeTab === "templates" && <WorkTemplateCatalogManager />}
         {activeTab === "pricing" && <CommercialDocumentPricingSettings />}
         {activeTab === "numbering" && <DocumentSequenceSettings />}
         {activeTab === "workers" && <WorkerCatalogManager />}

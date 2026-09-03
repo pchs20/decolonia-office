@@ -5,7 +5,6 @@ import { JobItemRepository } from "@/application/outbound/job-item-repository";
 import { ClientRepository } from "@/application/outbound/client-repository";
 import { WorkerRepository } from "@/application/outbound/worker-repository";
 import { TaxRepository } from "@/application/outbound/tax-repository";
-import { WorkTemplateRepository } from "@/application/outbound/work-template-repository";
 import { CommercialDocumentSettingsRepository } from "@/application/outbound/commercial-document-settings-repository";
 
 describe("commercial document duplication", () => {
@@ -18,7 +17,6 @@ describe("commercial document duplication", () => {
     clientRepository: {} as ClientRepository,
     workerRepository: {} as WorkerRepository,
     taxRepository: {} as TaxRepository,
-    templateRepository: {} as WorkTemplateRepository,
     settingsRepository: {} as CommercialDocumentSettingsRepository
   };
 

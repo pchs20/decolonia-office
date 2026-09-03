@@ -1,7 +1,6 @@
 import { Budget } from "@/domain/entities/budget";
 import { Invoice } from "@/domain/entities/invoice";
 import { Tax } from "@/domain/entities/tax";
-import { WorkTemplate } from "@/domain/entities/work-template";
 import { DocumentSequence } from "@/domain/entities/document-sequence";
 import { JobItem } from "@/domain/value-objects/job-item";
 import { BudgetRepository } from "@/application/outbound/budget-repository";
@@ -10,7 +9,6 @@ import { JobItemRepository } from "@/application/outbound/job-item-repository";
 import { ClientRepository } from "@/application/outbound/client-repository";
 import { WorkerRepository } from "@/application/outbound/worker-repository";
 import { TaxRepository } from "@/application/outbound/tax-repository";
-import { WorkTemplateRepository } from "@/application/outbound/work-template-repository";
 import { CommercialDocumentSettingsRepository } from "@/application/outbound/commercial-document-settings-repository";
 import {
   createBudget,
@@ -30,13 +28,6 @@ import {
   reactivateTax as reactivateTaxUseCase,
   archiveTax as archiveTaxUseCase
 } from "@/application/use-cases/tax-use-cases";
-import {
-  createWorkTemplate,
-  updateWorkTemplate,
-  deactivateWorkTemplate,
-  reactivateWorkTemplate,
-  archiveWorkTemplate
-} from "@/application/use-cases/work-template-use-cases";
 import { ClientSnapshot } from "@/domain/value-objects/client-snapshot";
 import { PricingMode } from "@/domain/value-objects/pricing-mode";
 import { WorkerSnapshot } from "@/domain/value-objects/worker-snapshot";
@@ -48,7 +39,6 @@ interface CommercialDocumentDeps {
   clientRepository: ClientRepository;
   workerRepository: WorkerRepository;
   taxRepository: TaxRepository;
-  templateRepository: WorkTemplateRepository;
   settingsRepository: CommercialDocumentSettingsRepository;
 }
 
@@ -337,45 +327,6 @@ export function createCommercialDocumentsUseCases(deps: CommercialDocumentDeps) 
 
     async archiveTax(id: string): Promise<void> {
       return archiveTaxUseCase(id, deps.taxRepository);
-    },
-
-    async createWorkTemplate(params: {
-      title: string;
-      description: string | null;
-      defaultUnitPrice: number | null;
-    }): Promise<WorkTemplate> {
-      return createWorkTemplate(params.title, params.description, params.defaultUnitPrice, deps.templateRepository);
-    },
-
-    async listWorkTemplates(page: number, limit: number, includeInactive?: boolean) {
-      return deps.templateRepository.list(page, limit, includeInactive);
-    },
-
-    async getWorkTemplateById(id: string): Promise<WorkTemplate> {
-      return deps.templateRepository.getById(id);
-    },
-
-    async updateWorkTemplate(
-      id: string,
-      params: { title: string; description: string | null; defaultUnitPrice: number | null; isActive?: boolean }
-    ): Promise<WorkTemplate> {
-      let template = await updateWorkTemplate(
-        id,
-        params.title,
-        params.description,
-        params.defaultUnitPrice,
-        deps.templateRepository
-      );
-      if (params.isActive === false) {
-        template = await deactivateWorkTemplate(id, deps.templateRepository);
-      } else if (params.isActive === true) {
-        template = await reactivateWorkTemplate(id, deps.templateRepository);
-      }
-      return template;
-    },
-
-    async archiveWorkTemplate(id: string): Promise<void> {
-      return archiveWorkTemplate(id, deps.templateRepository);
     },
 
     async getSequenceState(documentType: "budget" | "invoice", year: number | null): Promise<DocumentSequence> {

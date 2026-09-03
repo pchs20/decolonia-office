@@ -34,11 +34,6 @@ export function getErrorTranslationKey(errorMessage: string): string {
     "Failed to update tax definition": "catalog.taxes.errors.updateFailed",
     "Failed to delete tax definition": "catalog.taxes.errors.deleteFailed",
 
-    // Work template errors
-    "Failed to fetch work templates": "catalog.templates.errors.fetchFailed",
-    "Failed to create work template": "catalog.templates.errors.createFailed",
-    "Failed to update work template": "catalog.templates.errors.updateFailed",
-    "Failed to delete work template": "catalog.templates.errors.deleteFailed"
   };
 
   return errorMap[errorMessage] || "common.errors.unknown";

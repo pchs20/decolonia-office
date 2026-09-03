@@ -243,7 +243,6 @@
   "commercialDocuments": {
     "jobItems": "Line Items",
     "noJobItems": "No items yet",
-    "noTemplate": "No template",
     "addItem": "Add Item",
     "quantity": "Quantity",
     "unitPrice": "Unit Price",
@@ -268,7 +267,6 @@
       "taxId": "Tax ID",
       "workAddress": "Work Address",
       "billingAddress": "Billing Address",
-      "workTemplate": "Work Template",
       "pricingMode": "Pricing mode",
       "manualSubtotalAmount": "Manual subtotal",
       "calculatedTotal": "Calculated total"
@@ -283,7 +281,6 @@
     "title": "Settings",
     "tabs": {
       "taxes": "Tax Definitions",
-      "templates": "Work Templates",
       "pricing": "Pricing",
       "numbering": "Document Numbering",
       "workers": "Workers",
@@ -325,21 +322,6 @@
       "behaviors": {
         "added": "Added to subtotal",
         "included": "Included in price"
-      },
-      "status": {
-        "active": "Active",
-        "inactive": "Inactive"
-      }
-    },
-    "templates": {
-      "title": "Work Templates",
-      "addButton": "Add Template",
-      "empty": "No templates defined yet",
-      "fields": {
-        "title": "Title",
-        "description": "Description",
-        "defaultUnitPrice": "Unit Price",
-        "status": "Status"
       },
       "status": {
         "active": "Active",
