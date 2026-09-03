@@ -67,15 +67,16 @@ interface BudgetDocumentProps {
   budget: BudgetResponse;
   items: JobItemResponse[];
   labels: PdfLabels;
+  imageSource: string;
 }
 
-export function BudgetDocument({ budget, items, labels }: BudgetDocumentProps) {
+export function BudgetDocument({ budget, items, labels, imageSource }: BudgetDocumentProps) {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={styles.accentBar} />
         <View style={styles.header}>
-          <IssuerBlock worker={budget.worker} />
+          <IssuerBlock worker={budget.worker} imageSource={imageSource} />
           <View style={styles.docMeta}>
             <Text style={styles.docTitle}>{labels.budget.toUpperCase()}</Text>
             <View style={styles.metaRow}>
@@ -108,4 +109,3 @@ export function BudgetDocument({ budget, items, labels }: BudgetDocumentProps) {
     </Document>
   );
 }
-

@@ -68,15 +68,16 @@ interface InvoiceDocumentProps {
   invoice: InvoiceResponse;
   items: JobItemResponse[];
   labels: PdfLabels;
+  imageSource: string;
 }
 
-export function InvoiceDocument({ invoice, items, labels }: InvoiceDocumentProps) {
+export function InvoiceDocument({ invoice, items, labels, imageSource }: InvoiceDocumentProps) {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={styles.accentBar} />
         <View style={styles.header}>
-          <IssuerBlock worker={invoice.worker} />
+          <IssuerBlock worker={invoice.worker} imageSource={imageSource} />
           <View style={styles.docMeta}>
             <Text style={styles.docTitle}>{labels.invoice}</Text>
             <View style={styles.metaRow}>
