@@ -90,6 +90,10 @@ export function createCommercialDocumentsUseCases(deps: CommercialDocumentDeps) 
       return deps.budgetRepository.getById(id);
     },
 
+    async duplicateBudget(id: string): Promise<Budget> {
+      return deps.budgetRepository.duplicate(id);
+    },
+
     async updateBudget(
       id: string,
       params: {
@@ -211,6 +215,10 @@ export function createCommercialDocumentsUseCases(deps: CommercialDocumentDeps) 
 
     async getInvoiceById(id: string): Promise<Invoice> {
       return deps.invoiceRepository.getById(id);
+    },
+
+    async duplicateInvoice(id: string): Promise<Invoice> {
+      return deps.invoiceRepository.duplicate(id);
     },
 
     async updateInvoice(

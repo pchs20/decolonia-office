@@ -11,4 +11,5 @@ export interface InvoiceRepository {
   }>;
   update(invoice: Invoice): Promise<Invoice>;
   delete(id: string): Promise<void>;
+  duplicate(id: string): Promise<Invoice>;
 }

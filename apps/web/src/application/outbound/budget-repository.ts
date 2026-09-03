@@ -11,4 +11,5 @@ export interface BudgetRepository {
   }>;
   update(budget: Budget): Promise<Budget>;
   delete(id: string): Promise<void>;
+  duplicate(id: string): Promise<Budget>;
 }

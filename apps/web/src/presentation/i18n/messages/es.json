@@ -4,6 +4,7 @@
     "back": "← Atrás",
     "view": "Ver",
     "edit": "Editar",
+    "duplicate": "Duplicar",
     "finalize": "Finalizar",
     "archive": "Archivar",
     "delete": "Eliminar",
@@ -188,7 +189,9 @@
       "clientRequired": "El cliente es obligatorio",
       "workerRequired": "El trabajador es obligatorio",
       "fetchFailed": "Error al cargar los presupuestos",
-      "createFailed": "Error al crear el presupuesto"
+      "createFailed": "Error al crear el presupuesto",
+      "duplicateConfirm": "¿Duplicar este presupuesto? Se creará un nuevo número de presupuesto.",
+      "duplicateFailed": "Error al duplicar el presupuesto"
     },
     "filters": {
       "clientApplied": "Mostrando presupuestos del cliente seleccionado."
@@ -229,7 +232,9 @@
       "clientRequired": "El cliente es obligatorio",
       "workerRequired": "El trabajador es obligatorio",
       "fetchFailed": "Error al cargar las facturas",
-      "createFailed": "Error al crear la factura"
+      "createFailed": "Error al crear la factura",
+      "duplicateConfirm": "¿Duplicar esta factura? Se creará un nuevo número de factura.",
+      "duplicateFailed": "Error al duplicar la factura"
     },
     "filters": {
       "clientApplied": "Mostrando facturas del cliente seleccionado."

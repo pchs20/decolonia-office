@@ -15,7 +15,8 @@ describe("budget use-cases", () => {
     getById: jest.fn(),
     list: jest.fn(),
     update: jest.fn(),
-    delete: jest.fn()
+    delete: jest.fn(),
+    duplicate: jest.fn()
   };
 
   const settingsRepo: jest.Mocked<CommercialDocumentSettingsRepository> = {

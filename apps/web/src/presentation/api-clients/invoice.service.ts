@@ -63,6 +63,12 @@ export class InvoiceService {
     return response.json();
   }
 
+  static async duplicate(id: string): Promise<InvoiceResponse> {
+    const response = await fetch(`${API_ENDPOINT}/${id}/duplicate`, { method: "POST" });
+    if (!response.ok) throw new Error("Failed to duplicate invoice");
+    return response.json();
+  }
+
   static async update(id: string, data: InvoiceUpdateRequest): Promise<InvoiceResponse> {
     const response = await fetch(`${API_ENDPOINT}/${id}`, {
       method: "PATCH",

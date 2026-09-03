@@ -4,6 +4,7 @@
     "back": "← Back",
     "view": "View",
     "edit": "Edit",
+    "duplicate": "Duplicate",
     "finalize": "Finalize",
     "archive": "Archive",
     "delete": "Delete",
@@ -188,7 +189,9 @@
       "clientRequired": "Client is required",
       "workerRequired": "Worker is required",
       "fetchFailed": "Failed to fetch budgets",
-      "createFailed": "Failed to create budget"
+      "createFailed": "Failed to create budget",
+      "duplicateConfirm": "Duplicate this budget? A new budget number will be created.",
+      "duplicateFailed": "Failed to duplicate budget"
     },
     "filters": {
       "clientApplied": "Showing budgets for selected client."
@@ -229,7 +232,9 @@
       "clientRequired": "Client is required",
       "workerRequired": "Worker is required",
       "fetchFailed": "Failed to fetch invoices",
-      "createFailed": "Failed to create invoice"
+      "createFailed": "Failed to create invoice",
+      "duplicateConfirm": "Duplicate this invoice? A new invoice number will be created.",
+      "duplicateFailed": "Failed to duplicate invoice"
     },
     "filters": {
       "clientApplied": "Showing invoices for selected client."

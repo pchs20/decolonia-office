@@ -8,6 +8,7 @@ import { InvoiceResponse } from "@/api/schemas/invoice-schemas";
 import { useInvoices } from "@/presentation/hooks/commercial-document-hooks";
 import { getErrorTranslationKey } from "@/presentation/utils/error-translation";
 import { formatDocumentNumber } from "@/presentation/utils/document-number";
+import { InvoiceService } from "@/presentation/api-clients/invoice.service";
 
 interface InvoiceListPageProps {
   clientId?: string;
@@ -17,6 +18,7 @@ export function InvoiceListPage({ clientId }: InvoiceListPageProps) {
   const { t } = useTranslation();
   const router = useRouter();
   const { list, loading, error } = useInvoices();
+  const [duplicatingId, setDuplicatingId] = useState<string | null>(null);
   const [invoices, setInvoices] = useState<InvoiceResponse[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -43,6 +45,19 @@ export function InvoiceListPage({ clientId }: InvoiceListPageProps) {
   const years = Array.from({ length: 5 }, (_, i) => currentYear - i);
 
   const totalPages = Math.max(1, Math.ceil(total / limit));
+
+  const duplicateInvoice = async (id: string) => {
+    if (!window.confirm(t("invoices.errors.duplicateConfirm"))) return;
+    setDuplicatingId(id);
+    try {
+      const invoice = await InvoiceService.duplicate(id);
+      router.push(`/invoices/${invoice.id}?edit=1`);
+    } catch {
+      window.alert(t("invoices.errors.duplicateFailed"));
+    } finally {
+      setDuplicatingId(null);
+    }
+  };
 
   return (
     <div className="space-y-3">
@@ -159,6 +174,17 @@ export function InvoiceListPage({ clientId }: InvoiceListPageProps) {
                       >
                         {t("common.edit")}
                       </Link>
+                      <button
+                        type="button"
+                        disabled={duplicatingId === invoice.id}
+                        className="px-2 py-1 text-sm bg-invoices/10 text-invoices rounded hover:bg-invoices/20 disabled:opacity-50"
+                        onClick={event => {
+                          event.stopPropagation();
+                          void duplicateInvoice(invoice.id);
+                        }}
+                      >
+                        {t("common.duplicate")}
+                      </button>
                     </td>
                   </tr>
                 ))}

@@ -4,6 +4,7 @@
     "back": "← Enrere",
     "view": "Veure",
     "edit": "Editar",
+    "duplicate": "Duplicar",
     "finalize": "Finalitzar",
     "archive": "Arxivar",
     "delete": "Eliminar",
@@ -184,7 +185,9 @@
       "clientRequired": "El client és obligatori",
       "workerRequired": "El treballador és obligatori",
       "fetchFailed": "Error en carregar els pressupostos",
-      "createFailed": "Error en crear el pressupost"
+      "createFailed": "Error en crear el pressupost",
+      "duplicateConfirm": "Voleu duplicar aquest pressupost? Es crearà un número de pressupost nou.",
+      "duplicateFailed": "Error en duplicar el pressupost"
     },
     "filters": {
       "clientApplied": "Mostrant pressupostos del client seleccionat."
@@ -225,7 +228,9 @@
       "clientRequired": "El client és obligatori",
       "workerRequired": "El treballador és obligatori",
       "fetchFailed": "Error en carregar les factures",
-      "createFailed": "Error en crear la factura"
+      "createFailed": "Error en crear la factura",
+      "duplicateConfirm": "Voleu duplicar aquesta factura? Es crearà un número de factura nou.",
+      "duplicateFailed": "Error en duplicar la factura"
     },
     "filters": {
       "clientApplied": "Mostrant factures del client seleccionat."
