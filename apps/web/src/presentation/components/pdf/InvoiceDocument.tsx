@@ -20,22 +20,24 @@ const styles = StyleSheet.create({
     color: "#222"
   },
   header: {
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "space-between",
     marginBottom: 24
   },
   docMeta: {
-    alignItems: "flex-end"
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "baseline",
+    marginBottom: 24
   },
   docTitle: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 8
   },
-  metaRow: {
+  documentLabel: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    width: 180
+    alignItems: "baseline"
   },
   metaLabel: {
     fontSize: 9,
@@ -79,13 +81,13 @@ export function InvoiceDocument({ invoice, items, labels, imageSource }: Invoice
         <View style={styles.header}>
           <IssuerBlock worker={invoice.worker} imageSource={imageSource} />
           <View style={styles.docMeta}>
-            <Text style={styles.docTitle}>{labels.invoice}</Text>
-            <View style={styles.metaRow}>
-              <Text style={styles.metaLabel}>{labels.number}</Text>
+            <View style={styles.documentLabel}>
+              <Text style={styles.docTitle}>{labels.invoice} </Text>
+              <Text style={styles.metaLabel}>{labels.number}: </Text>
               <Text style={styles.metaValue}>{invoice.number}</Text>
             </View>
-            <View style={styles.metaRow}>
-              <Text style={styles.metaLabel}>{labels.date}</Text>
+            <View style={styles.documentLabel}>
+              <Text style={styles.metaLabel}>{labels.date}: </Text>
               <Text style={styles.metaValue}>{formatDate(invoice.issuedAt ?? invoice.createdAt)}</Text>
             </View>
           </View>
