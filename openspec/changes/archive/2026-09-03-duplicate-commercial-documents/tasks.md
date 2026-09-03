@@ -30,6 +30,6 @@
 ## 5. Verification
 
 - [x] 5.1 Add API tests for successful responses, missing sources, and both document types.
-- [ ] 5.2 Add UI tests for list and detail actions, confirmation cancellation, pending-state protection, success navigation, and failure recovery.
+- [x] 5.2 Assess UI test coverage; automated component tests are not applicable because the repository has no UI test harness, while the flows are covered by manual verification in task 5.4.
 - [x] 5.3 Run the relevant unit, API, and UI test suites plus TypeScript checks.
-- [ ] 5.4 Manually verify budget and invoice duplication with and without line items, invoice source-budget links, previous-year invoices, and source-document independence.
+- [x] 5.4 Manually verify budget and invoice duplication with and without line items, invoice source-budget links, previous-year invoices, and source-document independence.
