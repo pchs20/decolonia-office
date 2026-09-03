@@ -8,6 +8,7 @@ import { BudgetResponse } from "@/api/schemas/budget-schemas";
 import { useBudgets } from "@/presentation/hooks/commercial-document-hooks";
 import { getErrorTranslationKey } from "@/presentation/utils/error-translation";
 import { formatDocumentNumber } from "@/presentation/utils/document-number";
+import { BudgetService } from "@/presentation/api-clients/budget.service";
 
 interface BudgetListPageProps {
   clientId?: string;
@@ -17,6 +18,7 @@ export function BudgetListPage({ clientId }: BudgetListPageProps) {
   const { t } = useTranslation();
   const router = useRouter();
   const { list, loading, error } = useBudgets();
+  const [duplicatingId, setDuplicatingId] = useState<string | null>(null);
   const [budgets, setBudgets] = useState<BudgetResponse[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -43,6 +45,19 @@ export function BudgetListPage({ clientId }: BudgetListPageProps) {
   }, [clientId]);
 
   const totalPages = Math.max(1, Math.ceil(total / limit));
+
+  const duplicateBudget = async (id: string) => {
+    if (!window.confirm(t("budgets.errors.duplicateConfirm"))) return;
+    setDuplicatingId(id);
+    try {
+      const budget = await BudgetService.duplicate(id);
+      router.push(`/budgets/${budget.id}?edit=1`);
+    } catch {
+      window.alert(t("budgets.errors.duplicateFailed"));
+    } finally {
+      setDuplicatingId(null);
+    }
+  };
 
   return (
     <div className="space-y-3">
@@ -138,6 +153,17 @@ export function BudgetListPage({ clientId }: BudgetListPageProps) {
                       >
                         {t("common.edit")}
                       </Link>
+                      <button
+                        type="button"
+                        disabled={duplicatingId === budget.id}
+                        className="px-2 py-1 text-sm bg-budgets/10 text-budgets rounded hover:bg-budgets/20 disabled:opacity-50"
+                        onClick={event => {
+                          event.stopPropagation();
+                          void duplicateBudget(budget.id);
+                        }}
+                      >
+                        {t("common.duplicate")}
+                      </button>
                     </td>
                   </tr>
                 ))}

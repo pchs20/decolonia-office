@@ -61,6 +61,12 @@ export class BudgetService {
     return response.json();
   }
 
+  static async duplicate(id: string): Promise<BudgetResponse> {
+    const response = await fetch(`${API_ENDPOINT}/${id}/duplicate`, { method: "POST" });
+    if (!response.ok) throw new Error("Failed to duplicate budget");
+    return response.json();
+  }
+
   static async update(id: string, data: BudgetUpdateRequest): Promise<BudgetResponse> {
     const response = await fetch(`${API_ENDPOINT}/${id}`, {
       method: "PATCH",

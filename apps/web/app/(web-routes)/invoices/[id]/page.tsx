@@ -32,6 +32,7 @@ export default function InvoiceDetailPage({ params }: InvoiceDetailPageProps) {
   const [error, setError] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [duplicating, setDuplicating] = useState(false);
 
   useEffect(() => {
     void params.then(value => setInvoiceId(value.id));
@@ -111,6 +112,19 @@ export default function InvoiceDetailPage({ params }: InvoiceDetailPageProps) {
     setEditing(false);
   };
 
+  const handleDuplicate = async () => {
+    if (!invoiceId || !window.confirm(t("invoices.errors.duplicateConfirm"))) return;
+    setDuplicating(true);
+    try {
+      const duplicate = await InvoiceService.duplicate(invoiceId);
+      router.push(`/invoices/${duplicate.id}?edit=1`);
+    } catch {
+      window.alert(t("invoices.errors.duplicateFailed"));
+    } finally {
+      setDuplicating(false);
+    }
+  };
+
   if (loading) {
     return <div className="p-4 md:p-6">{t("common.loading")}</div>;
   }
@@ -167,6 +181,14 @@ export default function InvoiceDetailPage({ params }: InvoiceDetailPageProps) {
                 className="px-3 py-1 text-sm bg-invoices/10 text-invoices rounded hover:bg-invoices/20"
               >
                 {t("common.edit")}
+              </button>
+              <button
+                type="button"
+                disabled={duplicating}
+                onClick={() => void handleDuplicate()}
+                className="px-3 py-1 text-sm bg-invoices/10 text-invoices rounded hover:bg-invoices/20 disabled:opacity-50"
+              >
+                {t("common.duplicate")}
               </button>
             </>
           ) : null}

@@ -28,6 +28,7 @@ export default function BudgetDetailPage({ params }: BudgetDetailPageProps) {
   const [error, setError] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [duplicating, setDuplicating] = useState(false);
 
   useEffect(() => {
     void params.then(value => setBudgetId(value.id));
@@ -95,6 +96,19 @@ export default function BudgetDetailPage({ params }: BudgetDetailPageProps) {
     setEditing(false);
   };
 
+  const handleDuplicate = async () => {
+    if (!budgetId || !window.confirm(t("budgets.errors.duplicateConfirm"))) return;
+    setDuplicating(true);
+    try {
+      const duplicate = await BudgetService.duplicate(budgetId);
+      router.push(`/budgets/${duplicate.id}?edit=1`);
+    } catch {
+      window.alert(t("budgets.errors.duplicateFailed"));
+    } finally {
+      setDuplicating(false);
+    }
+  };
+
   if (loading) {
     return <div className="p-4 md:p-6">{t("common.loading")}</div>;
   }
@@ -151,6 +165,14 @@ export default function BudgetDetailPage({ params }: BudgetDetailPageProps) {
                 className="px-3 py-1 text-sm bg-budgets/10 text-budgets rounded hover:bg-budgets/20"
               >
                 {t("common.edit")}
+              </button>
+              <button
+                type="button"
+                disabled={duplicating}
+                onClick={() => void handleDuplicate()}
+                className="px-3 py-1 text-sm bg-budgets/10 text-budgets rounded hover:bg-budgets/20 disabled:opacity-50"
+              >
+                {t("common.duplicate")}
               </button>
             </>
           ) : null}

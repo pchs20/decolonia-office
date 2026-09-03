@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import { ensureDatabaseReady, getDbPool } from "@/infrastructure/persistence/postgres/db";
 import { EntityNotFoundError } from "@/domain/exceptions";
 import { Budget } from "@/domain/entities/budget";
@@ -291,10 +292,106 @@ export async function deleteBudgetRecord(id: string): Promise<void> {
   }
 }
 
+export async function duplicateBudgetRecord(id: string): Promise<Budget> {
+  await ensureDatabaseReady();
+  const client = await getDbPool().connect();
+  const newId = randomUUID();
+
+  try {
+    await client.query("BEGIN");
+    const source = await client.query("SELECT id FROM budgets WHERE id = $1", [id]);
+    if (!source.rows[0]) {
+      throw new EntityNotFoundError("Budget not found");
+    }
+
+    await client.query(
+      `INSERT INTO commercial_document_settings (
+        default_budget_pricing_mode, default_invoice_pricing_mode,
+        default_budget_next_number, invoice_next_numbers
+      )
+      SELECT 'computed', 'computed', 1, '{}'::jsonb
+      WHERE NOT EXISTS (SELECT 1 FROM commercial_document_settings)`
+    );
+
+    const numberResult = await client.query<{ next_number: number }>(
+      `UPDATE commercial_document_settings
+       SET default_budget_next_number = default_budget_next_number + 1,
+           updated_at = CURRENT_TIMESTAMP
+       WHERE id = (SELECT id FROM commercial_document_settings ORDER BY created_at ASC LIMIT 1)
+       RETURNING default_budget_next_number - 1 AS next_number`
+    );
+    const number = numberResult.rows[0]?.next_number;
+    if (!number) {
+      throw new Error("Failed to allocate budget number");
+    }
+
+    const result = await client.query<BudgetRow>(
+      `INSERT INTO budgets (
+        id, number, client_id, worker_id, notes, delivered_at,
+        client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
+        client_snapshot_work_street, client_snapshot_work_city, client_snapshot_work_postal_code,
+        client_snapshot_billing_street, client_snapshot_billing_city, client_snapshot_billing_postal_code,
+        worker_snapshot_name, worker_snapshot_tax_id, worker_snapshot_phone, worker_snapshot_email,
+        worker_snapshot_work_street, worker_snapshot_work_city, worker_snapshot_work_postal_code,
+        worker_snapshot_billing_street, worker_snapshot_billing_city, worker_snapshot_billing_postal_code,
+        worker_snapshot_bank_account, tax_snapshot_name, tax_snapshot_rate, tax_snapshot_behavior,
+        pricing_mode, manual_subtotal_amount, subtotal_amount, tax_amount, total_amount,
+        created_at, updated_at
+      )
+      SELECT $1, $2, client_id, worker_id, notes, NULL,
+        client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
+        client_snapshot_work_street, client_snapshot_work_city, client_snapshot_work_postal_code,
+        client_snapshot_billing_street, client_snapshot_billing_city, client_snapshot_billing_postal_code,
+        worker_snapshot_name, worker_snapshot_tax_id, worker_snapshot_phone, worker_snapshot_email,
+        worker_snapshot_work_street, worker_snapshot_work_city, worker_snapshot_work_postal_code,
+        worker_snapshot_billing_street, worker_snapshot_billing_city, worker_snapshot_billing_postal_code,
+        worker_snapshot_bank_account, tax_snapshot_name, tax_snapshot_rate, tax_snapshot_behavior,
+        pricing_mode, manual_subtotal_amount, subtotal_amount, tax_amount, total_amount,
+        CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+      FROM budgets WHERE id = $3
+      RETURNING id, number, client_id, worker_id, notes, delivered_at,
+        client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
+        client_snapshot_work_street, client_snapshot_work_city, client_snapshot_work_postal_code,
+        client_snapshot_billing_street, client_snapshot_billing_city, client_snapshot_billing_postal_code,
+        worker_snapshot_name, worker_snapshot_tax_id, worker_snapshot_phone, worker_snapshot_email,
+        worker_snapshot_work_street, worker_snapshot_work_city, worker_snapshot_work_postal_code,
+        worker_snapshot_billing_street, worker_snapshot_billing_city, worker_snapshot_billing_postal_code,
+        worker_snapshot_bank_account, tax_snapshot_name, tax_snapshot_rate, tax_snapshot_behavior,
+        pricing_mode, manual_subtotal_amount, subtotal_amount, tax_amount, total_amount,
+        created_at, updated_at`,
+      [newId, String(number), id]
+    );
+    const budgetRow = result.rows[0];
+    if (!budgetRow) {
+      throw new Error("Failed to duplicate budget");
+    }
+
+    await client.query(
+      `INSERT INTO job_items (
+        id, commercial_document_id, position, title, description,
+        quantity, unit_price, total_price, created_at, updated_at
+      )
+      SELECT gen_random_uuid(), $1, position, title, description,
+        quantity, unit_price, total_price, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+      FROM job_items WHERE commercial_document_id = $2`,
+      [newId, id]
+    );
+
+    await client.query("COMMIT");
+    return mapBudgetRow(budgetRow);
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 export const postgresBudgetRepository: BudgetRepository = {
   create: (budget) => createBudgetRecord(budget, postgresJobItemRepository),
   getById: getBudgetById,
   list: listBudgets,
   update: updateBudgetRecord,
-  delete: deleteBudgetRecord
+  delete: deleteBudgetRecord,
+  duplicate: duplicateBudgetRecord
 };

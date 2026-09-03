@@ -950,6 +950,19 @@ export function getOpenApiDocument() {
           }
         }
       },
+      "/api/budgets/{id}/duplicate": {
+        post: {
+          tags: ["Budgets"],
+          summary: "Duplicate budget",
+          parameters: [{ name: "id", in: "path", required: true, schema: { type: "string", format: "uuid" } }],
+          responses: {
+            "201": {
+              description: "Budget duplicated",
+              content: { "application/json": { schema: { $ref: "#/components/schemas/Budget" } } }
+            }
+          }
+        }
+      },
       "/api/budgets/{id}/items": {
         post: {
           tags: ["Budgets"],
@@ -1261,6 +1274,19 @@ export function getOpenApiDocument() {
                   schema: { $ref: "#/components/schemas/Invoice" }
                 }
               }
+            }
+          }
+        }
+      },
+      "/api/invoices/{id}/duplicate": {
+        post: {
+          tags: ["Invoices"],
+          summary: "Duplicate invoice",
+          parameters: [{ name: "id", in: "path", required: true, schema: { type: "string", format: "uuid" } }],
+          responses: {
+            "201": {
+              description: "Invoice duplicated",
+              content: { "application/json": { schema: { $ref: "#/components/schemas/Invoice" } } }
             }
           }
         }
