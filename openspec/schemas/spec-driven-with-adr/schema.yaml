@@ -216,6 +216,7 @@ artifacts:
       Good design docs explain the "why" behind technical decisions.
     requires:
       - proposal
+      - specs
   - id: adr
     generates: "../../../docs/adr/*.md"
     description: Architecture Decision Records distilled from design for future reference
