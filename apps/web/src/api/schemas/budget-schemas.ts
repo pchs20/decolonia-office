@@ -14,6 +14,9 @@ export interface BudgetCreateRequest {
   workerSnapshot?: DocumentPartyInput;
   notes?: string | null;
   taxId?: string | null;
+  number?: string;
+  identifierSource?: "automatic" | "custom";
+  confirmDuplicateNumber?: boolean;
 }
 
 export interface BudgetUpdateRequest {
@@ -24,6 +27,9 @@ export interface BudgetUpdateRequest {
   notes?: string | null;
   deliveredAt?: Date | null;
   taxId?: string | null;
+  number?: string;
+  identifierSource?: "custom";
+  confirmDuplicateNumber?: boolean;
 }
 
 export interface BudgetListResponse {

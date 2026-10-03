@@ -260,6 +260,7 @@
     },
     "fields": {
       "number": "Número",
+      "identifierSource": "Origen del identificador",
       "client": "Cliente",
       "worker": "Trabajador",
       "clientInfo": "Información del cliente",
@@ -270,6 +271,10 @@
       "pricingMode": "Modo de precio",
       "manualSubtotalAmount": "Subtotal manual",
       "calculatedTotal": "Total calculado"
+    },
+    "identifier": {
+      "resetAutomatic": "Restablecer automático",
+      "duplicateWarning": "El identificador {{identifier}} ya lo utiliza otro documento del mismo tipo. Envía de nuevo para confirmar."
     },
     "errors": {
       "noPrimaryWorker": "No hay ningún trabajador principal configurado. Configura un trabajador como principal en",

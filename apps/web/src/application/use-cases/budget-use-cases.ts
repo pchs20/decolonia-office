@@ -9,6 +9,7 @@ import { TaxRepository } from "@/application/outbound/tax-repository";
 import { ClientSnapshot } from "@/domain/value-objects/client-snapshot";
 import { PricingMode } from "@/domain/value-objects/pricing-mode";
 import { WorkerSnapshot } from "@/domain/value-objects/worker-snapshot";
+import { DocumentIdentifierSource, validateDocumentIdentifier } from "@/domain/value-objects/document-identifier";
 
 export async function createBudget(
   clientId: string,
@@ -23,14 +24,17 @@ export async function createBudget(
   settingsRepo: CommercialDocumentSettingsRepository,
   clientRepo: ClientRepository,
   workerRepo: WorkerRepository,
-  taxRepo: TaxRepository
+  taxRepo: TaxRepository,
+  identifierSource: DocumentIdentifierSource = "automatic",
+  customNumber: string | null = null
 ): Promise<Budget> {
   const client = await clientRepo.getById(clientId);
   const worker = await workerRepo.getById(workerId);
   const tax = taxId ? await taxRepo.getById(taxId) : null;
 
-  const number = await settingsRepo.allocateNumber("budget", null);
-  const budgetNumber = `${number}`;
+  const budgetNumber = identifierSource === "custom" && customNumber
+    ? validateDocumentIdentifier(customNumber)
+    : `${await settingsRepo.allocateNumber("budget", null)}`;
 
   const clientSnapshot: ClientSnapshot = clientSnapshotOverride ?? {
     name: client.name,
@@ -55,6 +59,7 @@ export async function createBudget(
   const budget: Budget = {
     id: randomUUID(),
     number: budgetNumber,
+    identifierSource,
     clientId,
     clientSnapshot,
     workerId,

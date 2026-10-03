@@ -14,6 +14,7 @@ import { BudgetService } from "@/presentation/api-clients/budget.service";
 import { CommercialDocumentSettingsService } from "@/presentation/api-clients/commercial-document-settings.service";
 import { JobItemForm } from "@/presentation/components/commercial-documents/JobItemForm";
 import { JobItemDisplay, JobItemsTable } from "@/presentation/components/commercial-documents/JobItemsTable";
+import { DocumentSequenceService } from "@/presentation/api-clients/document-sequence.service";
 
 interface BudgetFormProps {
   budget?: BudgetResponse;
@@ -118,6 +119,8 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
   const [primaryWorker, setPrimaryWorker] = useState<WorkerSchema | null>(null);
   const [primaryWorkerLoading, setPrimaryWorkerLoading] = useState(!isEditing);
   const [primaryWorkerError, setPrimaryWorkerError] = useState<string | null>(null);
+  const [automaticNumber, setAutomaticNumber] = useState("");
+  const [confirmDuplicateNumber, setConfirmDuplicateNumber] = useState(false);
 
   const [formData, setFormData] = useState({
     clientId: budget?.client?.id || initialClientId || "",
@@ -126,7 +129,9 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
     pricingMode: budget?.pricingMode || "computed",
     manualSubtotalAmount: budget?.manualSubtotalAmount !== null && budget?.manualSubtotalAmount !== undefined
       ? String(budget.manualSubtotalAmount)
-      : ""
+      : "",
+    number: budget?.number || "",
+    identifierSource: budget?.identifierSource || "automatic"
   });
 
   const [error, setError] = useState<string | null>(null);
@@ -202,6 +207,18 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
   useEffect(() => {
     void loadTaxes(1, 100, false);
   }, [loadTaxes]);
+
+  useEffect(() => {
+    if (isEditing) return;
+    void DocumentSequenceService.getAll().then(response => {
+      const sequence = response.sequences.find(item => item.documentType === "budget");
+      if (sequence) {
+        const value = String(sequence.nextNumber);
+        setAutomaticNumber(value);
+        setFormData(prev => prev.identifierSource === "automatic" ? { ...prev, number: value } : prev);
+      }
+    }).catch(() => undefined);
+  }, [isEditing]);
 
   useEffect(() => {
     if (budget?.tax?.name && taxes.length > 0) {
@@ -357,17 +374,21 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
     setLoading(true);
     try {
       const result = isEditing
-        ? await BudgetService.update(budget.id, {
+       ? await BudgetService.update(budget.id, {
+             number: formData.number !== budget.number ? formData.number : undefined,
             clientSnapshot: toSnapshotPayload(clientSnapshot),
             workerSnapshot: toSnapshotPayload(workerSnapshot),
             notes: formData.notes || null,
             taxId: formData.taxId || null,
             pricingMode: formData.pricingMode,
-            manualSubtotalAmount: formData.pricingMode === "manual-subtotal"
-              ? (formData.manualSubtotalAmount.trim() ? Number(formData.manualSubtotalAmount) : null)
-              : null
+             manualSubtotalAmount: formData.pricingMode === "manual-subtotal"
+               ? (formData.manualSubtotalAmount.trim() ? Number(formData.manualSubtotalAmount) : null)
+               : null,
+             confirmDuplicateNumber
           })
-        : await createBudget({
+         : await createBudget({
+             number: formData.identifierSource === "custom" ? formData.number : undefined,
+             identifierSource: formData.identifierSource,
             clientId: formData.clientId,
             workerId: primaryWorker!.id,
             clientSnapshot: toSnapshotPayload(clientSnapshot),
@@ -375,9 +396,10 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
             notes: formData.notes || undefined,
             taxId: formData.taxId || undefined,
             pricingMode: formData.pricingMode,
-            manualSubtotalAmount: formData.pricingMode === "manual-subtotal"
-              ? (formData.manualSubtotalAmount.trim() ? Number(formData.manualSubtotalAmount) : null)
-              : null
+             manualSubtotalAmount: formData.pricingMode === "manual-subtotal"
+               ? (formData.manualSubtotalAmount.trim() ? Number(formData.manualSubtotalAmount) : null)
+               : null,
+             confirmDuplicateNumber
           });
 
       if (isEditing) {
@@ -474,7 +496,16 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
 
       onSuccess(result);
     } catch (err) {
-      setError(err instanceof Error ? err.message : t("common.errors.unknown"));
+      const status = err instanceof Error && "status" in err ? (err as Error & { status?: number }).status : undefined;
+      if (status === 409 && !confirmDuplicateNumber) {
+        setConfirmDuplicateNumber(true);
+        const structured = err as Error & { code?: string; details?: Record<string, string> };
+        setError(structured.code === "DUPLICATE_DOCUMENT_IDENTIFIER"
+          ? t("commercialDocuments.identifier.duplicateWarning", { identifier: structured.details?.identifier || formData.number })
+          : t("common.errors.unknown"));
+      } else {
+        setError(err instanceof Error ? err.message : t("common.errors.unknown"));
+      }
     } finally {
       setLoading(false);
     }
@@ -586,6 +617,18 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
       <h2 className="text-2xl font-bold">
         {isEditing ? t("budgets.form.editTitle") : t("budgets.form.newTitle")}
       </h2>
+
+      <div className="flex items-end gap-2">
+        <div className="flex-1">
+          <label className="block text-sm font-medium mb-1">{t("commercialDocuments.fields.number")}</label>
+          <input name="number" value={formData.number} onChange={e => setFormData(prev => ({ ...prev, number: e.target.value, identifierSource: "custom" }))} className="w-full px-3 py-2 border rounded" />
+        </div>
+        {!isEditing && (
+          <button type="button" onClick={() => setFormData(prev => ({ ...prev, number: automaticNumber, identifierSource: "automatic" }))} className="px-3 py-2 border rounded text-sm">
+            {automaticNumber ? `${t("commercialDocuments.identifier.resetAutomatic")} (${automaticNumber})` : t("commercialDocuments.identifier.resetAutomatic")}
+          </button>
+        )}
+      </div>
 
       {error && (
         <div className="p-3 bg-red-100 text-red-700 rounded">

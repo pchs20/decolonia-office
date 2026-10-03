@@ -6,8 +6,7 @@ import {
   DocumentPdfRenderer
 } from "@/application/outbound/backup-export-ports";
 import { getDatePath } from "@/application/use-cases/backup-export/date-path";
-
-const documentNumberPattern = /[^a-zA-Z0-9-]/g;
+import { exportFileName } from "@/application/use-cases/backup-export/export-file-name";
 
 type ExportRecord = Record<string, BackupCell>;
 
@@ -34,11 +33,6 @@ function getRecordValue(record: ExportRecord, ...names: string[]): BackupCell {
   return null;
 }
 
-function formatDocumentNumber(value: BackupCell, fallbackId: string): string {
-  const number = String(value ?? fallbackId).replace(documentNumberPattern, "-");
-  return number || fallbackId;
-}
-
 function getRecordId(record: ExportRecord): string {
   return String(getRecordValue(record, "id") ?? "unknown");
 }
@@ -54,12 +48,11 @@ async function renderDocumentFiles(
       const dateValue = getRecordValue(record, "issuedAt", "issued_at", "deliveredAt", "delivered_at", "createdAt", "created_at");
       const date = typeof dateValue === "string" ? dateValue : null;
       const { year, period } = getDatePath(date);
-      const number = formatDocumentNumber(getRecordValue(record, "number"), documentId);
-      const prefix = documentType === "budget" ? "presupuesto" : "factura";
+       const fileName = exportFileName(documentType, getRecordValue(record, "number"), documentId);
       const content = await render(documentId);
 
       return {
-        path: `${documentType === "budget" ? "Budgets" : "Invoices"}/${year}/${period}/${prefix}-${number}.pdf`,
+         path: `${documentType === "budget" ? "Budgets" : "Invoices"}/${year}/${period}/${fileName}`,
         content,
         contentType: "application/pdf",
         documentType,

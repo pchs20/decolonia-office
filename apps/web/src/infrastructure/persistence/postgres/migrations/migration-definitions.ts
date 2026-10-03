@@ -18,6 +18,7 @@ import addIsPrimaryToWorkers from "./1719316803000-AddIsPrimaryToWorkers.sql";
 import createDocumentExportStatesTable from "./2026081500000-CreateDocumentExportStatesTable.sql";
 import addDestinationReferenceToDocumentExportStates from "./2026081500001-AddDestinationReferenceToDocumentExportStates.sql";
 import dropWorkTemplatesTable from "./2026090300000-DropWorkTemplatesTable.sql";
+import allowCustomDocumentIdentifiers from "./2026100300000-AllowCustomDocumentIdentifiers.sql";
 
 export type SqlMigration = {
   id: string;
@@ -125,5 +126,10 @@ export const SQL_MIGRATIONS: SqlMigration[] = [
     id: "2026090300000",
     name: "DropWorkTemplatesTable",
     sql: dropWorkTemplatesTable
+  },
+  {
+    id: "2026100300000",
+    name: "AllowCustomDocumentIdentifiers",
+    sql: allowCustomDocumentIdentifiers
   }
 ];

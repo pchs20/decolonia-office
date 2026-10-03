@@ -31,6 +31,8 @@ import {
 import { ClientSnapshot } from "@/domain/value-objects/client-snapshot";
 import { PricingMode } from "@/domain/value-objects/pricing-mode";
 import { WorkerSnapshot } from "@/domain/value-objects/worker-snapshot";
+import { DocumentIdentifierSource, validateDocumentIdentifier } from "@/domain/value-objects/document-identifier";
+import { ConflictError } from "@/domain/exceptions";
 
 interface CommercialDocumentDeps {
   budgetRepository: BudgetRepository;
@@ -44,7 +46,7 @@ interface CommercialDocumentDeps {
 
 export function createCommercialDocumentsUseCases(deps: CommercialDocumentDeps) {
   return {
-    async createBudget(params: {
+      async createBudget(params: {
       clientId: string;
       workerId: string;
       clientSnapshot: ClientSnapshot | null;
@@ -52,10 +54,21 @@ export function createCommercialDocumentsUseCases(deps: CommercialDocumentDeps) 
       notes: string | null;
       taxId: string | null;
       pricingMode?: PricingMode;
-      manualSubtotalAmount?: number | null;
-    }): Promise<Budget> {
-      const defaultPricingModes = await deps.settingsRepository.getDefaultPricingModes();
-      return createBudget(
+        manualSubtotalAmount?: number | null;
+        identifierSource?: DocumentIdentifierSource;
+        number?: string;
+        confirmDuplicateNumber?: boolean;
+      }): Promise<Budget> {
+        const defaultPricingModes = await deps.settingsRepository.getDefaultPricingModes();
+        const identifierSource = params.identifierSource ?? "automatic";
+        const number = identifierSource === "custom" ? validateDocumentIdentifier(params.number ?? "") : null;
+        if (number && !params.confirmDuplicateNumber && deps.budgetRepository.findByNumber && await deps.budgetRepository.findByNumber(number)) {
+          throw new ConflictError("Duplicate document identifier", "DUPLICATE_DOCUMENT_IDENTIFIER", {
+            documentType: "budget",
+            identifier: number
+          });
+        }
+        return createBudget(
         params.clientId,
         params.workerId,
         params.notes,
@@ -63,12 +76,14 @@ export function createCommercialDocumentsUseCases(deps: CommercialDocumentDeps) 
         params.pricingMode ?? defaultPricingModes.budget,
         params.manualSubtotalAmount ?? null,
         params.clientSnapshot,
-        params.workerSnapshot,
-        deps.budgetRepository,
+          params.workerSnapshot,
+          deps.budgetRepository,
         deps.settingsRepository,
         deps.clientRepository,
         deps.workerRepository,
-        deps.taxRepository
+          deps.taxRepository,
+          identifierSource,
+          number
       );
     },
 
@@ -94,13 +109,27 @@ export function createCommercialDocumentsUseCases(deps: CommercialDocumentDeps) 
         manualSubtotalAmount?: number | null;
         clientSnapshot?: ClientSnapshot;
         workerSnapshot?: WorkerSnapshot;
+        number?: string;
+        identifierSource?: "custom";
+        confirmDuplicateNumber?: boolean;
       }
-    ): Promise<Budget> {
+      ): Promise<Budget> {
       if (params.taxId !== undefined) {
         await updateBudgetTax(id, params.taxId, deps.budgetRepository, deps.taxRepository);
       }
 
       const budget = await deps.budgetRepository.getById(id);
+      if (params.number !== undefined) {
+        const number = validateDocumentIdentifier(params.number);
+        if (!params.confirmDuplicateNumber && deps.budgetRepository.findByNumber && await deps.budgetRepository.findByNumber(number, id)) {
+          throw new ConflictError("Duplicate document identifier", "DUPLICATE_DOCUMENT_IDENTIFIER", {
+            documentType: "budget",
+            identifier: number
+          });
+        }
+        budget.number = number;
+        budget.identifierSource = "custom";
+      }
       if (params.notes !== undefined) {
         budget.notes = params.notes;
       }
@@ -169,7 +198,7 @@ export function createCommercialDocumentsUseCases(deps: CommercialDocumentDeps) 
       await calculateBudgetTotals(budgetId, deps.jobItemRepository, deps.budgetRepository);
     },
 
-    async createInvoice(params: {
+      async createInvoice(params: {
       clientId: string;
       workerId: string;
       clientSnapshot: ClientSnapshot | null;
@@ -178,10 +207,21 @@ export function createCommercialDocumentsUseCases(deps: CommercialDocumentDeps) 
       taxId: string | null;
       pricingMode?: PricingMode;
       manualSubtotalAmount?: number | null;
-      sourceBudgetId: string | null;
-    }): Promise<Invoice> {
-      const defaultPricingModes = await deps.settingsRepository.getDefaultPricingModes();
-      return createInvoice(
+        sourceBudgetId: string | null;
+        identifierSource?: DocumentIdentifierSource;
+        number?: string;
+        confirmDuplicateNumber?: boolean;
+      }): Promise<Invoice> {
+        const defaultPricingModes = await deps.settingsRepository.getDefaultPricingModes();
+        const identifierSource = params.identifierSource ?? "automatic";
+        const number = identifierSource === "custom" ? validateDocumentIdentifier(params.number ?? "") : null;
+        if (number && !params.confirmDuplicateNumber && deps.invoiceRepository.findByNumber && await deps.invoiceRepository.findByNumber(number)) {
+          throw new ConflictError("Duplicate document identifier", "DUPLICATE_DOCUMENT_IDENTIFIER", {
+            documentType: "invoice",
+            identifier: number
+          });
+        }
+        return createInvoice(
         params.clientId,
         params.workerId,
         params.notes,
@@ -195,7 +235,9 @@ export function createCommercialDocumentsUseCases(deps: CommercialDocumentDeps) 
         deps.settingsRepository,
         deps.clientRepository,
         deps.workerRepository,
-        deps.taxRepository
+          deps.taxRepository,
+          identifierSource,
+          number
       );
     },
 
@@ -222,6 +264,9 @@ export function createCommercialDocumentsUseCases(deps: CommercialDocumentDeps) 
         sourceBudgetId?: string | null;
         clientSnapshot?: ClientSnapshot;
         workerSnapshot?: WorkerSnapshot;
+        number?: string;
+        identifierSource?: "custom";
+        confirmDuplicateNumber?: boolean;
       }
     ): Promise<Invoice> {
       if (params.taxId !== undefined) {
@@ -229,6 +274,17 @@ export function createCommercialDocumentsUseCases(deps: CommercialDocumentDeps) 
       }
 
       const invoice = await deps.invoiceRepository.getById(id);
+      if (params.number !== undefined) {
+        const number = validateDocumentIdentifier(params.number);
+        if (!params.confirmDuplicateNumber && deps.invoiceRepository.findByNumber && await deps.invoiceRepository.findByNumber(number, id)) {
+          throw new ConflictError("Duplicate document identifier", "DUPLICATE_DOCUMENT_IDENTIFIER", {
+            documentType: "invoice",
+            identifier: number
+          });
+        }
+        invoice.number = number;
+        invoice.identifierSource = "custom";
+      }
       if (params.notes !== undefined) {
         invoice.notes = params.notes;
       }

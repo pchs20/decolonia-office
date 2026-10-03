@@ -140,6 +140,9 @@ export async function PATCH(request: NextRequest, { params }: Params) {
       manualSubtotalAmount: parseManualSubtotalAmount(payload.manualSubtotalAmount),
       clientSnapshot: parseClientSnapshot(payload.clientSnapshot),
       workerSnapshot: parseWorkerSnapshot(payload.workerSnapshot)
+      ,number: payload.number !== undefined ? String(payload.number) : undefined
+      ,identifierSource: payload.number !== undefined ? "custom" : undefined
+      ,confirmDuplicateNumber: payload.confirmDuplicateNumber === true
     });
 
     return NextResponse.json(mapBudgetToResponse(recalculated), { status: 200 });

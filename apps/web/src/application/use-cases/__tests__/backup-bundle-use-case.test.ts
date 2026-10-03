@@ -49,8 +49,8 @@ describe("assembleBackupBundle", () => {
       rows: [["client-1", "Client"]]
     });
     expect(bundle.files.map((file) => file.path)).toEqual([
-      "Budgets/2026/Q1/presupuesto-2026-0042.pdf",
-      "Invoices/2026/Q1/factura-2026-0007.pdf"
+      "Budgets/2026/Q1/presupuesto-2026-0042-budget1.pdf",
+      "Invoices/2026/Q1/factura-2026-0007-invoice1.pdf"
     ]);
   });
 
@@ -63,6 +63,6 @@ describe("assembleBackupBundle", () => {
       })
     );
 
-    expect(bundle.files[0]?.path).toBe("Budgets/2027/Q4/presupuesto-42.pdf");
+    expect(bundle.files[0]?.path).toBe("Budgets/2027/Q4/presupuesto-42-budget1.pdf");
   });
 });

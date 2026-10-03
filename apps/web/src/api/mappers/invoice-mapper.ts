@@ -5,6 +5,7 @@ export function mapInvoiceToResponse(invoice: Invoice): InvoiceResponse {
   return {
     id: invoice.id,
     number: invoice.number,
+    identifierSource: invoice.identifierSource ?? "automatic",
     client: {
       id: invoice.clientId,
       name: invoice.clientSnapshot.name,

@@ -143,6 +143,9 @@ export async function PATCH(request: NextRequest, { params }: Params) {
         : undefined,
       clientSnapshot: parseClientSnapshot(payload.clientSnapshot),
       workerSnapshot: parseWorkerSnapshot(payload.workerSnapshot)
+      ,number: payload.number !== undefined ? String(payload.number) : undefined
+      ,identifierSource: payload.number !== undefined ? "custom" : undefined
+      ,confirmDuplicateNumber: payload.confirmDuplicateNumber === true
     });
 
     return NextResponse.json(mapInvoiceToResponse(recalculated), { status: 200 });

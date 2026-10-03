@@ -3,6 +3,7 @@
 import { useTranslation } from "react-i18next";
 import { CommercialDocumentType, formatDocumentNumber } from "@/presentation/utils/document-number";
 import { JobItemDisplay, JobItemsTable } from "@/presentation/components/commercial-documents/JobItemsTable";
+import { DocumentIdentifierSource } from "@/domain/value-objects/document-identifier";
 
 interface AddressInfo {
   street: string;
@@ -19,6 +20,7 @@ interface TaxInfo {
 interface CommercialDocumentViewProps {
   documentType: CommercialDocumentType;
   number: string;
+  identifierSource?: DocumentIdentifierSource;
   client: {
     id: string;
     name: string;
@@ -51,6 +53,7 @@ interface CommercialDocumentViewProps {
 export function CommercialDocumentView({
   documentType,
   number,
+  identifierSource,
   client,
   worker,
   tax,
@@ -70,7 +73,7 @@ export function CommercialDocumentView({
       {/* Header */}
       <div className="border-b pb-4">
         <div>
-          <div className="text-3xl font-bold">{formatDocumentNumber(number, documentType, t)}</div>
+          <div className="text-3xl font-bold">{formatDocumentNumber(number, documentType, t)}{identifierSource === "custom" ? " *" : ""}</div>
         </div>
       </div>
 
