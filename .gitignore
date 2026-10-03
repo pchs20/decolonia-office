@@ -52,3 +52,6 @@ invoice-client-output/
 
 # Historical invoice input
 invoice-client-input/
+
+# Development
+.github-token
