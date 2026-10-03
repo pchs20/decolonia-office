@@ -5,6 +5,7 @@ export function mapInvoiceRow(row: InvoiceRow): Invoice {
   return {
     id: row.id,
     number: row.number,
+    identifierSource: row.identifier_source,
     clientId: row.client_id,
     clientSnapshot: {
       name: row.client_snapshot_name,

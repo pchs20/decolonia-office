@@ -221,6 +221,7 @@ export default function InvoiceDetailPage({ params }: InvoiceDetailPageProps) {
         <CommercialDocumentView
           documentType="invoice"
           number={invoice.number}
+          identifierSource={invoice.identifierSource}
           client={{
             ...invoice.client,
             phone: invoice.client.phone ?? undefined,

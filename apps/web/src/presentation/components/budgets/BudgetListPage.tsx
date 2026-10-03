@@ -129,7 +129,7 @@ export function BudgetListPage({ clientId }: BudgetListPageProps) {
                         className="text-gray-900 hover:underline"
                         onClick={event => event.stopPropagation()}
                       >
-                        {formatDocumentNumber(budget.number, "budget", t)}
+                        {formatDocumentNumber(budget.number, "budget", t)} {budget.identifierSource === "custom" ? "*" : ""}
                       </Link>
                     </td>
                     <td className="px-4 py-2">{budget.client?.name || "-"}</td>

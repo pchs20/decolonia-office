@@ -260,6 +260,7 @@
     },
     "fields": {
       "number": "Number",
+      "identifierSource": "Identifier source",
       "client": "Client",
       "worker": "Worker",
       "clientInfo": "Client Information",
@@ -270,6 +271,10 @@
       "pricingMode": "Pricing mode",
       "manualSubtotalAmount": "Manual subtotal",
       "calculatedTotal": "Calculated total"
+    },
+    "identifier": {
+      "resetAutomatic": "Reset to automatic",
+      "duplicateWarning": "The identifier {{identifier}} is already used by another document of the same type. Submit again to confirm."
     },
     "errors": {
       "noPrimaryWorker": "No primary worker configured. Please configure a worker as primary in",

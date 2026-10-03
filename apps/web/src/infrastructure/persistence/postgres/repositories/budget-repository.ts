@@ -33,7 +33,7 @@ export async function createBudgetRecord(
     const budgetResult = await pool.query<BudgetRow>(
       `
         INSERT INTO budgets (
-          id, number, client_id, worker_id, notes, delivered_at,
+          id, number, identifier_source, client_id, worker_id, notes, delivered_at,
           client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
           client_snapshot_work_street, client_snapshot_work_city, client_snapshot_work_postal_code,
           client_snapshot_billing_street, client_snapshot_billing_city, client_snapshot_billing_postal_code,
@@ -46,7 +46,7 @@ export async function createBudgetRecord(
           subtotal_amount, tax_amount, total_amount, created_at, updated_at
         )
         VALUES (
-          $1, $2, $3, $4, $5, $6,
+          $1, $2, $38, $3, $4, $5, $6,
           $7, $8, $9, $10,
           $11, $12, $13,
           $14, $15, $16,
@@ -58,7 +58,7 @@ export async function createBudgetRecord(
           $31, $32,
           $33, $34, $35, $36, $37
         )
-        RETURNING id, number, client_id, worker_id, notes, delivered_at,
+        RETURNING id, number, identifier_source, client_id, worker_id, notes, delivered_at,
           client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
           client_snapshot_work_street, client_snapshot_work_city, client_snapshot_work_postal_code,
           client_snapshot_billing_street, client_snapshot_billing_city, client_snapshot_billing_postal_code,
@@ -107,7 +107,8 @@ export async function createBudgetRecord(
         budget.taxAmount,
         budget.totalAmount,
         budget.createdAt,
-        budget.updatedAt
+          budget.updatedAt,
+          budget.identifierSource
       ]
     );
 
@@ -125,10 +126,28 @@ export async function createBudgetRecord(
   }
 }
 
+export async function findBudgetByNumber(number: string, excludeId?: string): Promise<Budget | null> {
+  await ensureDatabaseReady();
+  const result = await getDbPool().query<BudgetRow>(
+    `SELECT id, number, identifier_source, client_id, worker_id, notes, delivered_at,
+       client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
+       client_snapshot_work_street, client_snapshot_work_city, client_snapshot_work_postal_code,
+       client_snapshot_billing_street, client_snapshot_billing_city, client_snapshot_billing_postal_code,
+       worker_snapshot_name, worker_snapshot_tax_id, worker_snapshot_phone, worker_snapshot_email,
+       worker_snapshot_work_street, worker_snapshot_work_city, worker_snapshot_work_postal_code,
+       worker_snapshot_billing_street, worker_snapshot_billing_city, worker_snapshot_billing_postal_code,
+       worker_snapshot_bank_account, tax_snapshot_name, tax_snapshot_rate, tax_snapshot_behavior,
+       pricing_mode, manual_subtotal_amount, subtotal_amount, tax_amount, total_amount, created_at, updated_at
+     FROM budgets WHERE number = $1 AND ($2::uuid IS NULL OR id <> $2::uuid) LIMIT 1`,
+    [number, excludeId ?? null]
+  );
+  return result.rows[0] ? mapBudgetRow(result.rows[0]) : null;
+}
+
 export async function getBudgetById(id: string): Promise<Budget> {
   return querySingleBudget(
     `
-      SELECT id, number, client_id, worker_id, notes, delivered_at,
+       SELECT id, number, identifier_source, client_id, worker_id, notes, delivered_at,
         client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
         client_snapshot_work_street, client_snapshot_work_city, client_snapshot_work_postal_code,
         client_snapshot_billing_street, client_snapshot_billing_city, client_snapshot_billing_postal_code,
@@ -163,7 +182,7 @@ export async function listBudgets(
   const offset = (safePage - 1) * safeLimit;
 
   let query = `
-    SELECT id, number, client_id, worker_id, notes, delivered_at,
+     SELECT id, number, identifier_source, client_id, worker_id, notes, delivered_at,
       client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
       client_snapshot_work_street, client_snapshot_work_city, client_snapshot_work_postal_code,
       client_snapshot_billing_street, client_snapshot_billing_city, client_snapshot_billing_postal_code,
@@ -232,9 +251,10 @@ export async function updateBudgetRecord(budget: Budget): Promise<Budget> {
         worker_snapshot_bank_account = $23,
         tax_snapshot_name = $24, tax_snapshot_rate = $25, tax_snapshot_behavior = $26,
         pricing_mode = $27, manual_subtotal_amount = $28,
-        subtotal_amount = $29, tax_amount = $30, total_amount = $31, updated_at = $32
-      WHERE id = $33
-      RETURNING id, number, client_id, worker_id, notes, delivered_at,
+         subtotal_amount = $29, tax_amount = $30, total_amount = $31, updated_at = $32,
+         number = $34, identifier_source = $35
+       WHERE id = $33
+       RETURNING id, number, identifier_source, client_id, worker_id, notes, delivered_at,
         client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
         client_snapshot_work_street, client_snapshot_work_city, client_snapshot_work_postal_code,
         client_snapshot_billing_street, client_snapshot_billing_city, client_snapshot_billing_postal_code,
@@ -279,7 +299,9 @@ export async function updateBudgetRecord(budget: Budget): Promise<Budget> {
       budget.taxAmount,
       budget.totalAmount,
       budget.updatedAt,
-      budget.id
+        budget.id,
+        budget.number,
+        budget.identifierSource
     ]
   );
 }
@@ -327,7 +349,7 @@ export async function duplicateBudgetRecord(id: string): Promise<Budget> {
 
     const result = await client.query<BudgetRow>(
       `INSERT INTO budgets (
-        id, number, client_id, worker_id, notes, delivered_at,
+         id, number, identifier_source, client_id, worker_id, notes, delivered_at,
         client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
         client_snapshot_work_street, client_snapshot_work_city, client_snapshot_work_postal_code,
         client_snapshot_billing_street, client_snapshot_billing_city, client_snapshot_billing_postal_code,
@@ -349,7 +371,7 @@ export async function duplicateBudgetRecord(id: string): Promise<Budget> {
         pricing_mode, manual_subtotal_amount, subtotal_amount, tax_amount, total_amount,
         CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
       FROM budgets WHERE id = $3
-      RETURNING id, number, client_id, worker_id, notes, delivered_at,
+       RETURNING id, number, identifier_source, client_id, worker_id, notes, delivered_at,
         client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
         client_snapshot_work_street, client_snapshot_work_city, client_snapshot_work_postal_code,
         client_snapshot_billing_street, client_snapshot_billing_city, client_snapshot_billing_postal_code,
@@ -393,5 +415,6 @@ export const postgresBudgetRepository: BudgetRepository = {
   list: listBudgets,
   update: updateBudgetRecord,
   delete: deleteBudgetRecord,
-  duplicate: duplicateBudgetRecord
+  duplicate: duplicateBudgetRecord,
+  findByNumber: findBudgetByNumber
 };

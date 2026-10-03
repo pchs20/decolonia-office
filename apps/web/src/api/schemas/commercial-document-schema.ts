@@ -1,4 +1,5 @@
 import { ProfileSchema } from "@/api/schemas/profile-schema";
+import { DocumentIdentifierSource } from "@/domain/value-objects/document-identifier";
 
 export interface DocumentAddressSchema {
   street: string;
@@ -37,6 +38,7 @@ export interface DocumentTaxSchema {
 export interface CommercialDocumentResponse {
   id: string;
   number: string;
+  identifierSource: DocumentIdentifierSource;
   pricingMode: "computed" | "manual-subtotal";
   manualSubtotalAmount: number | null;
   client: DocumentPartySchema;

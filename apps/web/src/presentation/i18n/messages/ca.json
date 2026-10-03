@@ -256,6 +256,7 @@
     },
     "fields": {
       "number": "Número",
+      "identifierSource": "Origen de l'identificador",
       "client": "Client",
       "worker": "Treballador",
       "clientInfo": "Informació del client",
@@ -275,6 +276,10 @@
       "pricing": "Preus",
       "numbering": "Numeració de documents",
       "backup": "Còpia i exportació"
+    },
+    "identifier": {
+      "resetAutomatic": "Restablir automàtic",
+      "duplicateWarning": "L'identificador {{identifier}} ja l'utilitza un altre document del mateix tipus. Envia de nou per confirmar."
     },
     "backup": {
       "title": "Còpia i exportació",

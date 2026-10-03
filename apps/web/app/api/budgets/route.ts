@@ -148,6 +148,8 @@ export async function POST(request: NextRequest) {
     const manualSubtotalAmount = parseManualSubtotalAmount(payload.manualSubtotalAmount);
     const clientSnapshot = parseClientSnapshot(payload.clientSnapshot);
     const workerSnapshot = parseWorkerSnapshot(payload.workerSnapshot);
+    const identifierSource = payload.identifierSource === "custom" ? "custom" : "automatic";
+    const number = typeof payload.number === "string" ? payload.number : undefined;
 
     if (!clientId) {
       throw new ApiError(400, "clientId is required");
@@ -165,7 +167,10 @@ export async function POST(request: NextRequest) {
       notes,
       taxId,
       pricingMode,
-      manualSubtotalAmount
+      manualSubtotalAmount,
+      number,
+      identifierSource,
+      confirmDuplicateNumber: payload.confirmDuplicateNumber === true
     });
 
     return NextResponse.json(mapBudgetToResponse(budget), { status: 201 });

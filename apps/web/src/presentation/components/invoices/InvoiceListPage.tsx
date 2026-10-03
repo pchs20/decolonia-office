@@ -150,7 +150,7 @@ export function InvoiceListPage({ clientId }: InvoiceListPageProps) {
                         className="text-gray-900 hover:underline"
                         onClick={event => event.stopPropagation()}
                       >
-                        {formatDocumentNumber(invoice.number, "invoice", t)}
+                        {formatDocumentNumber(invoice.number, "invoice", t)} {invoice.identifierSource === "custom" ? "*" : ""}
                       </Link>
                     </td>
                     <td className="px-4 py-2">{invoice.client?.name || "-"}</td>

@@ -17,6 +17,7 @@ describe("invoice use-cases", () => {
     update: jest.fn(),
     delete: jest.fn(),
     duplicate: jest.fn()
+    ,findByNumber: jest.fn()
   };
 
   const settingsRepo: jest.Mocked<CommercialDocumentSettingsRepository> = {
@@ -124,6 +125,19 @@ describe("invoice use-cases", () => {
     expect(settingsRepo.allocateNumber).toHaveBeenCalled();
     expect(created.number).toContain("7/");
     expect(created.sourceBudgetId).toBe("b-1");
+    expect(created.identifierSource).toBe("automatic");
+  });
+
+  it("creates a custom invoice without allocating a sequence number", async () => {
+    clientRepo.getById.mockResolvedValueOnce({} as never);
+    workerRepo.getById.mockResolvedValueOnce({} as never);
+    invoiceRepo.create.mockImplementation(async invoice => invoice);
+
+    const created = await createInvoice("c-1", "w-1", null, null, "computed", null, null, null, null, invoiceRepo, settingsRepo, clientRepo, workerRepo, taxRepo, "custom", "EXT-42");
+
+    expect(created.number).toBe("EXT-42");
+    expect(created.identifierSource).toBe("custom");
+    expect(settingsRepo.allocateNumber).not.toHaveBeenCalled();
   });
 
   it("recalculates invoice totals from items and tax", async () => {

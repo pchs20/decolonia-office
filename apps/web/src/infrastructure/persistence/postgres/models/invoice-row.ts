@@ -1,6 +1,7 @@
 export interface InvoiceRow {
   id: string;
   number: string;
+  identifier_source: "automatic" | "custom";
   client_id: string;
   worker_id: string;
   notes: string | null;

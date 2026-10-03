@@ -196,6 +196,7 @@ export default function BudgetDetailPage({ params }: BudgetDetailPageProps) {
         <CommercialDocumentView
           documentType="budget"
           number={budget.number}
+          identifierSource={budget.identifierSource}
           client={{
             ...budget.client,
             phone: budget.client.phone ?? undefined,

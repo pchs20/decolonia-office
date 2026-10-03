@@ -3,6 +3,7 @@ import { Budget } from "@/domain/entities/budget";
 export interface BudgetRepository {
   create(budget: Budget): Promise<Budget>;
   getById(id: string): Promise<Budget>;
+  findByNumber?(number: string, excludeId?: string): Promise<Budget | null>;
   list(page: number, limit: number, clientId?: string, search?: string): Promise<{
     budgets: Budget[];
     total: number;

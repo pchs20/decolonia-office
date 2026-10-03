@@ -115,7 +115,7 @@ describe("synchronizeCloudBatch", () => {
     const result = await synchronizeCloudBatch(test.dependencies, { batchSize: 1 });
 
     expect(result.processed).toBe(1);
-    expect(test.uploads).toEqual(["presupuesto-1.pdf"]);
+    expect(test.uploads).toEqual(["presupuesto-1-budget1.pdf"]);
     expect(test.successes).toEqual(["budget-1"]);
   });
 

@@ -15,7 +15,7 @@ export class ApiError extends Error {
   }
 }
 
-export function getErrorResponse(error: unknown): { status: number; body: { message: string } } {
+export function getErrorResponse(error: unknown): { status: number; body: { message: string; code?: string; details?: Record<string, string> } } {
   // API layer errors: pass through directly
   if (error instanceof ApiError) {
     return {
@@ -42,7 +42,11 @@ export function getErrorResponse(error: unknown): { status: number; body: { mess
   if (error instanceof ConflictError) {
     return {
       status: 409,
-      body: { message: error.message }
+      body: {
+        message: error.message,
+        ...(error.code ? { code: error.code } : {}),
+        ...(error.details ? { details: error.details } : {})
+      }
     };
   }
 

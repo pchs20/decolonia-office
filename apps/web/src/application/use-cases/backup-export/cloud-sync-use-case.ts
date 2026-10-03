@@ -12,6 +12,7 @@ import {
 import { ExportProvider } from "@/application/outbound/export-provider";
 import { buildBackupTables } from "@/application/use-cases/backup-export/backup-bundle-use-case";
 import { getDatePath } from "@/application/use-cases/backup-export/date-path";
+import { exportFileName } from "@/application/use-cases/backup-export/export-file-name";
 
 interface ExportRecord extends Record<string, BackupCell> {}
 
@@ -67,8 +68,7 @@ function asDate(record: ExportRecord, ...names: string[]): Date {
 }
 
 function fileName(type: ExportDocumentType, record: ExportRecord): string {
-  const number = String(value(record, "number") ?? asDocumentId(record)).replace(/[^a-zA-Z0-9-]/g, "-");
-  return `${type === "budget" ? "presupuesto" : "factura"}-${number}.pdf`;
+  return exportFileName(type, value(record, "number"), asDocumentId(record));
 }
 
 async function ensurePeriodFolder(

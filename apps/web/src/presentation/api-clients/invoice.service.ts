@@ -23,7 +23,12 @@ export class InvoiceService {
     });
 
     if (!response.ok) {
-      throw new Error("Failed to create invoice");
+      const body = await response.json().catch(() => null);
+      const error = new Error(body?.message || "Failed to create invoice") as Error & { status?: number; code?: string; details?: Record<string, string> };
+      error.status = response.status;
+      error.code = body?.code;
+      error.details = body?.details;
+      throw error;
     }
 
     return response.json();
@@ -79,7 +84,12 @@ export class InvoiceService {
     });
 
     if (!response.ok) {
-      throw new Error("Failed to update invoice");
+      const body = await response.json().catch(() => null);
+      const error = new Error(body?.message || "Failed to update invoice") as Error & { status?: number; code?: string; details?: Record<string, string> };
+      error.status = response.status;
+      error.code = body?.code;
+      error.details = body?.details;
+      throw error;
     }
 
     return response.json();

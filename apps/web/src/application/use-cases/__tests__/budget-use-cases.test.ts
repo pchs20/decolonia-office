@@ -17,6 +17,7 @@ describe("budget use-cases", () => {
     update: jest.fn(),
     delete: jest.fn(),
     duplicate: jest.fn()
+    ,findByNumber: jest.fn()
   };
 
   const settingsRepo: jest.Mocked<CommercialDocumentSettingsRepository> = {
@@ -125,6 +126,19 @@ describe("budget use-cases", () => {
     expect(created.clientSnapshot.name).toBe("Client A");
     expect(created.workerSnapshot.name).toBe("Worker A");
     expect(created.taxSnapshot?.rate).toBe(21);
+    expect(created.identifierSource).toBe("automatic");
+  });
+
+  it("creates a custom budget without allocating a sequence number", async () => {
+    clientRepo.getById.mockResolvedValueOnce({} as never);
+    workerRepo.getById.mockResolvedValueOnce({} as never);
+    budgetRepo.create.mockImplementation(async budget => budget);
+
+    const created = await createBudget("c-1", "w-1", null, null, "computed", null, null, null, budgetRepo, settingsRepo, clientRepo, workerRepo, taxRepo, "custom", " EXT-42 ");
+
+    expect(created.number).toBe("EXT-42");
+    expect(created.identifierSource).toBe("custom");
+    expect(settingsRepo.allocateNumber).not.toHaveBeenCalled();
   });
 
   it("recalculates totals from items and tax", async () => {

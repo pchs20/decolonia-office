@@ -16,6 +16,9 @@ export interface InvoiceCreateRequest {
   notes?: string | null;
   taxId?: string | null;
   sourceBudgetId?: string | null;
+  number?: string;
+  identifierSource?: "automatic" | "custom";
+  confirmDuplicateNumber?: boolean;
 }
 
 export interface InvoiceUpdateRequest {
@@ -27,6 +30,9 @@ export interface InvoiceUpdateRequest {
   issuedAt?: Date | null;
   taxId?: string | null;
   sourceBudgetId?: string | null;
+  number?: string;
+  identifierSource?: "custom";
+  confirmDuplicateNumber?: boolean;
 }
 
 export interface InvoiceListResponse {

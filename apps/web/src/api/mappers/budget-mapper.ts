@@ -5,6 +5,7 @@ export function mapBudgetToResponse(budget: Budget): BudgetResponse {
   return {
     id: budget.id,
     number: budget.number,
+    identifierSource: budget.identifierSource ?? "automatic",
     client: {
       id: budget.clientId,
       name: budget.clientSnapshot.name,

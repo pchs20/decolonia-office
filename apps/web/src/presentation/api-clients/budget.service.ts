@@ -23,7 +23,12 @@ export class BudgetService {
     });
 
     if (!response.ok) {
-      throw new Error("Failed to create budget");
+      const body = await response.json().catch(() => null);
+      const error = new Error(body?.message || "Failed to create budget") as Error & { status?: number; code?: string; details?: Record<string, string> };
+      error.status = response.status;
+      error.code = body?.code;
+      error.details = body?.details;
+      throw error;
     }
 
     return response.json();
@@ -77,7 +82,12 @@ export class BudgetService {
     });
 
     if (!response.ok) {
-      throw new Error("Failed to update budget");
+      const body = await response.json().catch(() => null);
+      const error = new Error(body?.message || "Failed to update budget") as Error & { status?: number; code?: string; details?: Record<string, string> };
+      error.status = response.status;
+      error.code = body?.code;
+      error.details = body?.details;
+      throw error;
     }
 
     return response.json();

@@ -153,6 +153,8 @@ export async function POST(request: NextRequest) {
       : null;
     const clientSnapshot = parseClientSnapshot(payload.clientSnapshot);
     const workerSnapshot = parseWorkerSnapshot(payload.workerSnapshot);
+    const identifierSource = payload.identifierSource === "custom" ? "custom" : "automatic";
+    const number = typeof payload.number === "string" ? payload.number : undefined;
 
     if (!clientId) {
       throw new ApiError(400, "clientId is required");
@@ -171,7 +173,10 @@ export async function POST(request: NextRequest) {
       taxId,
       pricingMode,
       manualSubtotalAmount,
-      sourceBudgetId
+      sourceBudgetId,
+      number,
+      identifierSource,
+      confirmDuplicateNumber: payload.confirmDuplicateNumber === true
     });
 
     return NextResponse.json(mapInvoiceToResponse(invoice), { status: 201 });

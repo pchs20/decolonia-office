@@ -6,7 +6,11 @@ import { DomainException } from "@/domain/exceptions/domain-exception";
  * Maps to 409 Conflict in API layer.
  */
 export class ConflictError extends DomainException {
-  constructor(message: string) {
+  constructor(
+    message: string,
+    public readonly code?: string,
+    public readonly details?: Record<string, string>
+  ) {
     super(message);
     Object.setPrototypeOf(this, ConflictError.prototype);
   }

@@ -16,6 +16,7 @@ import { CommercialDocumentSettingsService } from "@/presentation/api-clients/co
 import { InvoiceService } from "@/presentation/api-clients/invoice.service";
 import { JobItemForm } from "@/presentation/components/commercial-documents/JobItemForm";
 import { JobItemDisplay, JobItemsTable } from "@/presentation/components/commercial-documents/JobItemsTable";
+import { DocumentSequenceService } from "@/presentation/api-clients/document-sequence.service";
 import { formatDocumentNumber } from "@/presentation/utils/document-number";
 
 interface InvoiceFormProps {
@@ -128,6 +129,8 @@ export function InvoiceForm({ invoice, initialClientId, initialItems = [], onSuc
   const [primaryWorker, setPrimaryWorker] = useState<WorkerSchema | null>(null);
   const [primaryWorkerLoading, setPrimaryWorkerLoading] = useState(!isEditing);
   const [primaryWorkerError, setPrimaryWorkerError] = useState<string | null>(null);
+  const [automaticNumber, setAutomaticNumber] = useState("");
+  const [confirmDuplicateNumber, setConfirmDuplicateNumber] = useState(false);
 
   const [formData, setFormData] = useState({
     clientId: invoice?.client?.id || initialClientId || "",
@@ -137,7 +140,9 @@ export function InvoiceForm({ invoice, initialClientId, initialItems = [], onSuc
     pricingMode: invoice?.pricingMode || "computed",
     manualSubtotalAmount: invoice?.manualSubtotalAmount !== null && invoice?.manualSubtotalAmount !== undefined
       ? String(invoice.manualSubtotalAmount)
-      : ""
+      : "",
+    number: invoice?.number || "",
+    identifierSource: invoice?.identifierSource || "automatic"
   });
 
   const [error, setError] = useState<string | null>(null);
@@ -241,6 +246,19 @@ export function InvoiceForm({ invoice, initialClientId, initialItems = [], onSuc
   useEffect(() => {
     void loadTaxes(1, 100, false);
   }, [loadTaxes]);
+
+  useEffect(() => {
+    if (isEditing) return;
+    const year = new Date().getFullYear();
+    void DocumentSequenceService.getAll(year).then(response => {
+      const sequence = response.sequences.find(item => item.documentType === "invoice");
+      if (sequence) {
+        const value = `${sequence.nextNumber}/${year}`;
+        setAutomaticNumber(value);
+        setFormData(prev => prev.identifierSource === "automatic" ? { ...prev, number: value } : prev);
+      }
+    }).catch(() => undefined);
+  }, [isEditing]);
 
   useEffect(() => {
     if (invoice?.tax?.name && taxes.length > 0) {
@@ -394,18 +412,22 @@ export function InvoiceForm({ invoice, initialClientId, initialItems = [], onSuc
     setLoading(true);
     try {
       const result = isEditing
-        ? await InvoiceService.update(invoice.id, {
+         ? await InvoiceService.update(invoice.id, {
+             number: formData.number !== invoice.number ? formData.number : undefined,
             clientSnapshot: toSnapshotPayload(clientSnapshot),
             workerSnapshot: toSnapshotPayload(workerSnapshot),
             notes: formData.notes || null,
             taxId: formData.taxId || null,
             sourceBudgetId: formData.sourceBudgetId || null,
             pricingMode: formData.pricingMode,
-            manualSubtotalAmount: formData.pricingMode === "manual-subtotal"
-              ? (formData.manualSubtotalAmount.trim() ? Number(formData.manualSubtotalAmount) : null)
-              : null
+             manualSubtotalAmount: formData.pricingMode === "manual-subtotal"
+               ? (formData.manualSubtotalAmount.trim() ? Number(formData.manualSubtotalAmount) : null)
+               : null,
+             confirmDuplicateNumber
           })
         : await createInvoice({
+            number: formData.identifierSource === "custom" ? formData.number : undefined,
+            identifierSource: formData.identifierSource,
             clientId: formData.clientId,
             workerId: primaryWorker!.id,
             clientSnapshot: toSnapshotPayload(clientSnapshot),
@@ -414,9 +436,10 @@ export function InvoiceForm({ invoice, initialClientId, initialItems = [], onSuc
             taxId: formData.taxId || undefined,
             sourceBudgetId: formData.sourceBudgetId || undefined,
             pricingMode: formData.pricingMode,
-            manualSubtotalAmount: formData.pricingMode === "manual-subtotal"
-              ? (formData.manualSubtotalAmount.trim() ? Number(formData.manualSubtotalAmount) : null)
-              : null
+             manualSubtotalAmount: formData.pricingMode === "manual-subtotal"
+               ? (formData.manualSubtotalAmount.trim() ? Number(formData.manualSubtotalAmount) : null)
+               : null,
+             confirmDuplicateNumber
           });
 
       if (isEditing) {
@@ -513,7 +536,16 @@ export function InvoiceForm({ invoice, initialClientId, initialItems = [], onSuc
 
       onSuccess(result);
     } catch (err) {
-      setError(err instanceof Error ? err.message : t("common.errors.unknown"));
+      const status = err instanceof Error && "status" in err ? (err as Error & { status?: number }).status : undefined;
+      if (status === 409 && !confirmDuplicateNumber) {
+        setConfirmDuplicateNumber(true);
+        const structured = err as Error & { code?: string; details?: Record<string, string> };
+        setError(structured.code === "DUPLICATE_DOCUMENT_IDENTIFIER"
+          ? t("commercialDocuments.identifier.duplicateWarning", { identifier: structured.details?.identifier || formData.number })
+          : t("common.errors.unknown"));
+      } else {
+        setError(err instanceof Error ? err.message : t("common.errors.unknown"));
+      }
     } finally {
       setLoading(false);
     }
@@ -625,6 +657,18 @@ export function InvoiceForm({ invoice, initialClientId, initialItems = [], onSuc
       <h2 className="text-2xl font-bold">
         {isEditing ? t("invoices.form.editTitle") : t("invoices.form.newTitle")}
       </h2>
+
+      <div className="flex items-end gap-2">
+        <div className="flex-1">
+          <label className="block text-sm font-medium mb-1">{t("commercialDocuments.fields.number")}</label>
+          <input name="number" value={formData.number} onChange={e => setFormData(prev => ({ ...prev, number: e.target.value, identifierSource: "custom" }))} className="w-full px-3 py-2 border rounded" />
+        </div>
+        {!isEditing && (
+          <button type="button" onClick={() => setFormData(prev => ({ ...prev, identifierSource: "automatic" }))} className="px-3 py-2 border rounded text-sm">
+            {automaticNumber ? `${t("commercialDocuments.identifier.resetAutomatic")} (${automaticNumber})` : t("commercialDocuments.identifier.resetAutomatic")}
+          </button>
+        )}
+      </div>
 
       {error && (
         <div className="p-3 bg-red-100 text-red-700 rounded">
