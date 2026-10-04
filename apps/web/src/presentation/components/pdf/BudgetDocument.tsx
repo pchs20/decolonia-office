@@ -6,6 +6,7 @@ import { DocumentHeader } from "@/presentation/components/pdf/DocumentHeader";
 import { ClientBlock } from "@/presentation/components/pdf/ClientBlock";
 import { JobItemsTable } from "@/presentation/components/pdf/JobItemsTable";
 import { TotalsBlock } from "@/presentation/components/pdf/TotalsBlock";
+import { PaymentBlock } from "@/presentation/components/pdf/PaymentBlock";
 import { PdfLabels } from "@/presentation/i18n/pdf-translations";
 import { brandColors } from "@/lib/brand-colors";
 
@@ -75,6 +76,10 @@ export function BudgetDocument({ budget, items, labels, imageSource }: BudgetDoc
           tax={budget.tax}
           labels={labels}
         />
+
+        {budget.worker.bankAccount ? (
+          <PaymentBlock bankAccount={budget.worker.bankAccount} labels={labels} />
+        ) : null}
       </Page>
     </Document>
   );
