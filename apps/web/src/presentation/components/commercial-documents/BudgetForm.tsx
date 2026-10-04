@@ -30,6 +30,7 @@ interface SnapshotPartyFormData {
   taxId: string;
   phone: string;
   email: string;
+  bankAccount: string;
   workAddress: {
     street: string;
     city: string;
@@ -48,6 +49,7 @@ function mapClientToSnapshot(client: ClientSchema): SnapshotPartyFormData {
     taxId: client.taxId,
     phone: client.phone || "",
     email: client.email || "",
+    bankAccount: "",
     workAddress: {
       street: client.street,
       city: client.city,
@@ -67,6 +69,7 @@ function mapWorkerToSnapshot(worker: WorkerSchema): SnapshotPartyFormData {
     taxId: worker.taxId,
     phone: worker.phone || "",
     email: worker.email || "",
+    bankAccount: worker.bankAccount || "",
     workAddress: {
       street: worker.street,
       city: worker.city,
@@ -86,6 +89,7 @@ function mapBudgetPartyToSnapshot(party: BudgetResponse["client"] | BudgetRespon
     taxId: party.taxId,
     phone: party.phone || "",
     email: party.email || "",
+    bankAccount: party.bankAccount || "",
     workAddress: {
       street: party.workAddress.street,
       city: party.workAddress.city,
@@ -105,8 +109,29 @@ function emptySnapshot(): SnapshotPartyFormData {
     taxId: "",
     phone: "",
     email: "",
+    bankAccount: "",
     workAddress: { street: "", city: "", postalCode: "" },
     billingAddress: { street: "", city: "", postalCode: "" }
+  };
+}
+
+export function toBudgetSnapshotPayload(snapshot: SnapshotPartyFormData) {
+  return {
+    name: snapshot.name.trim(),
+    taxId: snapshot.taxId.trim(),
+    phone: snapshot.phone.trim() || null,
+    email: snapshot.email.trim() || null,
+    bankAccount: snapshot.bankAccount || null,
+    workAddress: {
+      street: snapshot.workAddress.street.trim(),
+      city: snapshot.workAddress.city.trim(),
+      postalCode: snapshot.workAddress.postalCode.trim()
+    },
+    billingAddress: {
+      street: snapshot.billingAddress.street.trim(),
+      city: snapshot.billingAddress.city.trim(),
+      postalCode: snapshot.billingAddress.postalCode.trim()
+    }
   };
 }
 
@@ -340,23 +365,6 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
     });
   };
 
-  const toSnapshotPayload = (snapshot: SnapshotPartyFormData) => ({
-    name: snapshot.name.trim(),
-    taxId: snapshot.taxId.trim(),
-    phone: snapshot.phone.trim() || null,
-    email: snapshot.email.trim() || null,
-    workAddress: {
-      street: snapshot.workAddress.street.trim(),
-      city: snapshot.workAddress.city.trim(),
-      postalCode: snapshot.workAddress.postalCode.trim()
-    },
-    billingAddress: {
-      street: snapshot.billingAddress.street.trim(),
-      city: snapshot.billingAddress.city.trim(),
-      postalCode: snapshot.billingAddress.postalCode.trim()
-    }
-  });
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -376,8 +384,8 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
       const result = isEditing
        ? await BudgetService.update(budget.id, {
              number: formData.number !== budget.number ? formData.number : undefined,
-            clientSnapshot: toSnapshotPayload(clientSnapshot),
-            workerSnapshot: toSnapshotPayload(workerSnapshot),
+             clientSnapshot: toBudgetSnapshotPayload(clientSnapshot),
+             workerSnapshot: toBudgetSnapshotPayload(workerSnapshot),
             notes: formData.notes || null,
             taxId: formData.taxId || null,
             pricingMode: formData.pricingMode,
@@ -391,8 +399,8 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
              identifierSource: formData.identifierSource,
             clientId: formData.clientId,
             workerId: primaryWorker!.id,
-            clientSnapshot: toSnapshotPayload(clientSnapshot),
-            workerSnapshot: toSnapshotPayload(workerSnapshot),
+             clientSnapshot: toBudgetSnapshotPayload(clientSnapshot),
+             workerSnapshot: toBudgetSnapshotPayload(workerSnapshot),
             notes: formData.notes || undefined,
             taxId: formData.taxId || undefined,
             pricingMode: formData.pricingMode,

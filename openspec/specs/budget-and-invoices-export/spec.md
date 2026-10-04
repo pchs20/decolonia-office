@@ -7,7 +7,7 @@ Define PDF export capabilities for budgets and invoices, including server-side P
 ## Requirements
 
 ### Requirement: Export budget as PDF
-The system SHALL generate a PDF representation of a budget using a server-side template that includes issuer data, client data, job items, and totals.
+The system SHALL generate a PDF representation of a budget using a server-side template that includes issuer data, client data, job items, totals, and optionally a payment block.
 
 #### Scenario: Budget PDF contains issuer block
 - **WHEN** a budget PDF is generated
@@ -28,6 +28,14 @@ The system SHALL generate a PDF representation of a budget using a server-side t
 #### Scenario: Budget PDF contains totals block
 - **WHEN** a budget PDF is generated
 - **THEN** the PDF includes subtotal, tax amount (with tax name and rate when applicable), and total amount
+
+#### Scenario: Budget PDF contains payment block when bank account is present
+- **WHEN** the `WorkerSnapshot.bankAccount` is non-null
+- **THEN** the PDF includes the same payment block as an invoice PDF, showing the payment method, bank transfer label, and bank account number
+
+#### Scenario: Budget PDF omits payment block when bank account is absent
+- **WHEN** the `WorkerSnapshot.bankAccount` is null
+- **THEN** the PDF omits the payment block entirely
 
 #### Scenario: Budget PDF omits notes
 - **WHEN** a budget PDF is generated
