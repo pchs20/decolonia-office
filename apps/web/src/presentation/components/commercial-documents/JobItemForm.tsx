@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 interface JobItemFormData {
@@ -25,6 +25,9 @@ const submitButtonClasses = {
   budgets: "bg-budgets hover:bg-budgets/90",
   invoices: "bg-invoices hover:bg-invoices/90"
 } as const;
+
+const MIN_DESCRIPTION_LINES = 3;
+const MAX_DESCRIPTION_LINES = 15;
 
 function normalizeFormData(data?: JobItemFormData): Required<JobItemFormData> {
   return {
@@ -63,6 +66,7 @@ export function JobItemForm({
   );
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
 
   const initialFormData = useMemo(
     () =>
@@ -76,6 +80,24 @@ export function JobItemForm({
     [initialTitle, initialDescription, initialQuantity, initialUnitPrice, initialTotalPrice]
   );
   const normalizedFormData = normalizeFormData(formData);
+
+  useEffect(() => {
+    const textarea = descriptionRef.current;
+    if (!textarea) {
+      return;
+    }
+
+    const computedStyle = window.getComputedStyle(textarea);
+    const lineHeight = Number.parseFloat(computedStyle.lineHeight);
+    const resolvedLineHeight = Number.isFinite(lineHeight) && lineHeight > 0 ? lineHeight : 20;
+    const minHeight = resolvedLineHeight * MIN_DESCRIPTION_LINES;
+    const maxHeight = resolvedLineHeight * MAX_DESCRIPTION_LINES;
+
+    textarea.style.height = `${minHeight}px`;
+    const nextHeight = Math.max(minHeight, Math.min(textarea.scrollHeight, maxHeight));
+    textarea.style.height = `${nextHeight}px`;
+    textarea.style.overflowY = textarea.scrollHeight > maxHeight ? "auto" : "hidden";
+  }, [formData.description]);
 
   useEffect(() => {
     setFormData(initialFormData);
@@ -170,11 +192,13 @@ export function JobItemForm({
       <div>
         <label className="block text-sm font-medium mb-1">{t("commercialDocuments.description")}</label>
         <textarea
+          ref={descriptionRef}
           name="description"
           value={formData.description}
           onChange={handleChange}
           className="w-full px-3 py-2 border rounded text-sm"
-          rows={2}
+          rows={MIN_DESCRIPTION_LINES}
+          style={{ minHeight: "4.5rem", overflowY: "hidden" }}
           placeholder={t("common.name")}
         />
       </div>
