@@ -106,7 +106,7 @@ export function JobItemsTable({
                 <td className="px-3 py-2">
                   <div className="font-medium">{item.title}</div>
                   {item.description && (
-                    <div className="text-gray-600 text-xs">{item.description}</div>
+                    <div className="text-gray-600 text-xs whitespace-pre-wrap break-words">{item.description}</div>
                   )}
                 </td>
                 <td className="text-right px-3 py-2">{item.quantity !== null && item.quantity !== undefined ? item.quantity.toFixed(2) : "-"}</td>
