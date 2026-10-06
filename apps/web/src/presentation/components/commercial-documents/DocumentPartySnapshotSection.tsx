@@ -147,7 +147,7 @@ export function DocumentPartySnapshotSection({
       {expanded && (
         <div className="space-y-3 pt-2">
           {actionVisible && (
-            <button type="button" onClick={() => void handleRefresh()} disabled={refreshing || sourceLoading} className="px-3 py-2 border rounded text-sm">
+            <button type="button" onClick={() => void handleRefresh()} disabled={refreshing || sourceLoading} className="px-3 py-2 bg-blue-700 text-white rounded text-sm">
               {refreshing ? t("commercialDocuments.snapshot.refreshing") : sourceAction}
             </button>
           )}
