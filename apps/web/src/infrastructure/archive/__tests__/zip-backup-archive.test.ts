@@ -13,12 +13,12 @@ describe("ZipBackupArchive", () => {
       ],
       files: [
         {
-          path: "Budgets/2026/Q1/presupuesto-1.pdf",
+          path: "Presupuestos/2026/Q1/presupuesto-1.pdf",
           content: new Uint8Array([1, 2, 3]),
           contentType: "application/pdf"
         },
         {
-          path: "Invoices/2026/Q1/factura-1.pdf",
+          path: "Facturas/2026/Q1/factura-1.pdf",
           content: new Uint8Array([4, 5, 6]),
           contentType: "application/pdf"
         }
@@ -31,10 +31,10 @@ describe("ZipBackupArchive", () => {
 
     expect(Object.keys(archive.files).filter((path) => !path.endsWith("/"))).toEqual([
       "Decolonia-data.xlsx",
-      "Budgets/2026/Q1/presupuesto-1.pdf",
-      "Invoices/2026/Q1/factura-1.pdf"
+      "Presupuestos/2026/Q1/presupuesto-1.pdf",
+      "Facturas/2026/Q1/factura-1.pdf"
     ]);
     expect(workbook.SheetNames).toEqual(["Clients", "Budgets", "Invoices"]);
-    expect(await archive.file("Budgets/2026/Q1/presupuesto-1.pdf")?.async("uint8array")).toEqual(new Uint8Array([1, 2, 3]));
+    expect(await archive.file("Presupuestos/2026/Q1/presupuesto-1.pdf")?.async("uint8array")).toEqual(new Uint8Array([1, 2, 3]));
   });
 });

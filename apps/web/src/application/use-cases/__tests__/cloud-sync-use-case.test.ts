@@ -5,6 +5,7 @@ import { ExportProvider } from "@/application/outbound/export-provider";
 
 function createDependencies(options: { skipBudgetOne?: boolean; failBudgetTwo?: boolean } = {}) {
   const uploads: string[] = [];
+  const folders: string[] = [];
   const successes: string[] = [];
   const failures: string[] = [];
   const destinationReferences: string[] = [];
@@ -26,7 +27,10 @@ function createDependencies(options: { skipBudgetOne?: boolean; failBudgetTwo?: 
     getInvoiceNumber: async () => "1"
   };
   const filePort: CloudFilePort = {
-    ensureFolder: async ({ name }) => ({ externalReference: name }),
+    ensureFolder: async ({ name }) => {
+      folders.push(name);
+      return { externalReference: name };
+    },
     upsertFile: async ({ name }) => {
       uploads.push(name);
       return { externalReference: `drive-${name}` };
@@ -83,6 +87,7 @@ function createDependencies(options: { skipBudgetOne?: boolean; failBudgetTwo?: 
       }
     },
     uploads,
+    folders,
     successes,
     failures,
     destinationReferences
@@ -116,6 +121,7 @@ describe("synchronizeCloudBatch", () => {
 
     expect(result.processed).toBe(1);
     expect(test.uploads).toEqual(["presupuesto-1-budget1.pdf"]);
+    expect(test.folders).toEqual(["2026", "Q1"]);
     expect(test.successes).toEqual(["budget-1"]);
   });
 

@@ -7,6 +7,7 @@ import {
 } from "@/application/outbound/backup-export-ports";
 import { getDatePath } from "@/application/use-cases/backup-export/date-path";
 import { exportFileName } from "@/application/use-cases/backup-export/export-file-name";
+import { exportFolderName } from "@/application/use-cases/backup-export/export-folder-name";
 
 type ExportRecord = Record<string, BackupCell>;
 
@@ -52,7 +53,7 @@ async function renderDocumentFiles(
       const content = await render(documentId);
 
       return {
-         path: `${documentType === "budget" ? "Budgets" : "Invoices"}/${year}/${period}/${fileName}`,
+         path: `${exportFolderName(documentType)}/${year}/${period}/${fileName}`,
         content,
         contentType: "application/pdf",
         documentType,

@@ -13,6 +13,7 @@ import { ExportProvider } from "@/application/outbound/export-provider";
 import { buildBackupTables } from "@/application/use-cases/backup-export/backup-bundle-use-case";
 import { getDatePath } from "@/application/use-cases/backup-export/date-path";
 import { exportFileName } from "@/application/use-cases/backup-export/export-file-name";
+import { exportFolderName } from "@/application/use-cases/backup-export/export-folder-name";
 
 interface ExportRecord extends Record<string, BackupCell> {}
 
@@ -167,7 +168,7 @@ export async function synchronizeCloudBatch(
         externalReference: uploaded.externalReference,
         sourceUpdatedAt
       });
-      const folderType = document.type === "budget" ? "Budgets" : "Invoices";
+      const folderType = exportFolderName(document.type);
       const datePathInfo = getDatePath(date);
       const path = `${folderType}/${datePathInfo.year}/${datePathInfo.period}/${fileName(document.type, document.record)}`;
       uploadedDocuments.push({ type: document.type, path });
