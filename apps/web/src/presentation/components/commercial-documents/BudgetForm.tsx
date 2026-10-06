@@ -4,16 +4,26 @@ import { useEffect, useMemo, useState } from "react"
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { BudgetResponse } from "@/api/schemas/budget-schemas";
-import { ClientSchema } from "@/api/schemas/client-schema";
 import { WorkerSchema } from "@/api/schemas/worker-schema";
 import { useBudgets } from "@/presentation/hooks/commercial-document-hooks";
 import { useClients } from "@/presentation/hooks/clients-hook";
+import { ClientService } from "@/presentation/api-clients/client.service";
 import { WorkerService } from "@/presentation/api-clients/worker.service";
 import { useTaxesList } from "@/presentation/hooks/catalog-hooks";
 import { BudgetService } from "@/presentation/api-clients/budget.service";
 import { CommercialDocumentSettingsService } from "@/presentation/api-clients/commercial-document-settings.service";
 import { JobItemForm } from "@/presentation/components/commercial-documents/JobItemForm";
 import { JobItemDisplay, JobItemsTable } from "@/presentation/components/commercial-documents/JobItemsTable";
+import { DocumentPartySnapshotSection } from "@/presentation/components/commercial-documents/DocumentPartySnapshotSection";
+import {
+  DocumentPartySnapshotField,
+  DocumentPartySnapshotFormData,
+  emptyDocumentPartySnapshot,
+  mapClientToDocumentPartySnapshot,
+  mapDocumentPartySnapshot,
+  mapWorkerToDocumentPartySnapshot,
+  toDocumentPartySnapshotPayload
+} from "@/presentation/components/commercial-documents/document-party-snapshot";
 import { DocumentSequenceService } from "@/presentation/api-clients/document-sequence.service";
 
 interface BudgetFormProps {
@@ -25,114 +35,9 @@ interface BudgetFormProps {
   onDirtyChange?: (isDirty: boolean) => void;
 }
 
-interface SnapshotPartyFormData {
-  name: string;
-  taxId: string;
-  phone: string;
-  email: string;
-  bankAccount: string;
-  workAddress: {
-    street: string;
-    city: string;
-    postalCode: string;
-  };
-  billingAddress: {
-    street: string;
-    city: string;
-    postalCode: string;
-  };
-}
-
-function mapClientToSnapshot(client: ClientSchema): SnapshotPartyFormData {
-  return {
-    name: client.name,
-    taxId: client.taxId,
-    phone: client.phone || "",
-    email: client.email || "",
-    bankAccount: "",
-    workAddress: {
-      street: client.street,
-      city: client.city,
-      postalCode: client.postalCode
-    },
-    billingAddress: {
-      street: client.billingStreet || client.street,
-      city: client.billingCity || client.city,
-      postalCode: client.billingPostalCode || client.postalCode
-    }
-  };
-}
-
-function mapWorkerToSnapshot(worker: WorkerSchema): SnapshotPartyFormData {
-  return {
-    name: worker.name,
-    taxId: worker.taxId,
-    phone: worker.phone || "",
-    email: worker.email || "",
-    bankAccount: worker.bankAccount || "",
-    workAddress: {
-      street: worker.street,
-      city: worker.city,
-      postalCode: worker.postalCode
-    },
-    billingAddress: {
-      street: worker.billingStreet || worker.street,
-      city: worker.billingCity || worker.city,
-      postalCode: worker.billingPostalCode || worker.postalCode
-    }
-  };
-}
-
-function mapBudgetPartyToSnapshot(party: BudgetResponse["client"] | BudgetResponse["worker"]): SnapshotPartyFormData {
-  return {
-    name: party.name,
-    taxId: party.taxId,
-    phone: party.phone || "",
-    email: party.email || "",
-    bankAccount: party.bankAccount || "",
-    workAddress: {
-      street: party.workAddress.street,
-      city: party.workAddress.city,
-      postalCode: party.workAddress.postalCode
-    },
-    billingAddress: {
-      street: party.billingAddress.street,
-      city: party.billingAddress.city,
-      postalCode: party.billingAddress.postalCode
-    }
-  };
-}
-
-function emptySnapshot(): SnapshotPartyFormData {
-  return {
-    name: "",
-    taxId: "",
-    phone: "",
-    email: "",
-    bankAccount: "",
-    workAddress: { street: "", city: "", postalCode: "" },
-    billingAddress: { street: "", city: "", postalCode: "" }
-  };
-}
-
+export type SnapshotPartyFormData = DocumentPartySnapshotFormData;
 export function toBudgetSnapshotPayload(snapshot: SnapshotPartyFormData) {
-  return {
-    name: snapshot.name.trim(),
-    taxId: snapshot.taxId.trim(),
-    phone: snapshot.phone.trim() || null,
-    email: snapshot.email.trim() || null,
-    bankAccount: snapshot.bankAccount || null,
-    workAddress: {
-      street: snapshot.workAddress.street.trim(),
-      city: snapshot.workAddress.city.trim(),
-      postalCode: snapshot.workAddress.postalCode.trim()
-    },
-    billingAddress: {
-      street: snapshot.billingAddress.street.trim(),
-      city: snapshot.billingAddress.city.trim(),
-      postalCode: snapshot.billingAddress.postalCode.trim()
-    }
-  };
+  return toDocumentPartySnapshotPayload(snapshot);
 }
 
 export function BudgetForm({ budget, initialClientId, initialItems = [], onSuccess, onCancel, onDirtyChange }: BudgetFormProps) {
@@ -166,11 +71,13 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [isItemFormDirty, setIsItemFormDirty] = useState(false);
   const [clientSnapshot, setClientSnapshot] = useState<SnapshotPartyFormData>(
-    budget?.client ? mapBudgetPartyToSnapshot(budget.client) : emptySnapshot()
+    budget?.client ? mapDocumentPartySnapshot(budget.client) : emptyDocumentPartySnapshot()
   );
   const [workerSnapshot, setWorkerSnapshot] = useState<SnapshotPartyFormData>(
-    budget?.worker ? mapBudgetPartyToSnapshot(budget.worker) : emptySnapshot()
+    budget?.worker ? mapDocumentPartySnapshot(budget.worker) : emptyDocumentPartySnapshot()
   );
+  const [clientSourceSnapshot, setClientSourceSnapshot] = useState<SnapshotPartyFormData | null>(null);
+  const [workerSourceSnapshot, setWorkerSourceSnapshot] = useState<SnapshotPartyFormData | null>(null);
 
   const initialFormSignature = useMemo(
     () => JSON.stringify({
@@ -284,7 +191,9 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
 
     const selected = clients.find(client => client.id === formData.clientId);
     if (selected) {
-      setClientSnapshot(mapClientToSnapshot(selected));
+      const sourceSnapshot = mapClientToDocumentPartySnapshot(selected);
+      setClientSourceSnapshot(sourceSnapshot);
+      setClientSnapshot(sourceSnapshot);
     }
   }, [clients, formData.clientId, isEditing]);
 
@@ -301,7 +210,9 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
         const worker = await WorkerService.getPrimary();
         setPrimaryWorker(worker);
         if (worker) {
-          setWorkerSnapshot(mapWorkerToSnapshot(worker));
+          const sourceSnapshot = mapWorkerToDocumentPartySnapshot(worker);
+          setWorkerSourceSnapshot(sourceSnapshot);
+          setWorkerSnapshot(sourceSnapshot);
         }
       } catch (err) {
         setPrimaryWorkerError(err instanceof Error ? err.message : "Failed to fetch primary worker");
@@ -313,6 +224,20 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
     void fetchPrimaryWorker();
   }, [isEditing]);
 
+  useEffect(() => {
+    if (!isEditing || !budget?.client?.id) return;
+    void ClientService.getById(budget.client.id)
+      .then(client => setClientSourceSnapshot(mapClientToDocumentPartySnapshot(client)))
+      .catch(() => setClientSourceSnapshot(null));
+  }, [budget?.client?.id, isEditing]);
+
+  useEffect(() => {
+    if (!isEditing || !budget?.worker?.id) return;
+    void WorkerService.getById(budget.worker.id)
+      .then(worker => setWorkerSourceSnapshot(mapWorkerToDocumentPartySnapshot(worker)))
+      .catch(() => setWorkerSourceSnapshot(null));
+  }, [budget?.worker?.id, isEditing]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -323,17 +248,7 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
 
   const handleSnapshotFieldChange = (
     party: "client" | "worker",
-    field:
-      | "name"
-      | "taxId"
-      | "phone"
-      | "email"
-      | "workStreet"
-      | "workCity"
-      | "workPostalCode"
-      | "billingStreet"
-      | "billingCity"
-      | "billingPostalCode",
+    field: DocumentPartySnapshotField,
     value: string
   ) => {
     const setParty = party === "client" ? setClientSnapshot : setWorkerSnapshot;
@@ -347,6 +262,8 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
           return { ...prev, phone: value };
         case "email":
           return { ...prev, email: value };
+        case "bankAccount":
+          return { ...prev, bankAccount: value };
         case "workStreet":
           return { ...prev, workAddress: { ...prev.workAddress, street: value } };
         case "workCity":
@@ -363,6 +280,23 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
           return prev;
       }
     });
+  };
+
+  const refreshClientSnapshot = async () => {
+    if (!formData.clientId) return null;
+    const client = await ClientService.getById(formData.clientId);
+    const sourceSnapshot = mapClientToDocumentPartySnapshot(client);
+    setClientSourceSnapshot(sourceSnapshot);
+    return sourceSnapshot;
+  };
+
+  const refreshWorkerSnapshot = async () => {
+    const workerId = budget?.worker?.id || primaryWorker?.id;
+    if (!workerId) return null;
+    const worker = await WorkerService.getById(workerId);
+    const sourceSnapshot = mapWorkerToDocumentPartySnapshot(worker);
+    setWorkerSourceSnapshot(sourceSnapshot);
+    return sourceSnapshot;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -704,91 +638,23 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
         </div>
       </div>
 
-      <div className="space-y-3 border rounded p-4 bg-gray-50">
-        <h3 className="text-base font-semibold">{t("commercialDocuments.fields.clientInfo")}</h3>
-          <input
-            type="text"
-            value={clientSnapshot.name}
-            onChange={event => handleSnapshotFieldChange("client", "name", event.target.value)}
-            placeholder={t("profile.fields.name")}
-            required
-            className="w-full px-3 py-2 border rounded"
-          />
-          <input
-            type="text"
-            value={clientSnapshot.taxId}
-            onChange={event => handleSnapshotFieldChange("client", "taxId", event.target.value)}
-            placeholder={t("profile.fields.taxId")}
-            required
-            className="w-full px-3 py-2 border rounded"
-          />
-          <input
-            type="text"
-            value={clientSnapshot.phone}
-            onChange={event => handleSnapshotFieldChange("client", "phone", event.target.value)}
-            placeholder={t("profile.fields.phone")}
-            className="w-full px-3 py-2 border rounded"
-          />
-          <input
-            type="email"
-            value={clientSnapshot.email}
-            onChange={event => handleSnapshotFieldChange("client", "email", event.target.value)}
-            placeholder={t("profile.fields.email")}
-            className="w-full px-3 py-2 border rounded"
-          />
-          <input
-            type="text"
-            value={clientSnapshot.workAddress.street}
-            onChange={event => handleSnapshotFieldChange("client", "workStreet", event.target.value)}
-            placeholder={t("profile.fields.workStreet")}
-            required
-            className="w-full px-3 py-2 border rounded"
-          />
-          <div className="grid grid-cols-2 gap-2">
-            <input
-              type="text"
-              value={clientSnapshot.workAddress.city}
-              onChange={event => handleSnapshotFieldChange("client", "workCity", event.target.value)}
-              placeholder={t("profile.fields.workCity")}
-              required
-              className="w-full px-3 py-2 border rounded"
-            />
-            <input
-              type="text"
-              value={clientSnapshot.workAddress.postalCode}
-              onChange={event => handleSnapshotFieldChange("client", "workPostalCode", event.target.value)}
-              placeholder={t("profile.fields.workPostalCode")}
-              required
-              className="w-full px-3 py-2 border rounded"
-            />
-          </div>
-          <input
-            type="text"
-            value={clientSnapshot.billingAddress.street}
-            onChange={event => handleSnapshotFieldChange("client", "billingStreet", event.target.value)}
-            placeholder={t("profile.fields.billingStreet")}
-            required
-            className="w-full px-3 py-2 border rounded"
-          />
-          <div className="grid grid-cols-2 gap-2">
-            <input
-              type="text"
-              value={clientSnapshot.billingAddress.city}
-              onChange={event => handleSnapshotFieldChange("client", "billingCity", event.target.value)}
-              placeholder={t("profile.fields.billingCity")}
-              required
-              className="w-full px-3 py-2 border rounded"
-            />
-            <input
-              type="text"
-              value={clientSnapshot.billingAddress.postalCode}
-              onChange={event => handleSnapshotFieldChange("client", "billingPostalCode", event.target.value)}
-              placeholder={t("profile.fields.billingPostalCode")}
-              required
-              className="w-full px-3 py-2 border rounded"
-            />
-          </div>
-        </div>
+      <DocumentPartySnapshotSection
+        party="client"
+        snapshot={clientSnapshot}
+        sourceSnapshot={clientSourceSnapshot}
+        isEditing={isEditing}
+        onChange={(field, value) => handleSnapshotFieldChange("client", field, value)}
+        onRefresh={refreshClientSnapshot}
+      />
+
+      <DocumentPartySnapshotSection
+        party="worker"
+        snapshot={workerSnapshot}
+        sourceSnapshot={workerSourceSnapshot}
+        isEditing={isEditing}
+        onChange={(field, value) => handleSnapshotFieldChange("worker", field, value)}
+        onRefresh={refreshWorkerSnapshot}
+      />
 
       <div className="space-y-3 border rounded p-4 bg-gray-50">
           <div className="flex items-center justify-between">
