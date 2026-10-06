@@ -43,4 +43,3 @@ Multiline title support SHALL apply consistently to budget and invoice job items
 #### Scenario: Budget and invoice forms behave consistently
 - **WHEN** a user adds or edits a job item from either a budget or invoice form
 - **THEN** the title uses the same multiline editing and display behavior in both forms
-
