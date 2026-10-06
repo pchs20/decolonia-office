@@ -32,4 +32,3 @@ The system SHALL restrict the coverage disclaimer to budget PDFs and SHALL NOT d
 #### Scenario: Invoice PDF omits disclaimer
 - **WHEN** an invoice PDF is generated in any supported locale
 - **THEN** the invoice PDF does not display the budget coverage disclaimer
-
