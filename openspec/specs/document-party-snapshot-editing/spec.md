@@ -79,4 +79,3 @@ The system SHALL show a read-only summary of fields that differ before applying 
 #### Scenario: Source refresh fails
 - **WHEN** the current client or worker cannot be fetched
 - **THEN** the form keeps the existing snapshot values and displays an actionable error
-
