@@ -196,7 +196,9 @@
     "filters": {
       "clientApplied": "Mostrando presupuestos del cliente seleccionado."
     },
-    "exportPdf": "Exportar PDF"
+    "exportPdf": "Exportar PDF",
+    "exportPdfLoading": "Generando PDF...",
+    "exportPdfError": "No se pudo generar el PDF. Inténtalo de nuevo."
   },
   "invoices": {
     "title": "Facturas",
@@ -206,6 +208,8 @@
     "noResultsSearch": "No hay facturas que coincidan con la búsqueda",
     "backToList": "← Volver a facturas",
     "exportPdf": "Exportar PDF",
+    "exportPdfLoading": "Generando PDF...",
+    "exportPdfError": "No se pudo generar el PDF. Inténtalo de nuevo.",
     "fields": {
       "client": "Cliente *",
       "selectClient": "Selecciona un cliente...",
@@ -310,6 +314,8 @@
       "syncButton": "Sincronizar con Google Drive",
       "authorizeButton": "Autorizar Google Drive",
       "downloadButton": "Descargar copia ZIP",
+      "downloadPreparing": "Preparando copia de seguridad...",
+      "downloadError": "No se pudo descargar la copia de seguridad. Inténtalo de nuevo.",
       "syncing": "Sincronizando...",
       "inProgress": "Sincronizando... quedan {{remaining}} documentos.",
       "completed": "Sincronización completada: {{processed}} subidos, {{skipped}} omitidos, {{failed}} fallidos.",

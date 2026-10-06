@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
+import { LoaderCircle } from "lucide-react";
 import { BudgetResponse } from "@/api/schemas/budget-schemas";
 import { InvoiceResponse } from "@/api/schemas/invoice-schemas";
 import { JobItemResponse } from "@/api/schemas/job-item-schemas";
@@ -13,6 +14,7 @@ import { CommercialDocumentView } from "@/presentation/components/commercial-doc
 import { InvoiceForm } from "@/presentation/components/invoices/InvoiceForm";
 import { JobItemDisplay } from "@/presentation/components/commercial-documents/JobItemsTable";
 import { formatDocumentNumber } from "@/presentation/utils/document-number";
+import { downloadResponse } from "@/presentation/utils/download-file";
 
 interface InvoiceDetailPageProps {
   params: Promise<{
@@ -33,6 +35,8 @@ export default function InvoiceDetailPage({ params }: InvoiceDetailPageProps) {
   const [editing, setEditing] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [duplicating, setDuplicating] = useState(false);
+  const [exportingPdf, setExportingPdf] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
 
   useEffect(() => {
     void params.then(value => setInvoiceId(value.id));
@@ -125,6 +129,21 @@ export default function InvoiceDetailPage({ params }: InvoiceDetailPageProps) {
     }
   };
 
+  const handleExportPdf = async () => {
+    if (!invoiceId || !invoice || exportingPdf) return;
+
+    setExportingPdf(true);
+    setExportError(null);
+    try {
+      const response = await fetch(`/api/invoices/${invoiceId}/pdf`);
+      await downloadResponse(response, `factura-${invoice.number}.pdf`);
+    } catch {
+      setExportError(t("invoices.exportPdfError"));
+    } finally {
+      setExportingPdf(false);
+    }
+  };
+
   if (loading) {
     return <div className="p-4 md:p-6">{t("common.loading")}</div>;
   }
@@ -159,21 +178,13 @@ export default function InvoiceDetailPage({ params }: InvoiceDetailPageProps) {
             <>
               <button
                 type="button"
-                onClick={async () => {
-                  if (!invoiceId) return;
-                  const response = await fetch(`/api/invoices/${invoiceId}/pdf`);
-                  if (!response.ok) return;
-                  const blob = await response.blob();
-                  const url = URL.createObjectURL(blob);
-                  const a = document.createElement("a");
-                  a.href = url;
-                  a.download = `factura-${invoice.number}.pdf`;
-                  a.click();
-                  URL.revokeObjectURL(url);
-                }}
-                className="px-3 py-1 text-sm bg-invoices/10 text-invoices rounded hover:bg-invoices/20"
+                onClick={() => void handleExportPdf()}
+                disabled={exportingPdf}
+                aria-busy={exportingPdf}
+                className="inline-flex items-center gap-2 px-3 py-1 text-sm bg-invoices/10 text-invoices rounded hover:bg-invoices/20 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {t("invoices.exportPdf")}
+                {exportingPdf ? <LoaderCircle className="h-4 w-4 motion-safe:animate-spin" aria-hidden="true" /> : null}
+                {exportingPdf ? t("invoices.exportPdfLoading") : t("invoices.exportPdf")}
               </button>
               <button
                 type="button"
@@ -194,6 +205,8 @@ export default function InvoiceDetailPage({ params }: InvoiceDetailPageProps) {
           ) : null}
         </div>
       </div>
+
+      {exportError ? <p className="text-sm text-red-700" role="alert">{exportError}</p> : null}
 
       {linkedBudget ? (
         <div className="rounded border bg-blue-50 border-blue-200 p-3 text-sm">

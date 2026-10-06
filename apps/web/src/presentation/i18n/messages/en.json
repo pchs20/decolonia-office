@@ -196,7 +196,9 @@
     "filters": {
       "clientApplied": "Showing budgets for selected client."
     },
-    "exportPdf": "Export PDF"
+    "exportPdf": "Export PDF",
+    "exportPdfLoading": "Generating PDF...",
+    "exportPdfError": "The PDF could not be generated. Please try again."
   },
   "invoices": {
     "title": "Invoices",
@@ -206,6 +208,8 @@
     "noResultsSearch": "No invoices found matching your search",
     "backToList": "← Back to Invoices",
     "exportPdf": "Export PDF",
+    "exportPdfLoading": "Generating PDF...",
+    "exportPdfError": "The PDF could not be generated. Please try again.",
     "fields": {
       "client": "Client *",
       "selectClient": "Select a client...",
@@ -310,6 +314,8 @@
       "syncButton": "Sync to Google Drive",
       "authorizeButton": "Authorize Google Drive",
       "downloadButton": "Download backup ZIP",
+      "downloadPreparing": "Preparing backup...",
+      "downloadError": "The backup could not be downloaded. Please try again.",
       "syncing": "Syncing...",
       "inProgress": "Syncing... {{remaining}} documents remaining.",
       "completed": "Sync complete: {{processed}} uploaded, {{skipped}} skipped, {{failed}} failed.",

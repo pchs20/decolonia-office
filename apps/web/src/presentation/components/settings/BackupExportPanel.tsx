@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Download, RefreshCw } from "lucide-react";
+import { Download, LoaderCircle, RefreshCw } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { downloadFilename, downloadResponse } from "@/presentation/utils/download-file";
 
 interface SyncResult {
   nextCursor: number | null;
@@ -17,6 +18,7 @@ interface SyncResult {
 export function BackupExportPanel() {
   const { t } = useTranslation();
   const [syncing, setSyncing] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const [checkingAuthorization, setCheckingAuthorization] = useState(true);
   const [driveAuthorized, setDriveAuthorized] = useState(false);
   const [progress, setProgress] = useState<SyncResult | null>(null);
@@ -31,6 +33,8 @@ export function BackupExportPanel() {
   }, []);
 
   async function syncToDrive() {
+    if (syncing || downloading) return;
+
     setSyncing(true);
     setError(null);
     setProgress(null);
@@ -77,8 +81,22 @@ export function BackupExportPanel() {
     }
   }
 
-  function downloadBackup() {
-    window.location.assign("/api/backup/download");
+  async function downloadBackup() {
+    if (syncing || downloading) return;
+
+    setDownloading(true);
+    setError(null);
+    try {
+      const response = await fetch("/api/backup/download");
+      await downloadResponse(
+        response,
+        downloadFilename(response.headers.get("Content-Disposition"), "Decolonia-backup.zip")
+      );
+    } catch {
+      setError(t("catalog.backup.downloadError"));
+    } finally {
+      setDownloading(false);
+    }
   }
 
   function authorizeDrive() {
@@ -86,7 +104,7 @@ export function BackupExportPanel() {
   }
 
   return (
-    <section className="space-y-6" aria-labelledby="backup-export-title">
+    <section className="space-y-6" aria-labelledby="backup-export-title" aria-busy={syncing || downloading}>
       <div>
         <h2 id="backup-export-title" className="text-xl font-semibold text-gray-800">
           {t("catalog.backup.title")}
@@ -97,28 +115,30 @@ export function BackupExportPanel() {
       <div className="flex flex-wrap gap-3">
         {!checkingAuthorization && (driveAuthorized ? <button
           type="button"
-          onClick={syncToDrive}
-          disabled={syncing}
+           onClick={() => void syncToDrive()}
+           disabled={syncing || downloading}
+           aria-busy={syncing}
           className="inline-flex items-center gap-2 rounded bg-settings px-4 py-2 text-sm font-medium text-white hover:bg-settings/90 disabled:cursor-not-allowed disabled:bg-gray-400"
         >
-          <RefreshCw className={syncing ? "h-4 w-4 animate-spin" : "h-4 w-4"} aria-hidden="true" />
+           <RefreshCw className={`${syncing ? "motion-safe:animate-spin" : ""} h-4 w-4`} aria-hidden="true" />
           {syncing ? t("catalog.backup.syncing") : t("catalog.backup.syncButton")}
         </button> : <button
           type="button"
           onClick={authorizeDrive}
-          disabled={syncing}
+           disabled={syncing || downloading}
           className="inline-flex items-center gap-2 rounded bg-settings px-4 py-2 text-sm font-medium text-white hover:bg-settings/90 disabled:cursor-not-allowed disabled:bg-gray-400"
         >
           {t("catalog.backup.authorizeButton")}
         </button>)}
         <button
           type="button"
-          onClick={downloadBackup}
-          disabled={syncing}
-          className="inline-flex items-center gap-2 rounded bg-settings px-4 py-2 text-sm font-medium text-white hover:bg-settings/90 disabled:cursor-not-allowed disabled:bg-gray-400"
-        >
-          <Download className="h-4 w-4" aria-hidden="true" />
-          {t("catalog.backup.downloadButton")}
+           onClick={() => void downloadBackup()}
+           disabled={syncing || downloading}
+           aria-busy={downloading}
+           className="inline-flex items-center gap-2 rounded bg-settings px-4 py-2 text-sm font-medium text-white hover:bg-settings/90 disabled:cursor-not-allowed disabled:bg-gray-400"
+         >
+           {downloading ? <LoaderCircle className="h-4 w-4 motion-safe:animate-spin" aria-hidden="true" /> : <Download className="h-4 w-4" aria-hidden="true" />}
+           {downloading ? t("catalog.backup.downloadPreparing") : t("catalog.backup.downloadButton")}
         </button>
       </div>
 
@@ -143,11 +163,18 @@ export function BackupExportPanel() {
           )}
         </div>
       )}
-      {progress && syncing && (
-        <p className="text-sm text-gray-700" role="status">
-          {t("catalog.backup.inProgress", { remaining: progress.remaining })}
-        </p>
-      )}
+       {syncing && (
+         <p className="text-sm text-gray-700" role="status">
+           {progress
+             ? t("catalog.backup.inProgress", { remaining: progress.remaining })
+             : t("catalog.backup.syncing")}
+         </p>
+       )}
+       {downloading && (
+         <p className="text-sm text-gray-700" role="status">
+           {t("catalog.backup.downloadPreparing")}
+         </p>
+       )}
       {error && <p className="text-sm text-red-700" role="alert">{error}</p>}
       {progress && progress.failures.length > 0 && (
         <div className="rounded border border-red-200 bg-red-50 p-3 text-sm text-red-800">
