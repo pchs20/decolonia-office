@@ -66,7 +66,25 @@ export function JobItemForm({
   );
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const titleRef = useRef<HTMLTextAreaElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
+
+  const resizeTextarea = (textarea: HTMLTextAreaElement | null) => {
+    if (!textarea) {
+      return;
+    }
+
+    const computedStyle = window.getComputedStyle(textarea);
+    const lineHeight = Number.parseFloat(computedStyle.lineHeight);
+    const resolvedLineHeight = Number.isFinite(lineHeight) && lineHeight > 0 ? lineHeight : 20;
+    const minHeight = resolvedLineHeight * MIN_DESCRIPTION_LINES;
+    const maxHeight = resolvedLineHeight * MAX_DESCRIPTION_LINES;
+
+    textarea.style.height = `${minHeight}px`;
+    const nextHeight = Math.max(minHeight, Math.min(textarea.scrollHeight, maxHeight));
+    textarea.style.height = `${nextHeight}px`;
+    textarea.style.overflowY = textarea.scrollHeight > maxHeight ? "auto" : "hidden";
+  };
 
   const initialFormData = useMemo(
     () =>
@@ -82,22 +100,9 @@ export function JobItemForm({
   const normalizedFormData = normalizeFormData(formData);
 
   useEffect(() => {
-    const textarea = descriptionRef.current;
-    if (!textarea) {
-      return;
-    }
-
-    const computedStyle = window.getComputedStyle(textarea);
-    const lineHeight = Number.parseFloat(computedStyle.lineHeight);
-    const resolvedLineHeight = Number.isFinite(lineHeight) && lineHeight > 0 ? lineHeight : 20;
-    const minHeight = resolvedLineHeight * MIN_DESCRIPTION_LINES;
-    const maxHeight = resolvedLineHeight * MAX_DESCRIPTION_LINES;
-
-    textarea.style.height = `${minHeight}px`;
-    const nextHeight = Math.max(minHeight, Math.min(textarea.scrollHeight, maxHeight));
-    textarea.style.height = `${nextHeight}px`;
-    textarea.style.overflowY = textarea.scrollHeight > maxHeight ? "auto" : "hidden";
-  }, [formData.description]);
+    resizeTextarea(titleRef.current);
+    resizeTextarea(descriptionRef.current);
+  }, [formData.title, formData.description]);
 
   useEffect(() => {
     setFormData(initialFormData);
@@ -178,13 +183,15 @@ export function JobItemForm({
 
       <div>
         <label className="block text-sm font-medium mb-1">{t("commercialDocuments.title")}</label>
-        <input
-          type="text"
+        <textarea
+          ref={titleRef}
           name="title"
           value={formData.title}
           onChange={handleChange}
           required
           className="w-full px-3 py-2 border rounded text-sm"
+          rows={MIN_DESCRIPTION_LINES}
+          style={{ minHeight: "4.5rem", overflowY: "hidden" }}
           placeholder={t("commercialDocuments.title")}
         />
       </div>

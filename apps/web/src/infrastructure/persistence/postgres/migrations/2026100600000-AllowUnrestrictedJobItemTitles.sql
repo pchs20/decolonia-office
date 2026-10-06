@@ -1,0 +1,2 @@
+ALTER TABLE job_items
+  ALTER COLUMN title TYPE TEXT;
