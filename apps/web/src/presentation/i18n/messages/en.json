@@ -367,7 +367,8 @@
     "noTax": "Taxes not included",
     "total": "Total",
     "paymentMethod": "Payment method",
-    "bankTransfer": "Bank transfer"
+    "bankTransfer": "Bank transfer",
+    "disclaimer": "Construction-sector public liability insurance"
   },
   "dashboard": {
     "newBudget": "+ New budget",

@@ -367,7 +367,8 @@
     "noTax": "Impuestos no incluidos",
     "total": "Total",
     "paymentMethod": "Forma de pago",
-    "bankTransfer": "Transferencia bancaria"
+    "bankTransfer": "Transferencia bancaria",
+    "disclaimer": "Seguro de responsabilidad civil ámbito de construcción"
   },
   "dashboard": {
     "newBudget": "+ Nuevo presupuesto",

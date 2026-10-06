@@ -357,7 +357,8 @@
     "noTax": "Impostos no inclosos",
     "total": "Total",
     "paymentMethod": "Forma de pagament",
-    "bankTransfer": "Transferència bancària"
+    "bankTransfer": "Transferència bancària",
+    "disclaimer": "Assegurança de responsabilitat civil en l'àmbit de la construcció"
   },
   "dashboard": {
     "newBudget": "+ Nou pressupost",
