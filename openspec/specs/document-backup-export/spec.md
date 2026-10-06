@@ -5,11 +5,19 @@
 Define stateless local backup downloads containing the structured application data and generated document PDFs.
 ## Requirements
 ### Requirement: Manually download a complete backup ZIP
-The system SHALL provide an authenticated Backup & Export settings action that generates and downloads a current backup archive as a ZIP file.
+The system SHALL provide an authenticated Backup & Export settings action that generates and downloads a current backup archive as a ZIP file. The action SHALL expose preparation and failure feedback while preserving the complete, stateless archive contract.
 
 #### Scenario: Worker downloads a backup
 - **WHEN** an authenticated worker selects `Download backup ZIP`
-- **THEN** the system generates a backup archive and returns it as a downloadable ZIP response
+- **THEN** the system generates a backup archive, returns it as a downloadable ZIP response, and communicates that preparation is in progress until the download is ready
+
+#### Scenario: Backup download control prevents duplicate requests
+- **WHEN** a backup archive is being prepared or downloaded
+- **THEN** the `Download backup ZIP` control is disabled and a second backup request cannot be initiated from the Backup & Export panel
+
+#### Scenario: Backup download failure is actionable
+- **WHEN** backup archive generation or download fails
+- **THEN** the Backup & Export panel displays a localized error, restores the download control, and does not report a successful backup
 
 #### Scenario: Unauthenticated worker attempts a backup download
 - **WHEN** an unauthenticated request attempts to generate a backup archive

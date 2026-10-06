@@ -192,7 +192,9 @@
     "filters": {
       "clientApplied": "Mostrant pressupostos del client seleccionat."
     },
-    "exportPdf": "Exportar PDF"
+    "exportPdf": "Exportar PDF",
+    "exportPdfLoading": "Generant PDF...",
+    "exportPdfError": "No s'ha pogut generar el PDF. Torna-ho a provar."
   },
   "invoices": {
     "title": "Factures",
@@ -202,6 +204,8 @@
     "noResultsSearch": "No hi ha factures que coincideixin amb la cerca",
     "backToList": "← Tornar a factures",
     "exportPdf": "Exportar PDF",
+    "exportPdfLoading": "Generant PDF...",
+    "exportPdfError": "No s'ha pogut generar el PDF. Torna-ho a provar.",
     "fields": {
       "client": "Client *",
       "selectClient": "Selecciona un client...",
@@ -300,6 +304,8 @@
       "syncButton": "Sincronitzar amb Google Drive",
       "authorizeButton": "Autoritzar Google Drive",
       "downloadButton": "Descarregar còpia ZIP",
+      "downloadPreparing": "Preparant la còpia de seguretat...",
+      "downloadError": "No s'ha pogut descarregar la còpia de seguretat. Torna-ho a provar.",
       "syncing": "Sincronitzant...",
       "inProgress": "Sincronitzant... queden {{remaining}} documents.",
       "completed": "Sincronització completada: {{processed}} pujats, {{skipped}} omesos, {{failed}} fallits.",

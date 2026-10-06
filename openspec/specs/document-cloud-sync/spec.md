@@ -5,7 +5,7 @@
 Define manual, one-way synchronization of application data and generated PDFs to a shared Google Drive destination.
 ## Requirements
 ### Requirement: Manually initiate cloud synchronization
-The system SHALL provide an authenticated Backup & Export settings surface with a manual action that starts synchronization of the current clients, budgets, invoices, spreadsheet data, and generated PDFs to the configured cloud provider.
+The system SHALL provide an authenticated Backup & Export settings surface with a manual action that starts synchronization of the current clients, budgets, invoices, spreadsheet data, and generated PDFs to the configured cloud provider. The surface SHALL clearly communicate synchronization progress, completion, and failure, and SHALL prevent conflicting backup operations from running concurrently.
 
 #### Scenario: Worker starts a cloud sync
 - **WHEN** an authenticated worker selects `Sync to Google Drive`
@@ -30,6 +30,10 @@ The system SHALL provide an authenticated Backup & Export settings surface with 
 #### Scenario: Unauthenticated worker attempts to sync
 - **WHEN** an unauthenticated request attempts to start or continue a cloud sync
 - **THEN** the system rejects the request according to the application's API authentication contract
+
+#### Scenario: Cloud sync reports an operation failure
+- **WHEN** a synchronization request fails before completion
+- **THEN** the Backup & Export surface displays an actionable localized error, removes the pending state, and allows a later retry
 
 ### Requirement: Export structured data to one spreadsheet
 The system SHALL maintain one cloud spreadsheet named `Decolonia-data` at the root of the shared `Decolonia` folder, containing current-state tabs named `Clients`, `Budgets`, and `Invoices`.
