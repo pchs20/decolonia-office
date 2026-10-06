@@ -17,6 +17,7 @@ const testGlobal = globalThis as typeof globalThis & {
 testGlobal.__non_webpack_require__ = require;
 
 const { BudgetDocument } = require("@/presentation/components/pdf/BudgetDocument") as typeof import("@/presentation/components/pdf/BudgetDocument");
+const { InvoiceDocument } = require("@/presentation/components/pdf/InvoiceDocument") as typeof import("@/presentation/components/pdf/InvoiceDocument");
 
 const labels = {
   budget: "Presupuesto",
@@ -32,8 +33,15 @@ const labels = {
   noTax: "Impuestos no incluidos",
   total: "Total",
   paymentMethod: "Forma de pago",
-  bankTransfer: "Transferencia bancaria"
+  bankTransfer: "Transferencia bancaria",
+  disclaimer: "Seguro de responsabilidad civil ámbito de construcción"
 };
+
+const localizedLabels = [
+  labels,
+  { ...labels, disclaimer: "Assegurança de responsabilitat civil en l'àmbit de la construcció" },
+  { ...labels, disclaimer: "Construction-sector public liability insurance" }
+];
 
 function createBudget(bankAccount: string | null) {
   return {
@@ -73,24 +81,44 @@ function createBudget(bankAccount: string | null) {
   };
 }
 
-function renderBudget(bankAccount: string | null): string {
+function renderBudget(bankAccount: string | null, pdfLabels = labels): string {
   return renderToStaticMarkup(
     React.createElement(BudgetDocument, {
       budget: createBudget(bankAccount),
       items: [],
-      labels,
+      labels: pdfLabels,
       imageSource: "image-source"
     })
   );
+}
+
+function renderInvoice(pdfLabels = labels): string {
+  const budget = createBudget("ES1234567890");
+
+  return renderToStaticMarkup(
+    React.createElement(InvoiceDocument, {
+      invoice: { ...budget, issuedAt: null, sourceBudgetId: null },
+      items: [],
+      labels: pdfLabels,
+      imageSource: "image-source"
+    })
+  );
+}
+
+function renderedText(value: string): string {
+  return value.replaceAll("'", "&#x27;");
 }
 
 describe("BudgetDocument payment block", () => {
   test("renders the invoice-style payment block when a bank account is configured", () => {
     const markup = renderBudget("ES1234567890");
 
+    expect(markup.indexOf("100.00 €")).toBeLessThan(markup.indexOf(labels.disclaimer));
     expect(markup).toContain("Forma de pago");
     expect(markup).toContain("Transferencia bancaria");
     expect(markup).toContain("ES1234567890");
+    expect(markup).toContain(labels.disclaimer);
+    expect(markup.indexOf(labels.disclaimer)).toBeLessThan(markup.indexOf("Forma de pago"));
   });
 
   test("omits the payment block when no bank account is configured", () => {
@@ -98,5 +126,14 @@ describe("BudgetDocument payment block", () => {
 
     expect(markup).not.toContain("Forma de pago");
     expect(markup).not.toContain("Transferencia bancaria");
+    expect(markup).toContain(labels.disclaimer);
+  });
+
+  test.each(localizedLabels)("renders the localized disclaimer in a budget PDF", pdfLabels => {
+    expect(renderBudget(null, pdfLabels)).toContain(renderedText(pdfLabels.disclaimer));
+  });
+
+  test.each(localizedLabels)("does not render the disclaimer in an invoice PDF", pdfLabels => {
+    expect(renderInvoice(pdfLabels)).not.toContain(pdfLabels.disclaimer);
   });
 });

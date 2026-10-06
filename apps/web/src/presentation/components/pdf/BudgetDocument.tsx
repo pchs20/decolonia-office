@@ -1,5 +1,5 @@
 /** @jsxImportSource . */
-import { Document, Page, StyleSheet, View } from "@react-pdf/renderer";
+import { Document, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
 import { BudgetResponse } from "@/api/schemas/budget-schemas";
 import { JobItemResponse } from "@/api/schemas/job-item-schemas";
 import { DocumentHeader } from "@/presentation/components/pdf/DocumentHeader";
@@ -31,6 +31,11 @@ const styles = StyleSheet.create({
     marginLeft: -48,
     marginRight: -48,
     marginBottom: 34
+  },
+  disclaimer: {
+    marginBottom: 16,
+    fontSize: 9,
+    color: "#555"
   }
 });
 
@@ -76,6 +81,8 @@ export function BudgetDocument({ budget, items, labels, imageSource }: BudgetDoc
           tax={budget.tax}
           labels={labels}
         />
+
+        <Text style={styles.disclaimer}>{labels.disclaimer}</Text>
 
         {budget.worker.bankAccount ? (
           <PaymentBlock bankAccount={budget.worker.bankAccount} labels={labels} />
