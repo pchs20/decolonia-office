@@ -104,7 +104,7 @@ export function JobItemsTable({
               <tr key={item.id} className="border-b hover:bg-gray-50">
                 <td className="px-3 py-2">{item.position}</td>
                 <td className="px-3 py-2">
-                  <div className="font-medium">{item.title}</div>
+                  <div className="font-medium whitespace-pre-wrap break-words">{item.title}</div>
                   {item.description && (
                     <div className="text-gray-600 text-xs whitespace-pre-wrap break-words">{item.description}</div>
                   )}

@@ -1,8 +1,5 @@
-# long-concept-descriptions Specification
+## MODIFIED Requirements
 
-## Purpose
-TBD - created by archiving change improve-long-concept-descriptions. Update Purpose after archive.
-## Requirements
 ### Requirement: Auto-growing concept description editor
 The budget and invoice concept editor SHALL provide inline plain-text textareas for both the title and description fields. Each textarea SHALL have a minimum height of three visual lines, grow automatically as its content grows until it reaches a maximum height of approximately fifteen visual lines, and provide internal vertical scrolling for additional content after reaching that maximum.
 

@@ -19,6 +19,7 @@ import createDocumentExportStatesTable from "./2026081500000-CreateDocumentExpor
 import addDestinationReferenceToDocumentExportStates from "./2026081500001-AddDestinationReferenceToDocumentExportStates.sql";
 import dropWorkTemplatesTable from "./2026090300000-DropWorkTemplatesTable.sql";
 import allowCustomDocumentIdentifiers from "./2026100300000-AllowCustomDocumentIdentifiers.sql";
+import allowUnrestrictedJobItemTitles from "./2026100600000-AllowUnrestrictedJobItemTitles.sql";
 
 export type SqlMigration = {
   id: string;
@@ -131,5 +132,10 @@ export const SQL_MIGRATIONS: SqlMigration[] = [
     id: "2026100300000",
     name: "AllowCustomDocumentIdentifiers",
     sql: allowCustomDocumentIdentifiers
+  },
+  {
+    id: "2026100600000",
+    name: "AllowUnrestrictedJobItemTitles",
+    sql: allowUnrestrictedJobItemTitles
   }
 ];

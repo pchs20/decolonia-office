@@ -41,15 +41,19 @@ The system SHALL allow users to edit the invoice's notes and document-owned clie
 - **THEN** system stores the date (optional)
 
 ### Requirement: Add job items to invoice
-The system SHALL allow users to add, edit, remove, and reorder job items (work line items) from an invoice.
+The system SHALL allow users to add, edit, remove, and reorder job items (work line items) from an invoice. Job-item titles SHALL support intentional plain-text line breaks and SHALL not be limited to 255 characters.
 
 #### Scenario: Add a job item
-- **WHEN** user clicks "Add Item" and enters title, description, optional quantity, optional unitPrice
+- **WHEN** user clicks "Add Item" and enters a title, including optional intentional line breaks, description, optional quantity, and optional unitPrice
 - **THEN** system appends the job item to the invoice's items list with auto-assigned position number
 
 #### Scenario: Edit job item pricing
 - **WHEN** user updates quantity, unitPrice, or totalPrice fields on an existing item
 - **THEN** system stores the changes; subtotal, tax, and total recalculate
+
+#### Scenario: Preserve multiline invoice title
+- **WHEN** a user saves an invoice job item with an intentional multiline title
+- **THEN** the invoice item retains the complete title and line breaks in its detail view and PDF export
 
 #### Scenario: Remove job item
 - **WHEN** user clicks "Remove" on a job item
