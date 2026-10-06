@@ -280,6 +280,19 @@
       "noPrimaryWorker": "No hay ningún trabajador principal configurado. Configura un trabajador como principal en",
       "noPrimaryWorkerLink": "Configuración \u2192 Trabajadores",
       "primaryWorkerFailed": "Error al cargar el trabajador principal. Asegúrate de que haya un trabajador configurado como principal en"
+    },
+    "snapshot": {
+      "restoreClient": "Restaurar datos del cliente",
+      "restoreWorker": "Restaurar datos del trabajador",
+      "applyLatestClient": "Aplicar últimos datos del cliente",
+      "applyLatestWorker": "Aplicar últimos datos del trabajador",
+      "refreshing": "Cargando datos actuales...",
+      "refreshFailed": "No se pudo cargar la información actual.",
+      "alreadyCurrent": "Esta información ya está actualizada.",
+      "confirmTitle": "¿{{action}}?",
+      "changedFields": "Los siguientes campos son diferentes del registro actual:",
+      "replaceNotice": "Se reemplazarán todos los campos de {{party}} de este documento. El registro original no se modificará.",
+      "apply": "Aplicar últimos datos"
     }
   },
   "catalog": {

@@ -267,6 +267,19 @@
       "pricingMode": "Mode de preu",
       "manualSubtotalAmount": "Subtotal manual",
       "calculatedTotal": "Total calculat"
+    },
+    "snapshot": {
+      "restoreClient": "Restaurar dades del client",
+      "restoreWorker": "Restaurar dades del treballador",
+      "applyLatestClient": "Aplicar les últimes dades del client",
+      "applyLatestWorker": "Aplicar les últimes dades del treballador",
+      "refreshing": "Carregant les dades actuals...",
+      "refreshFailed": "No s'ha pogut carregar la informació actual.",
+      "alreadyCurrent": "Aquesta informació ja està actualitzada.",
+      "confirmTitle": "Voleu {{action}}?",
+      "changedFields": "Els camps següents són diferents del registre actual:",
+      "replaceNotice": "Se substituiran tots els camps de {{party}} d'aquest document. El registre original no es modificarà.",
+      "apply": "Aplicar les últimes dades"
     }
   },
   "catalog": {

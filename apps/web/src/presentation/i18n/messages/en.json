@@ -280,6 +280,19 @@
       "noPrimaryWorker": "No primary worker configured. Please configure a worker as primary in",
       "noPrimaryWorkerLink": "Settings \u2192 Workers",
       "primaryWorkerFailed": "Failed to load primary worker. Please ensure a worker is configured as primary in"
+    },
+    "snapshot": {
+      "restoreClient": "Restore client data",
+      "restoreWorker": "Restore worker data",
+      "applyLatestClient": "Apply latest client data",
+      "applyLatestWorker": "Apply latest worker data",
+      "refreshing": "Loading latest data...",
+      "refreshFailed": "Could not load the latest information.",
+      "alreadyCurrent": "This snapshot is already current.",
+      "confirmTitle": "{{action}}?",
+      "changedFields": "The following fields differ from the source record:",
+      "replaceNotice": "All {{party}} snapshot fields will be replaced in this document. The source record will not be modified.",
+      "apply": "Apply latest data"
     }
   },
   "catalog": {
