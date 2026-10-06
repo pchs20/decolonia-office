@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   title: "Decolonia Office",
   description: "Manage client information, budgets, invoices, and work documents.",
   manifest: "/manifest.json",
+  icons: {
+    icon: "/icons/favicon.png"
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent"
