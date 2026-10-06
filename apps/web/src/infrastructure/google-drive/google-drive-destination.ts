@@ -3,6 +3,7 @@ import { getGoogleDriveConfig } from "@/infrastructure/google-drive/config";
 import { GoogleDriveAdapter } from "@/infrastructure/google-drive/google-drive-adapter";
 import { ExportProvider } from "@/application/outbound/export-provider";
 import { GoogleDriveOAuthCredentials } from "@/infrastructure/google-drive/oauth";
+import { exportFolderName } from "@/application/use-cases/backup-export/export-folder-name";
 
 export interface GoogleDriveDestination {
   provider: ExportProvider.GoogleDrive;
@@ -20,8 +21,8 @@ export async function prepareGoogleDriveDestination(credentials: GoogleDriveOAut
   const adapter = new GoogleDriveAdapter(config);
   const root = { externalReference: config.sharedFolderId };
   const [budgets, invoices] = await Promise.all([
-    adapter.ensureFolder({ name: "Budgets", parentFolderReference: root.externalReference }),
-    adapter.ensureFolder({ name: "Invoices", parentFolderReference: root.externalReference })
+    adapter.ensureFolder({ name: exportFolderName("budget"), parentFolderReference: root.externalReference }),
+    adapter.ensureFolder({ name: exportFolderName("invoice"), parentFolderReference: root.externalReference })
   ]);
   const spreadsheet = await adapter.ensureSpreadsheet({
     name: "Decolonia-data",

@@ -3,9 +3,7 @@
 ## Purpose
 
 Define stateless local backup downloads containing the structured application data and generated document PDFs.
-
 ## Requirements
-
 ### Requirement: Manually download a complete backup ZIP
 The system SHALL provide an authenticated Backup & Export settings action that generates and downloads a current backup archive as a ZIP file.
 
@@ -37,23 +35,23 @@ The system SHALL organize ZIP entries using the same logical structure as the pe
 
 ```text
 <workbook>.xlsx
-Budgets/<year>/<quarter>/<budget-pdf>
-Invoices/<year>/<quarter>/<invoice-pdf>
+Presupuestos/<year>/<quarter>/<budget-pdf>
+Facturas/<year>/<quarter>/<invoice-pdf>
 ```
 
-Quarter folders SHALL use `Q1`, `Q2`, `Q3`, and `Q4`, with each quarter representing three calendar months.
+Quarter folders SHALL use `Q1`, `Q2`, `Q3`, and `Q4`, with each quarter representing three calendar months. The workbook tabs SHALL remain named `Clients`, `Budgets`, and `Invoices`.
 
 #### Scenario: Backup places PDFs by year and quarter
 - **WHEN** a budget or invoice PDF is added to the archive
-- **THEN** its path contains the document type, its selected year, and its `Q1` through `Q4` quarter folder
+- **THEN** its path contains `Presupuestos` for budgets or `Facturas` for invoices, its selected year, and its `Q1` through `Q4` quarter folder
 
 #### Scenario: Backup uses deterministic document paths
 - **WHEN** the same current database state is exported more than once
-- **THEN** equivalent documents use the same relative archive paths and filenames, apart from the archive's timestamped outer filename
+- **THEN** equivalent documents use the same Spanish relative archive paths and filenames, apart from the archive's timestamped outer filename
 
 #### Scenario: Workbook is at the archive root
 - **WHEN** a backup archive is generated
-- **THEN** the workbook is stored at the ZIP root as `Decolonia-data.xlsx`, not inside a `Data` subfolder
+- **THEN** the workbook is stored at the ZIP root as `Decolonia-data.xlsx`, not inside a `Data` subfolder, and its tabs remain named `Clients`, `Budgets`, and `Invoices`
 
 ### Requirement: ZIP export is stateless and one-way
 The system SHALL generate each backup archive from current database state without creating or updating persistent cloud export-state records.
