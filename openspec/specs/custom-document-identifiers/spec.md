@@ -1,9 +1,7 @@
 ## Purpose
 
 Allow users to keep automatic budget and invoice numbering by default while providing validated custom identifiers when needed.
-
 ## Requirements
-
 ### Requirement: Automatic identifiers remain the default
 The system SHALL preserve the current automatic allocation flow when a document is created. The creation form SHALL start in automatic mode, with the next suggested identifier displayed. Budgets SHALL continue using the budget sequence, and invoices SHALL continue using the current-year invoice sequence.
 
@@ -74,3 +72,18 @@ The system SHALL NOT advance or rewind an automatic sequence solely because a us
 #### Scenario: Editing an identifier does not change the sequence
 - **WHEN** a user changes an existing budget identifier from `42` to `CLIENT-A-01`
 - **THEN** the budget identifier changes but the automatic budget sequence remains unchanged
+
+### Requirement: Duplicated documents preserve identifier source metadata
+The system SHALL duplicate budgets and invoices with a new internal UUID and allocated user-facing identifier while preserving the source document's explicit `identifier_source` value.
+
+#### Scenario: Duplicate a budget with a custom identifier
+- **WHEN** a budget marked with `identifier_source = custom` is duplicated
+- **THEN** the new budget is persisted with a new UUID, a newly allocated identifier, and `identifier_source = custom`
+
+#### Scenario: Duplicate an invoice with an automatic identifier
+- **WHEN** an invoice marked with `identifier_source = automatic` is duplicated
+- **THEN** the new invoice is persisted with a new UUID, a newly allocated current-year identifier, and `identifier_source = automatic`
+
+#### Scenario: Duplicate queries remain column aligned
+- **WHEN** the budget or invoice duplication repository executes its `INSERT ... SELECT` statement
+- **THEN** every target column has exactly one corresponding expression and the transaction completes without a PostgreSQL column-count error

@@ -14,6 +14,7 @@ function budgetRow() {
   return {
     id: "budget-new",
     number: "8",
+    identifier_source: "custom" as const,
     client_id: "client-1",
     worker_id: "worker-1",
     notes: "Notes",
@@ -82,6 +83,9 @@ describe("commercial document duplication repositories", () => {
 
     expect(result.id).toBe("budget-new");
     expect(result.number).toBe("8");
+    expect(result.identifierSource).toBe("custom");
+    const budgetInsert = query.mock.calls.find(([sql]) => String(sql).includes("INSERT INTO budgets"));
+    expect(budgetInsert?.[0]).toContain("SELECT $1, $2, identifier_source, client_id");
     expect(query).toHaveBeenLastCalledWith("COMMIT");
     expect(release).toHaveBeenCalledTimes(1);
     expect(query.mock.calls.some(([sql]) => String(sql).includes("gen_random_uuid()"))).toBe(true);
@@ -103,6 +107,8 @@ describe("commercial document duplication repositories", () => {
     expect(result.number).toBe("4/2026");
     expect(result.sourceBudgetId).toBe("budget-1");
     expect(result.issuedAt).toBeNull();
+    const invoiceInsert = query.mock.calls.find(([sql]) => String(sql).includes("INSERT INTO invoices"));
+    expect(invoiceInsert?.[0]).toContain("SELECT $1, $2, identifier_source, client_id");
     expect(query).toHaveBeenLastCalledWith("COMMIT");
     expect(release).toHaveBeenCalledTimes(1);
   });

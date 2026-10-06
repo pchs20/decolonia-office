@@ -360,7 +360,7 @@ export async function duplicateBudgetRecord(id: string): Promise<Budget> {
         pricing_mode, manual_subtotal_amount, subtotal_amount, tax_amount, total_amount,
         created_at, updated_at
       )
-      SELECT $1, $2, client_id, worker_id, notes, NULL,
+      SELECT $1, $2, identifier_source, client_id, worker_id, notes, NULL,
         client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
         client_snapshot_work_street, client_snapshot_work_city, client_snapshot_work_postal_code,
         client_snapshot_billing_street, client_snapshot_billing_city, client_snapshot_billing_postal_code,
