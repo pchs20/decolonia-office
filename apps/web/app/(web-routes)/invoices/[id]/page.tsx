@@ -37,6 +37,7 @@ export default function InvoiceDetailPage({ params }: InvoiceDetailPageProps) {
   const [duplicating, setDuplicating] = useState(false);
   const [exportingPdf, setExportingPdf] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     void params.then(value => setInvoiceId(value.id));
@@ -144,6 +145,18 @@ export default function InvoiceDetailPage({ params }: InvoiceDetailPageProps) {
     }
   };
 
+  const handleDelete = async () => {
+    if (!invoiceId || !window.confirm(t("invoices.deleteConfirm"))) return;
+    setDeleting(true);
+    try {
+      await InvoiceService.delete(invoiceId);
+      router.push("/invoices");
+    } catch {
+      setError(t("invoices.errors.deleteFailed"));
+      setDeleting(false);
+    }
+  };
+
   if (loading) {
     return <div className="p-4 md:p-6">{t("common.loading")}</div>;
   }
@@ -200,6 +213,9 @@ export default function InvoiceDetailPage({ params }: InvoiceDetailPageProps) {
                 className="px-3 py-1 text-sm bg-invoices/10 text-invoices rounded hover:bg-invoices/20 disabled:opacity-50"
               >
                 {t("common.duplicate")}
+              </button>
+              <button type="button" disabled={deleting} onClick={() => void handleDelete()} className="px-3 py-1 text-sm bg-danger/10 text-danger rounded hover:bg-danger/20 disabled:opacity-50">
+                {deleting ? t("common.deleting") : t("common.delete")}
               </button>
             </>
           ) : null}

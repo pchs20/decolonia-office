@@ -99,6 +99,33 @@ export async function synchronizeCloudBatch(
     dependencies.dataSource.getBudgetsForExport(),
     dependencies.dataSource.getInvoicesForExport()
   ]);
+  const inactiveStates = await dependencies.exportStateRepository.listInactiveDocuments(
+    dependencies.destination.provider,
+    dependencies.destination.destinationReference
+  );
+  const deletionFailures: CloudSyncBatchResult["failures"] = [];
+  for (const state of inactiveStates) {
+    if (!state.externalReference) continue;
+    try {
+      await dependencies.destination.filePort.trashFile({ externalReference: state.externalReference });
+      await dependencies.exportStateRepository.markDeleted({
+        documentType: state.documentType,
+        documentId: state.documentId,
+        provider: dependencies.destination.provider,
+        destinationReference: dependencies.destination.destinationReference
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Cloud deletion failed";
+      await dependencies.exportStateRepository.recordFailure({
+        documentType: state.documentType,
+        documentId: state.documentId,
+        provider: dependencies.destination.provider,
+        destinationReference: dependencies.destination.destinationReference,
+        error: message
+      });
+      deletionFailures.push({ documentType: state.documentType, documentId: state.documentId, message });
+    }
+  }
   const tables = [
     buildBackupTables("Clients", clients),
     buildBackupTables("Budgets", budgets),
@@ -122,7 +149,7 @@ export async function synchronizeCloudBatch(
   let processed = 0;
   let skipped = 0;
   const uploadedDocuments: CloudSyncBatchResult["uploadedDocuments"] = [];
-  const failures: CloudSyncBatchResult["failures"] = [];
+  const failures: CloudSyncBatchResult["failures"] = [...deletionFailures];
 
   for (const document of batch) {
     const documentId = asDocumentId(document.record);

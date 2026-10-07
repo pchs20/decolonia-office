@@ -163,3 +163,21 @@ The system SHALL provide an export action on the invoice detail page that trigge
 #### Scenario: Export PDF button not visible in edit mode
 - **WHEN** a user is in invoice edit mode
 - **THEN** the "Export PDF" button is not shown
+
+### Requirement: Soft-delete invoices
+The system SHALL mark invoices inactive rather than physically removing them. Inactive invoices SHALL be excluded from active reads, lists, searches, duplication, updates, and PDF retrieval, while their job items remain stored.
+
+#### Scenario: Delete active invoice
+- **WHEN** an authorized user confirms deletion of an active invoice
+- **THEN** the invoice is marked inactive and its job items remain stored
+
+#### Scenario: Delete invoice from list or detail view
+- **WHEN** the user confirms deletion from an invoice list or detail view
+- **THEN** the invoice is soft-deleted and a detail-view deletion returns the user to the invoices list
+
+### Requirement: Preserve active documents for inactive clients
+Active invoices SHALL remain visible and usable when their linked client is inactive, using the invoice's materialized client snapshot.
+
+#### Scenario: List invoice for inactive client
+- **WHEN** a user lists invoices linked to an inactive client
+- **THEN** active invoices linked to that client remain available

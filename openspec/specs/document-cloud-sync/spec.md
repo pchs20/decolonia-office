@@ -145,3 +145,22 @@ The system SHALL provide comprehensive sync completion feedback that shows the f
 #### Scenario: User can verify file locations by paths shown
 - **WHEN** a user sees the sync completion message with document paths
 - **THEN** each path uses the same Spanish folder hierarchy as the corresponding Google Drive location
+
+### Requirement: Reconcile inactive records during cloud synchronization
+The next Google Drive synchronization SHALL exclude inactive clients, budgets, and invoices from the spreadsheet snapshot. It SHALL trash previously exported PDFs for inactive budgets and invoices, retain failed deletion state for retry, and continue exporting active documents whose clients are inactive.
+
+#### Scenario: Remove inactive client from spreadsheet
+- **WHEN** a client is soft-deleted before synchronization
+- **THEN** the client is absent from the synchronized Clients table while related active budgets and invoices remain present
+
+#### Scenario: Trash inactive document PDF
+- **WHEN** an inactive budget or invoice has a tracked Drive file reference
+- **THEN** synchronization moves that file to Drive trash and does not regenerate the PDF
+
+#### Scenario: Retry failed document trash
+- **WHEN** trashing an inactive document's Drive file fails
+- **THEN** synchronization records the failure, preserves the export state, and retries during a later synchronization
+
+#### Scenario: Preserve active document for inactive client
+- **WHEN** an active budget or invoice belongs to an inactive client
+- **THEN** it remains in the spreadsheet and remains eligible for PDF synchronization using its stored snapshot

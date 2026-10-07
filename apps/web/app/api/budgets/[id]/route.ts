@@ -5,7 +5,7 @@ import { ClientSnapshot } from "@/domain/value-objects/client-snapshot";
 import { WorkerSnapshot } from "@/domain/value-objects/worker-snapshot";
 import { commercialDocumentsUseCases } from "@/api/composition/commercial-documents";
 
-const { getBudgetById, updateBudget } = commercialDocumentsUseCases;
+const { deleteBudget, getBudgetById, updateBudget } = commercialDocumentsUseCases;
 
 function parsePricingMode(value: unknown): "computed" | "manual-subtotal" | undefined {
   if (value === undefined) {
@@ -148,6 +148,18 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     return NextResponse.json(mapBudgetToResponse(recalculated), { status: 200 });
   } catch (error) {
     console.error("PATCH /api/budgets/:id failed", error);
+    const mapped = getErrorResponse(error);
+    return NextResponse.json(mapped.body, { status: mapped.status });
+  }
+}
+
+export async function DELETE(_: NextRequest, { params }: Params) {
+  try {
+    const { id } = await params;
+    await deleteBudget(id);
+    return new NextResponse(null, { status: 204 });
+  } catch (error) {
+    console.error("DELETE /api/budgets/:id failed", error);
     const mapped = getErrorResponse(error);
     return NextResponse.json(mapped.body, { status: mapped.status });
   }

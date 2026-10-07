@@ -168,6 +168,7 @@
     "searchPlaceholder": "Buscar por número, cliente, trabajador o ciudad...",
     "noResultsSearch": "No hay presupuestos que coincidan con la búsqueda",
     "backToList": "← Volver a presupuestos",
+    "deleteConfirm": "¿Seguro que quieres eliminar este presupuesto?",
     "fields": {
       "client": "Cliente *",
       "selectClient": "Selecciona un cliente...",
@@ -192,6 +193,7 @@
       "createFailed": "Error al crear el presupuesto",
       "duplicateConfirm": "¿Duplicar este presupuesto? Se creará un nuevo número de presupuesto.",
       "duplicateFailed": "Error al duplicar el presupuesto"
+      ,"deleteFailed": "Error al eliminar el presupuesto"
     },
     "filters": {
       "clientApplied": "Mostrando presupuestos del cliente seleccionado."
@@ -207,6 +209,7 @@
     "searchPlaceholder": "Buscar por número, cliente, trabajador o ciudad...",
     "noResultsSearch": "No hay facturas que coincidan con la búsqueda",
     "backToList": "← Volver a facturas",
+    "deleteConfirm": "¿Seguro que quieres eliminar esta factura?",
     "exportPdf": "Exportar PDF",
     "exportPdfLoading": "Generando PDF...",
     "exportPdfError": "No se pudo generar el PDF. Inténtalo de nuevo.",
@@ -239,6 +242,7 @@
       "createFailed": "Error al crear la factura",
       "duplicateConfirm": "¿Duplicar esta factura? Se creará un nuevo número de factura.",
       "duplicateFailed": "Error al duplicar la factura"
+      ,"deleteFailed": "Error al eliminar la factura"
     },
     "filters": {
       "clientApplied": "Mostrando facturas del cliente seleccionado."

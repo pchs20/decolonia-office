@@ -59,6 +59,7 @@ export interface CloudFilePort {
     externalReference: string;
     parentFolderReference: string;
   }): Promise<void>;
+  trashFile(input: { externalReference: string }): Promise<void>;
 }
 
 export interface BackupArchivePort {

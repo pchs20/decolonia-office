@@ -21,7 +21,7 @@ async function queryExportRows(sql: string): Promise<Record<string, BackupCell>[
 }
 
 export const postgresBackupDataSource: BackupDataSource = {
-  getClientsForExport: () => queryExportRows("SELECT * FROM clients ORDER BY created_at ASC"),
+  getClientsForExport: () => queryExportRows("SELECT * FROM clients WHERE is_active = true ORDER BY created_at ASC"),
   getBudgetsForExport: () => queryExportRows(`
     SELECT b.*,
       COALESCE(
@@ -33,6 +33,7 @@ export const postgresBackupDataSource: BackupDataSource = {
         '[]'::json
       ) AS job_items
     FROM budgets b
+    WHERE b.is_active = true
     ORDER BY b.created_at ASC
   `),
   getInvoicesForExport: () => queryExportRows(`
@@ -46,6 +47,7 @@ export const postgresBackupDataSource: BackupDataSource = {
         '[]'::json
       ) AS job_items
     FROM invoices i
+    WHERE i.is_active = true
     ORDER BY i.created_at ASC
   `)
 };

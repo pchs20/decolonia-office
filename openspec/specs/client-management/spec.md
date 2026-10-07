@@ -164,3 +164,14 @@ Client-management address behavior SHALL remain aligned with worker-profile addr
 #### Scenario: Billing completeness validation is equivalent across profiles
 - **WHEN** any billing field is provided in client or worker profile payloads
 - **THEN** all billing address fields are required together for both profile types
+
+### Requirement: Soft-delete client with historical records preserved
+The system SHALL mark clients inactive rather than physically removing them, while preserving related budgets and invoices as historical records.
+
+#### Scenario: Archive active client
+- **WHEN** an authorized user confirms deletion of an active client
+- **THEN** the client is marked inactive and its budgets and invoices remain unchanged
+
+#### Scenario: Delete client from detail view
+- **WHEN** the user confirms deletion from a client detail view
+- **THEN** the client is soft-deleted and the user is returned to the clients list

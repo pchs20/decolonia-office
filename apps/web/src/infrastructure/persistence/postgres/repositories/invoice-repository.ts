@@ -28,7 +28,7 @@ export async function createInvoiceRecord(invoice: Invoice): Promise<Invoice> {
     const invoiceResult = await pool.query<InvoiceRow>(
       `
         INSERT INTO invoices (
-          id, number, identifier_source, client_id, worker_id, notes, issued_at, source_budget_id,
+          id, is_active, number, identifier_source, client_id, worker_id, notes, issued_at, source_budget_id,
           client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
           client_snapshot_work_street, client_snapshot_work_city, client_snapshot_work_postal_code,
           client_snapshot_billing_street, client_snapshot_billing_city, client_snapshot_billing_postal_code,
@@ -41,7 +41,7 @@ export async function createInvoiceRecord(invoice: Invoice): Promise<Invoice> {
            subtotal_amount, tax_amount, total_amount, created_at, updated_at
         )
         VALUES (
-          $1, $2, $38, $3, $4, $5, $6, $7,
+           $1, true, $2, $38, $3, $4, $5, $6, $7,
           $8, $9, $10, $11,
           $12, $13, $14,
           $15, $16, $17,
@@ -53,7 +53,7 @@ export async function createInvoiceRecord(invoice: Invoice): Promise<Invoice> {
           $32, $33,
            $34, $35, $36, $37
         )
-        RETURNING id, number, identifier_source, client_id, worker_id, notes, issued_at, source_budget_id,
+        RETURNING id, is_active, number, identifier_source, client_id, worker_id, notes, issued_at, source_budget_id,
           client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
           client_snapshot_work_street, client_snapshot_work_city, client_snapshot_work_postal_code,
           client_snapshot_billing_street, client_snapshot_billing_city, client_snapshot_billing_postal_code,
@@ -125,7 +125,7 @@ export async function createInvoiceRecord(invoice: Invoice): Promise<Invoice> {
 export async function findInvoiceByNumber(number: string, excludeId?: string): Promise<Invoice | null> {
   await ensureDatabaseReady();
   const result = await getDbPool().query<InvoiceRow>(
-    `SELECT id, number, identifier_source, client_id, worker_id, notes, issued_at, source_budget_id,
+     `SELECT id, is_active, number, identifier_source, client_id, worker_id, notes, issued_at, source_budget_id,
        client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
        client_snapshot_work_street, client_snapshot_work_city, client_snapshot_work_postal_code,
        client_snapshot_billing_street, client_snapshot_billing_city, client_snapshot_billing_postal_code,
@@ -134,7 +134,7 @@ export async function findInvoiceByNumber(number: string, excludeId?: string): P
        worker_snapshot_billing_street, worker_snapshot_billing_city, worker_snapshot_billing_postal_code,
        worker_snapshot_bank_account, tax_snapshot_name, tax_snapshot_rate, tax_snapshot_behavior,
        pricing_mode, manual_subtotal_amount, subtotal_amount, tax_amount, total_amount, created_at, updated_at
-     FROM invoices WHERE number = $1 AND ($2::uuid IS NULL OR id <> $2::uuid) LIMIT 1`,
+      FROM invoices WHERE is_active = true AND number = $1 AND ($2::uuid IS NULL OR id <> $2::uuid) LIMIT 1`,
     [number, excludeId ?? null]
   );
   return result.rows[0] ? mapInvoiceRow(result.rows[0]) : null;
@@ -143,7 +143,7 @@ export async function findInvoiceByNumber(number: string, excludeId?: string): P
 export async function getInvoiceById(id: string): Promise<Invoice> {
   return querySingleInvoice(
     `
-      SELECT id, number, identifier_source, client_id, worker_id, notes, issued_at, source_budget_id,
+       SELECT id, is_active, number, identifier_source, client_id, worker_id, notes, issued_at, source_budget_id,
         client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
         client_snapshot_work_street, client_snapshot_work_city, client_snapshot_work_postal_code,
         client_snapshot_billing_street, client_snapshot_billing_city, client_snapshot_billing_postal_code,
@@ -155,7 +155,7 @@ export async function getInvoiceById(id: string): Promise<Invoice> {
         pricing_mode, manual_subtotal_amount,
         subtotal_amount, tax_amount, total_amount, created_at, updated_at
       FROM invoices
-      WHERE id = $1
+       WHERE id = $1 AND is_active = true
     `,
     [id]
   );
@@ -179,7 +179,7 @@ export async function listInvoices(
   const offset = (safePage - 1) * safeLimit;
 
   let query = `
-    SELECT id, number, identifier_source, client_id, worker_id, notes, issued_at, source_budget_id,
+    SELECT id, is_active, number, identifier_source, client_id, worker_id, notes, issued_at, source_budget_id,
       client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
       client_snapshot_work_street, client_snapshot_work_city, client_snapshot_work_postal_code,
       client_snapshot_billing_street, client_snapshot_billing_city, client_snapshot_billing_postal_code,
@@ -191,7 +191,7 @@ export async function listInvoices(
       pricing_mode, manual_subtotal_amount,
       subtotal_amount, tax_amount, total_amount, created_at, updated_at
     FROM invoices
-    WHERE 1=1
+    WHERE is_active = true
   `;
   const params: unknown[] = [];
 
@@ -255,8 +255,8 @@ export async function updateInvoiceRecord(invoice: Invoice): Promise<Invoice> {
         pricing_mode = $28, manual_subtotal_amount = $29,
         subtotal_amount = $30, tax_amount = $31, total_amount = $32, updated_at = $33,
         number = $35, identifier_source = $36
-       WHERE id = $34
-      RETURNING id, number, identifier_source, client_id, worker_id, notes, issued_at, source_budget_id,
+       WHERE id = $34 AND is_active = true
+       RETURNING id, is_active, number, identifier_source, client_id, worker_id, notes, issued_at, source_budget_id,
         client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
         client_snapshot_work_street, client_snapshot_work_city, client_snapshot_work_postal_code,
         client_snapshot_billing_street, client_snapshot_billing_city, client_snapshot_billing_postal_code,
@@ -311,7 +311,10 @@ export async function updateInvoiceRecord(invoice: Invoice): Promise<Invoice> {
 
 export async function deleteInvoiceRecord(id: string): Promise<void> {
   await ensureDatabaseReady();
-  const result = await getDbPool().query("DELETE FROM invoices WHERE id = $1", [id]);
+  const result = await getDbPool().query(
+    "UPDATE invoices SET is_active = false, updated_at = CURRENT_TIMESTAMP WHERE id = $1 AND is_active = true",
+    [id]
+  );
   if (result.rowCount === 0) {
     throw new EntityNotFoundError("Invoice not found");
   }
@@ -325,7 +328,7 @@ export async function duplicateInvoiceRecord(id: string): Promise<Invoice> {
 
   try {
     await client.query("BEGIN");
-    const source = await client.query("SELECT id FROM invoices WHERE id = $1", [id]);
+    const source = await client.query("SELECT id FROM invoices WHERE id = $1 AND is_active = true", [id]);
     if (!source.rows[0]) {
       throw new EntityNotFoundError("Invoice not found");
     }
@@ -356,8 +359,19 @@ export async function duplicateInvoiceRecord(id: string): Promise<Invoice> {
     );
 
     const result = await client.query<InvoiceRow>(
-      `INSERT INTO invoices (
-        id, number, identifier_source, client_id, worker_id, notes, issued_at, source_budget_id,
+       `INSERT INTO invoices (
+         id, number, identifier_source, client_id, worker_id, notes, issued_at, source_budget_id,
+        client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
+        client_snapshot_work_street, client_snapshot_work_city, client_snapshot_work_postal_code,
+        client_snapshot_billing_street, client_snapshot_billing_city, client_snapshot_billing_postal_code,
+        worker_snapshot_name, worker_snapshot_tax_id, worker_snapshot_phone, worker_snapshot_email,
+        worker_snapshot_work_street, worker_snapshot_work_city, worker_snapshot_work_postal_code,
+        worker_snapshot_billing_street, worker_snapshot_billing_city, worker_snapshot_billing_postal_code,
+        worker_snapshot_bank_account, tax_snapshot_name, tax_snapshot_rate, tax_snapshot_behavior,
+         pricing_mode, manual_subtotal_amount, subtotal_amount, tax_amount, total_amount,
+         created_at, updated_at, is_active
+       )
+       SELECT $1, $2, identifier_source, client_id, worker_id, notes, NULL, source_budget_id,
         client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
         client_snapshot_work_street, client_snapshot_work_city, client_snapshot_work_postal_code,
         client_snapshot_billing_street, client_snapshot_billing_city, client_snapshot_billing_postal_code,
@@ -366,20 +380,9 @@ export async function duplicateInvoiceRecord(id: string): Promise<Invoice> {
         worker_snapshot_billing_street, worker_snapshot_billing_city, worker_snapshot_billing_postal_code,
         worker_snapshot_bank_account, tax_snapshot_name, tax_snapshot_rate, tax_snapshot_behavior,
         pricing_mode, manual_subtotal_amount, subtotal_amount, tax_amount, total_amount,
-        created_at, updated_at
-      )
-      SELECT $1, $2, identifier_source, client_id, worker_id, notes, NULL, source_budget_id,
-        client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
-        client_snapshot_work_street, client_snapshot_work_city, client_snapshot_work_postal_code,
-        client_snapshot_billing_street, client_snapshot_billing_city, client_snapshot_billing_postal_code,
-        worker_snapshot_name, worker_snapshot_tax_id, worker_snapshot_phone, worker_snapshot_email,
-        worker_snapshot_work_street, worker_snapshot_work_city, worker_snapshot_work_postal_code,
-        worker_snapshot_billing_street, worker_snapshot_billing_city, worker_snapshot_billing_postal_code,
-        worker_snapshot_bank_account, tax_snapshot_name, tax_snapshot_rate, tax_snapshot_behavior,
-        pricing_mode, manual_subtotal_amount, subtotal_amount, tax_amount, total_amount,
-        CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
-      FROM invoices WHERE id = $3
-       RETURNING id, number, identifier_source, client_id, worker_id, notes, issued_at, source_budget_id,
+         CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, true
+       FROM invoices WHERE id = $3 AND is_active = true
+        RETURNING id, is_active, number, identifier_source, client_id, worker_id, notes, issued_at, source_budget_id,
         client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
         client_snapshot_work_street, client_snapshot_work_city, client_snapshot_work_postal_code,
         client_snapshot_billing_street, client_snapshot_billing_city, client_snapshot_billing_postal_code,

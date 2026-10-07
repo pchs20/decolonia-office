@@ -1,5 +1,6 @@
 export interface BudgetRow {
   id: string;
+  is_active: boolean;
   number: string;
   identifier_source: "automatic" | "custom";
   client_id: string;

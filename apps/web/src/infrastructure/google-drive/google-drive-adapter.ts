@@ -135,6 +135,21 @@ export class GoogleDriveAdapter implements CloudFilePort, CloudSpreadsheetPort {
     });
   }
 
+  async trashFile(input: { externalReference: string }) {
+    try {
+      await this.drive.files.update({
+        fileId: input.externalReference,
+        requestBody: { trashed: true },
+        supportsAllDrives: true,
+        fields: "id,trashed"
+      });
+    } catch (error) {
+      const status = (error as { code?: number }).code;
+      if (status === 404) return;
+      throw error;
+    }
+  }
+
   async ensureSpreadsheet(input: { name: string; parentFolderReference: string }) {
     const query = [
       `name = '${escapeQueryValue(input.name)}'`,

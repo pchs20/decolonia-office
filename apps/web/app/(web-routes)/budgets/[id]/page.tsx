@@ -33,6 +33,7 @@ export default function BudgetDetailPage({ params }: BudgetDetailPageProps) {
   const [duplicating, setDuplicating] = useState(false);
   const [exportingPdf, setExportingPdf] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     void params.then(value => setBudgetId(value.id));
@@ -128,6 +129,18 @@ export default function BudgetDetailPage({ params }: BudgetDetailPageProps) {
     }
   };
 
+  const handleDelete = async () => {
+    if (!budgetId || !window.confirm(t("budgets.deleteConfirm"))) return;
+    setDeleting(true);
+    try {
+      await BudgetService.delete(budgetId);
+      router.push("/budgets");
+    } catch {
+      setError(t("budgets.errors.deleteFailed"));
+      setDeleting(false);
+    }
+  };
+
   if (loading) {
     return <div className="p-4 md:p-6">{t("common.loading")}</div>;
   }
@@ -184,6 +197,9 @@ export default function BudgetDetailPage({ params }: BudgetDetailPageProps) {
                 className="px-3 py-1 text-sm bg-budgets/10 text-budgets rounded hover:bg-budgets/20 disabled:opacity-50"
               >
                 {t("common.duplicate")}
+              </button>
+              <button type="button" disabled={deleting} onClick={() => void handleDelete()} className="px-3 py-1 text-sm bg-danger/10 text-danger rounded hover:bg-danger/20 disabled:opacity-50">
+                {deleting ? t("common.deleting") : t("common.delete")}
               </button>
             </>
           ) : null}

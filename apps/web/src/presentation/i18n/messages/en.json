@@ -168,6 +168,7 @@
     "searchPlaceholder": "Search by number, client, worker, or city...",
     "noResultsSearch": "No budgets found matching your search",
     "backToList": "← Back to Budgets",
+    "deleteConfirm": "Are you sure you want to delete this budget?",
     "fields": {
       "client": "Client *",
       "selectClient": "Select a client...",
@@ -192,6 +193,7 @@
       "createFailed": "Failed to create budget",
       "duplicateConfirm": "Duplicate this budget? A new budget number will be created.",
       "duplicateFailed": "Failed to duplicate budget"
+      ,"deleteFailed": "Failed to delete budget"
     },
     "filters": {
       "clientApplied": "Showing budgets for selected client."
@@ -207,6 +209,7 @@
     "searchPlaceholder": "Search by number, client, worker, or city...",
     "noResultsSearch": "No invoices found matching your search",
     "backToList": "← Back to Invoices",
+    "deleteConfirm": "Are you sure you want to delete this invoice?",
     "exportPdf": "Export PDF",
     "exportPdfLoading": "Generating PDF...",
     "exportPdfError": "The PDF could not be generated. Please try again.",
@@ -239,6 +242,7 @@
       "createFailed": "Failed to create invoice",
       "duplicateConfirm": "Duplicate this invoice? A new invoice number will be created.",
       "duplicateFailed": "Failed to duplicate invoice"
+      ,"deleteFailed": "Failed to delete invoice"
     },
     "filters": {
       "clientApplied": "Showing invoices for selected client."
