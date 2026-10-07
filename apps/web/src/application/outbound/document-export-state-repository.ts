@@ -24,6 +24,8 @@ export interface DocumentExportStateRepository {
     provider: ExportProvider,
     destinationReference: string
   ): Promise<DocumentExportState | null>;
+  listInactiveDocuments(provider: ExportProvider, destinationReference: string): Promise<DocumentExportState[]>;
+  markDeleted(input: { documentType: ExportDocumentType; documentId: string; provider: ExportProvider; destinationReference: string }): Promise<void>;
   recordSuccess(input: {
     documentType: ExportDocumentType;
     documentId: string;

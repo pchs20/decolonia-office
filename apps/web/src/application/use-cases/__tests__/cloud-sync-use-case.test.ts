@@ -3,12 +3,13 @@ import { BackupDataSource, CloudFilePort, CloudSpreadsheetPort, DocumentPdfRende
 import { DocumentExportStateRepository } from "@/application/outbound/document-export-state-repository";
 import { ExportProvider } from "@/application/outbound/export-provider";
 
-function createDependencies(options: { skipBudgetOne?: boolean; failBudgetTwo?: boolean } = {}) {
+function createDependencies(options: { skipBudgetOne?: boolean; failBudgetTwo?: boolean; inactiveState?: boolean; failTrash?: boolean } = {}) {
   const uploads: string[] = [];
   const folders: string[] = [];
   const successes: string[] = [];
   const failures: string[] = [];
   const destinationReferences: string[] = [];
+  const trashed: string[] = [];
   const source: BackupDataSource = {
     getClientsForExport: async () => [],
     getBudgetsForExport: async () => [
@@ -35,7 +36,11 @@ function createDependencies(options: { skipBudgetOne?: boolean; failBudgetTwo?: 
       uploads.push(name);
       return { externalReference: `drive-${name}` };
     },
-    moveFile: async () => undefined
+    moveFile: async () => undefined,
+    trashFile: async ({ externalReference }) => {
+      if (options.failTrash) throw new Error("trash failed");
+      trashed.push(externalReference);
+    }
   };
   const spreadsheetPort: CloudSpreadsheetPort = {
     ensureSpreadsheet: async () => ({ externalReference: "sheet" }),
@@ -61,6 +66,21 @@ function createDependencies(options: { skipBudgetOne?: boolean; failBudgetTwo?: 
         }
       : null;
     },
+    listInactiveDocuments: async () => options.inactiveState ? [{
+      id: "state-deleted",
+      documentType: "budget",
+      documentId: "budget-deleted",
+      provider: ExportProvider.GoogleDrive,
+      destinationReference: "shared-folder",
+      externalReference: "drive-deleted",
+      sourceUpdatedAt: new Date(),
+      syncedAt: new Date(),
+      lastAttemptedAt: new Date(),
+      lastError: null,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }] : [],
+    markDeleted: async () => undefined,
     recordSuccess: async ({ documentId }) => {
       successes.push(documentId);
       return {} as never;
@@ -91,6 +111,7 @@ function createDependencies(options: { skipBudgetOne?: boolean; failBudgetTwo?: 
     successes,
     failures,
     destinationReferences
+    ,trashed
   };
 }
 
@@ -140,5 +161,23 @@ describe("synchronizeCloudBatch", () => {
     await synchronizeCloudBatch(test.dependencies, { batchSize: 1 });
 
     expect(test.destinationReferences).toEqual(["shared-folder"]);
+  });
+
+  it("trashes previously exported inactive documents without rendering them", async () => {
+    const test = createDependencies({ inactiveState: true });
+    const result = await synchronizeCloudBatch(test.dependencies, { batchSize: 1 });
+
+    expect(test.trashed).toEqual(["drive-deleted"]);
+    expect(result.failures).toEqual([]);
+  });
+
+  it("reports failed Drive trash operations for retry", async () => {
+    const test = createDependencies({ inactiveState: true, failTrash: true });
+    const result = await synchronizeCloudBatch(test.dependencies, { batchSize: 1 });
+
+    expect(result.failures).toEqual([
+      { documentType: "budget", documentId: "budget-deleted", message: "trash failed" }
+    ]);
+    expect(test.failures).toContain("budget-deleted");
   });
 });

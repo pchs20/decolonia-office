@@ -164,6 +164,7 @@
     "searchPlaceholder": "Cerca per número, client, treballador o ciutat...",
     "noResultsSearch": "No hi ha pressupostos que coincideixin amb la cerca",
     "backToList": "← Tornar a pressupostos",
+    "deleteConfirm": "Segur que vols eliminar aquest pressupost?",
     "fields": {
       "client": "Client *",
       "selectClient": "Selecciona un client...",
@@ -188,6 +189,7 @@
       "createFailed": "Error en crear el pressupost",
       "duplicateConfirm": "Voleu duplicar aquest pressupost? Es crearà un número de pressupost nou.",
       "duplicateFailed": "Error en duplicar el pressupost"
+      ,"deleteFailed": "Error en eliminar el pressupost"
     },
     "filters": {
       "clientApplied": "Mostrant pressupostos del client seleccionat."
@@ -203,6 +205,7 @@
     "searchPlaceholder": "Cerca per número, client, treballador o ciutat...",
     "noResultsSearch": "No hi ha factures que coincideixin amb la cerca",
     "backToList": "← Tornar a factures",
+    "deleteConfirm": "Segur que vols eliminar aquesta factura?",
     "exportPdf": "Exportar PDF",
     "exportPdfLoading": "Generant PDF...",
     "exportPdfError": "No s'ha pogut generar el PDF. Torna-ho a provar.",
@@ -235,6 +238,7 @@
       "createFailed": "Error en crear la factura",
       "duplicateConfirm": "Voleu duplicar aquesta factura? Es crearà un número de factura nou.",
       "duplicateFailed": "Error en duplicar la factura"
+      ,"deleteFailed": "Error en eliminar la factura"
     },
     "filters": {
       "clientApplied": "Mostrant factures del client seleccionat."

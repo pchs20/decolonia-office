@@ -33,7 +33,7 @@ export async function createBudgetRecord(
     const budgetResult = await pool.query<BudgetRow>(
       `
         INSERT INTO budgets (
-          id, number, identifier_source, client_id, worker_id, notes, delivered_at,
+           id, is_active, number, identifier_source, client_id, worker_id, notes, delivered_at,
           client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
           client_snapshot_work_street, client_snapshot_work_city, client_snapshot_work_postal_code,
           client_snapshot_billing_street, client_snapshot_billing_city, client_snapshot_billing_postal_code,
@@ -46,7 +46,7 @@ export async function createBudgetRecord(
           subtotal_amount, tax_amount, total_amount, created_at, updated_at
         )
         VALUES (
-          $1, $2, $38, $3, $4, $5, $6,
+           $1, true, $2, $38, $3, $4, $5, $6,
           $7, $8, $9, $10,
           $11, $12, $13,
           $14, $15, $16,
@@ -58,7 +58,7 @@ export async function createBudgetRecord(
           $31, $32,
           $33, $34, $35, $36, $37
         )
-        RETURNING id, number, identifier_source, client_id, worker_id, notes, delivered_at,
+        RETURNING id, is_active, number, identifier_source, client_id, worker_id, notes, delivered_at,
           client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
           client_snapshot_work_street, client_snapshot_work_city, client_snapshot_work_postal_code,
           client_snapshot_billing_street, client_snapshot_billing_city, client_snapshot_billing_postal_code,
@@ -129,7 +129,7 @@ export async function createBudgetRecord(
 export async function findBudgetByNumber(number: string, excludeId?: string): Promise<Budget | null> {
   await ensureDatabaseReady();
   const result = await getDbPool().query<BudgetRow>(
-    `SELECT id, number, identifier_source, client_id, worker_id, notes, delivered_at,
+    `SELECT id, is_active, number, identifier_source, client_id, worker_id, notes, delivered_at,
        client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
        client_snapshot_work_street, client_snapshot_work_city, client_snapshot_work_postal_code,
        client_snapshot_billing_street, client_snapshot_billing_city, client_snapshot_billing_postal_code,
@@ -138,7 +138,7 @@ export async function findBudgetByNumber(number: string, excludeId?: string): Pr
        worker_snapshot_billing_street, worker_snapshot_billing_city, worker_snapshot_billing_postal_code,
        worker_snapshot_bank_account, tax_snapshot_name, tax_snapshot_rate, tax_snapshot_behavior,
        pricing_mode, manual_subtotal_amount, subtotal_amount, tax_amount, total_amount, created_at, updated_at
-     FROM budgets WHERE number = $1 AND ($2::uuid IS NULL OR id <> $2::uuid) LIMIT 1`,
+      FROM budgets WHERE is_active = true AND number = $1 AND ($2::uuid IS NULL OR id <> $2::uuid) LIMIT 1`,
     [number, excludeId ?? null]
   );
   return result.rows[0] ? mapBudgetRow(result.rows[0]) : null;
@@ -147,7 +147,7 @@ export async function findBudgetByNumber(number: string, excludeId?: string): Pr
 export async function getBudgetById(id: string): Promise<Budget> {
   return querySingleBudget(
     `
-       SELECT id, number, identifier_source, client_id, worker_id, notes, delivered_at,
+        SELECT id, is_active, number, identifier_source, client_id, worker_id, notes, delivered_at,
         client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
         client_snapshot_work_street, client_snapshot_work_city, client_snapshot_work_postal_code,
         client_snapshot_billing_street, client_snapshot_billing_city, client_snapshot_billing_postal_code,
@@ -159,7 +159,7 @@ export async function getBudgetById(id: string): Promise<Budget> {
         pricing_mode, manual_subtotal_amount,
         subtotal_amount, tax_amount, total_amount, created_at, updated_at
       FROM budgets
-      WHERE id = $1
+       WHERE id = $1 AND is_active = true
     `,
     [id]
   );
@@ -182,7 +182,7 @@ export async function listBudgets(
   const offset = (safePage - 1) * safeLimit;
 
   let query = `
-     SELECT id, number, identifier_source, client_id, worker_id, notes, delivered_at,
+     SELECT id, is_active, number, identifier_source, client_id, worker_id, notes, delivered_at,
       client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
       client_snapshot_work_street, client_snapshot_work_city, client_snapshot_work_postal_code,
       client_snapshot_billing_street, client_snapshot_billing_city, client_snapshot_billing_postal_code,
@@ -194,7 +194,7 @@ export async function listBudgets(
       pricing_mode, manual_subtotal_amount,
       subtotal_amount, tax_amount, total_amount, created_at, updated_at
     FROM budgets
-    WHERE 1=1
+     WHERE is_active = true
   `;
   const params: unknown[] = [];
 
@@ -253,8 +253,8 @@ export async function updateBudgetRecord(budget: Budget): Promise<Budget> {
         pricing_mode = $27, manual_subtotal_amount = $28,
          subtotal_amount = $29, tax_amount = $30, total_amount = $31, updated_at = $32,
          number = $34, identifier_source = $35
-       WHERE id = $33
-       RETURNING id, number, identifier_source, client_id, worker_id, notes, delivered_at,
+       WHERE id = $33 AND is_active = true
+       RETURNING id, is_active, number, identifier_source, client_id, worker_id, notes, delivered_at,
         client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
         client_snapshot_work_street, client_snapshot_work_city, client_snapshot_work_postal_code,
         client_snapshot_billing_street, client_snapshot_billing_city, client_snapshot_billing_postal_code,
@@ -308,9 +308,23 @@ export async function updateBudgetRecord(budget: Budget): Promise<Budget> {
 
 export async function deleteBudgetRecord(id: string): Promise<void> {
   await ensureDatabaseReady();
-  const result = await getDbPool().query("DELETE FROM budgets WHERE id = $1", [id]);
-  if (result.rowCount === 0) {
-    throw new EntityNotFoundError("Budget not found");
+  const client = await getDbPool().connect();
+  try {
+    await client.query("BEGIN");
+    const result = await client.query(
+      "UPDATE budgets SET is_active = false, updated_at = CURRENT_TIMESTAMP WHERE id = $1 AND is_active = true",
+      [id]
+    );
+    if (result.rowCount === 0) {
+      throw new EntityNotFoundError("Budget not found");
+    }
+    await client.query("UPDATE invoices SET source_budget_id = NULL WHERE source_budget_id = $1", [id]);
+    await client.query("COMMIT");
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
   }
 }
 
@@ -321,7 +335,7 @@ export async function duplicateBudgetRecord(id: string): Promise<Budget> {
 
   try {
     await client.query("BEGIN");
-    const source = await client.query("SELECT id FROM budgets WHERE id = $1", [id]);
+      const source = await client.query("SELECT id FROM budgets WHERE id = $1 AND is_active = true", [id]);
     if (!source.rows[0]) {
       throw new EntityNotFoundError("Budget not found");
     }
@@ -348,8 +362,19 @@ export async function duplicateBudgetRecord(id: string): Promise<Budget> {
     }
 
     const result = await client.query<BudgetRow>(
-      `INSERT INTO budgets (
-         id, number, identifier_source, client_id, worker_id, notes, delivered_at,
+       `INSERT INTO budgets (
+          id, number, identifier_source, client_id, worker_id, notes, delivered_at,
+        client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
+        client_snapshot_work_street, client_snapshot_work_city, client_snapshot_work_postal_code,
+        client_snapshot_billing_street, client_snapshot_billing_city, client_snapshot_billing_postal_code,
+        worker_snapshot_name, worker_snapshot_tax_id, worker_snapshot_phone, worker_snapshot_email,
+        worker_snapshot_work_street, worker_snapshot_work_city, worker_snapshot_work_postal_code,
+        worker_snapshot_billing_street, worker_snapshot_billing_city, worker_snapshot_billing_postal_code,
+        worker_snapshot_bank_account, tax_snapshot_name, tax_snapshot_rate, tax_snapshot_behavior,
+         pricing_mode, manual_subtotal_amount, subtotal_amount, tax_amount, total_amount,
+         created_at, updated_at, is_active
+       )
+        SELECT $1, $2, identifier_source, client_id, worker_id, notes, NULL,
         client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
         client_snapshot_work_street, client_snapshot_work_city, client_snapshot_work_postal_code,
         client_snapshot_billing_street, client_snapshot_billing_city, client_snapshot_billing_postal_code,
@@ -358,20 +383,9 @@ export async function duplicateBudgetRecord(id: string): Promise<Budget> {
         worker_snapshot_billing_street, worker_snapshot_billing_city, worker_snapshot_billing_postal_code,
         worker_snapshot_bank_account, tax_snapshot_name, tax_snapshot_rate, tax_snapshot_behavior,
         pricing_mode, manual_subtotal_amount, subtotal_amount, tax_amount, total_amount,
-        created_at, updated_at
-      )
-      SELECT $1, $2, identifier_source, client_id, worker_id, notes, NULL,
-        client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
-        client_snapshot_work_street, client_snapshot_work_city, client_snapshot_work_postal_code,
-        client_snapshot_billing_street, client_snapshot_billing_city, client_snapshot_billing_postal_code,
-        worker_snapshot_name, worker_snapshot_tax_id, worker_snapshot_phone, worker_snapshot_email,
-        worker_snapshot_work_street, worker_snapshot_work_city, worker_snapshot_work_postal_code,
-        worker_snapshot_billing_street, worker_snapshot_billing_city, worker_snapshot_billing_postal_code,
-        worker_snapshot_bank_account, tax_snapshot_name, tax_snapshot_rate, tax_snapshot_behavior,
-        pricing_mode, manual_subtotal_amount, subtotal_amount, tax_amount, total_amount,
-        CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
-      FROM budgets WHERE id = $3
-       RETURNING id, number, identifier_source, client_id, worker_id, notes, delivered_at,
+         CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, true
+       FROM budgets WHERE id = $3 AND is_active = true
+        RETURNING id, is_active, number, identifier_source, client_id, worker_id, notes, delivered_at,
         client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
         client_snapshot_work_street, client_snapshot_work_city, client_snapshot_work_postal_code,
         client_snapshot_billing_street, client_snapshot_billing_city, client_snapshot_billing_postal_code,

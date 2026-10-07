@@ -1,13 +1,14 @@
-import { duplicateBudgetRecord } from "@/infrastructure/persistence/postgres/repositories/budget-repository";
-import { duplicateInvoiceRecord } from "@/infrastructure/persistence/postgres/repositories/invoice-repository";
+import { deleteBudgetRecord, duplicateBudgetRecord } from "@/infrastructure/persistence/postgres/repositories/budget-repository";
+import { deleteInvoiceRecord, duplicateInvoiceRecord } from "@/infrastructure/persistence/postgres/repositories/invoice-repository";
 
 const query = jest.fn();
 const release = jest.fn();
 const connect = jest.fn(async () => ({ query, release }));
+const poolQuery = jest.fn();
 
 jest.mock("@/infrastructure/persistence/postgres/db", () => ({
   ensureDatabaseReady: jest.fn().mockResolvedValue(undefined),
-  getDbPool: jest.fn(() => ({ connect }))
+  getDbPool: jest.fn(() => ({ connect, query: poolQuery }))
 }));
 
 function budgetRow() {
@@ -67,6 +68,7 @@ describe("commercial document duplication repositories", () => {
   beforeEach(() => {
     query.mockReset();
     release.mockReset();
+    poolQuery.mockReset();
   });
 
   it("duplicates a budget and its line items in one transaction", async () => {
@@ -140,5 +142,33 @@ describe("commercial document duplication repositories", () => {
 
     expect(query).toHaveBeenLastCalledWith("ROLLBACK");
     expect(release).toHaveBeenCalledTimes(1);
+  });
+
+  it("soft-deletes a budget and clears invoice source references transactionally", async () => {
+    query
+      .mockResolvedValueOnce({ rowCount: 1 })
+      .mockResolvedValueOnce({ rowCount: 2 })
+      .mockResolvedValueOnce({ rows: [] });
+
+    await deleteBudgetRecord("budget-1");
+
+    expect(query.mock.calls[1][0]).toContain("UPDATE budgets SET is_active = false");
+    expect(query.mock.calls[2]).toEqual([
+      "UPDATE invoices SET source_budget_id = NULL WHERE source_budget_id = $1",
+      ["budget-1"]
+    ]);
+    expect(query).toHaveBeenLastCalledWith("COMMIT");
+  });
+
+  it("soft-deletes an invoice without deleting its aggregate", async () => {
+    poolQuery.mockResolvedValueOnce({ rowCount: 1 });
+
+    await deleteInvoiceRecord("invoice-1");
+
+    expect(poolQuery).toHaveBeenCalledWith(
+      "UPDATE invoices SET is_active = false, updated_at = CURRENT_TIMESTAMP WHERE id = $1 AND is_active = true",
+      ["invoice-1"]
+    );
+    expect(poolQuery.mock.calls.some(([sql]) => String(sql).startsWith("DELETE FROM"))).toBe(false);
   });
 });

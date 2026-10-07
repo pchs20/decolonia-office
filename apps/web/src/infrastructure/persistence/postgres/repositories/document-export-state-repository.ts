@@ -91,6 +91,34 @@ async function recordSuccess(input: {
   return mapRow(result.rows[0]);
 }
 
+async function listInactiveDocuments(provider: ExportProvider, destinationReference: string) {
+  await ensureDatabaseReady();
+  const result = await getDbPool().query<DocumentExportStateRow>(
+    `SELECT s.id, s.document_type, s.document_id, s.provider, s.destination_reference, s.external_reference,
+            s.source_updated_at, s.synced_at, s.last_attempted_at, s.last_error, s.created_at, s.updated_at
+       FROM document_export_states s
+       LEFT JOIN budgets b ON s.document_type = 'budget' AND b.id = s.document_id
+       LEFT JOIN invoices i ON s.document_type = 'invoice' AND i.id = s.document_id
+      WHERE s.provider = $1 AND s.destination_reference = $2
+        AND s.external_reference IS NOT NULL
+        AND ((s.document_type = 'budget' AND b.is_active = false)
+          OR (s.document_type = 'invoice' AND i.is_active = false))`,
+    [provider, destinationReference]
+  );
+  return result.rows.map(mapRow);
+}
+
+async function markDeleted(input: { documentType: "budget" | "invoice"; documentId: string; provider: ExportProvider; destinationReference: string }) {
+  await ensureDatabaseReady();
+  await getDbPool().query(
+    `UPDATE document_export_states
+        SET external_reference = NULL, source_updated_at = NULL, synced_at = CURRENT_TIMESTAMP,
+            last_attempted_at = CURRENT_TIMESTAMP, last_error = NULL, updated_at = CURRENT_TIMESTAMP
+      WHERE document_type = $1 AND document_id = $2 AND provider = $3 AND destination_reference = $4`,
+    [input.documentType, input.documentId, input.provider, input.destinationReference]
+  );
+}
+
 async function recordFailure(input: {
   documentType: "budget" | "invoice";
   documentId: string;
@@ -124,6 +152,8 @@ async function recordFailure(input: {
 
 export const postgresDocumentExportStateRepository: DocumentExportStateRepository = {
   getByDocument,
+  listInactiveDocuments,
+  markDeleted,
   recordSuccess,
   recordFailure
 };

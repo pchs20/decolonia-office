@@ -93,6 +93,11 @@ export class BudgetService {
     return response.json();
   }
 
+  static async delete(id: string): Promise<void> {
+    const response = await fetch(`${API_ENDPOINT}/${id}`, { method: "DELETE" });
+    if (!response.ok) throw new Error("Failed to delete budget");
+  }
+
   static async addItem(budgetId: string, data: JobItemCreateRequest): Promise<JobItemResponse> {
     const response = await fetch(`${API_ENDPOINT}/${budgetId}/items`, {
       method: "POST",

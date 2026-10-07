@@ -25,6 +25,7 @@ export function InvoiceListPage({ clientId }: InvoiceListPageProps) {
   const [limit] = useState(20);
   const [yearFilter, setYearFilter] = useState("");
   const [search, setSearch] = useState("");
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
   const fetchInvoices = async () => {
     try {
@@ -56,6 +57,16 @@ export function InvoiceListPage({ clientId }: InvoiceListPageProps) {
       window.alert(t("invoices.errors.duplicateFailed"));
     } finally {
       setDuplicatingId(null);
+    }
+  };
+
+  const deleteInvoice = async (id: string) => {
+    try {
+      await InvoiceService.delete(id);
+      setDeleteConfirm(null);
+      await fetchInvoices();
+    } catch {
+      window.alert(t("invoices.errors.deleteFailed"));
     }
   };
 
@@ -185,6 +196,16 @@ export function InvoiceListPage({ clientId }: InvoiceListPageProps) {
                       >
                         {t("common.duplicate")}
                       </button>
+                      <button
+                        type="button"
+                        className="px-2 py-1 text-sm bg-danger/10 text-danger rounded hover:bg-danger/20"
+                        onClick={event => {
+                          event.stopPropagation();
+                          setDeleteConfirm(invoice.id);
+                        }}
+                      >
+                        {t("common.delete")}
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -218,6 +239,18 @@ export function InvoiceListPage({ clientId }: InvoiceListPageProps) {
           </div>
         </>
       )}
+      {deleteConfirm ? (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
+          <div role="dialog" aria-modal="true" className="bg-white p-6 rounded-lg">
+            <h3 className="text-lg font-semibold mb-4">{t("common.confirmDelete")}</h3>
+            <p className="mb-6">{t("invoices.deleteConfirm")}</p>
+            <div className="flex gap-2 justify-end">
+              <button type="button" onClick={() => setDeleteConfirm(null)} className="px-4 py-2 border rounded">{t("common.cancel")}</button>
+              <button type="button" onClick={() => void deleteInvoice(deleteConfirm)} className="px-4 py-2 bg-red-600 text-white rounded">{t("common.delete")}</button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

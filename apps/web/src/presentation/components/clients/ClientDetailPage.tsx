@@ -22,6 +22,7 @@ export function ClientDetailPage({ clientId, startInEditMode = false }: ClientDe
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     fetchClient();
@@ -79,6 +80,18 @@ export function ClientDetailPage({ clientId, startInEditMode = false }: ClientDe
     setEditing(false);
   };
 
+  const handleDelete = async () => {
+    if (!window.confirm(t("clients.deleteConfirm"))) return;
+    setDeleting(true);
+    try {
+      await ClientService.delete(clientId);
+      router.push("/clients");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t("clients.errors.deleteFailed"));
+      setDeleting(false);
+    }
+  };
+
   if (loading) {
     return <div className="p-4 md:p-6 text-center">{t('common.loading')}</div>;
   }
@@ -131,12 +144,17 @@ export function ClientDetailPage({ clientId, startInEditMode = false }: ClientDe
         <Link href="/clients" className="text-gray-500 hover:text-gray-700">
           {t('clients.backToList')}
         </Link>
-        <button
-          onClick={() => setEditing(true)}
-          className="px-4 py-2 bg-clients text-white rounded hover:bg-clients/90"
-        >
-          {t('common.edit')}
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setEditing(true)}
+            className="px-4 py-2 bg-clients text-white rounded hover:bg-clients/90"
+          >
+            {t('common.edit')}
+          </button>
+          <button type="button" onClick={() => void handleDelete()} disabled={deleting} className="px-4 py-2 bg-danger text-white rounded hover:bg-danger/90 disabled:opacity-50">
+            {deleting ? t('common.deleting') : t('common.delete')}
+          </button>
+        </div>
       </div>
 
       {successMessage && (
