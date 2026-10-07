@@ -82,3 +82,10 @@ The system SHALL fail the backup download with an actionable error when required
 #### Scenario: Empty document collections are exported
 - **WHEN** the database contains no budgets or no invoices
 - **THEN** the workbook still contains the corresponding tabs and the archive contains the corresponding folders only as required by the archive format
+
+### Requirement: Exclude inactive records from local exports
+The local backup export SHALL include only active clients, budgets, and invoices. Inactive records SHALL NOT appear in exported tables or generated document files.
+
+#### Scenario: Build backup with inactive records
+- **WHEN** a backup archive is generated while supported records are inactive
+- **THEN** no inactive record appears in the workbook or generated PDF files

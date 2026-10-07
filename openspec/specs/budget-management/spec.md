@@ -148,3 +148,18 @@ The system SHALL provide an export action on the budget detail page that trigger
 #### Scenario: Export PDF button not visible in edit mode
 - **WHEN** a user is in budget edit mode
 - **THEN** the "Export PDF" button is not shown
+
+### Requirement: Soft-delete budgets
+The system SHALL mark budgets inactive rather than physically removing them. Inactive budgets SHALL be excluded from active reads, lists, searches, duplication, updates, and PDF retrieval. Their job items SHALL remain stored.
+
+#### Scenario: Delete active budget
+- **WHEN** an authorized user confirms deletion of an active budget
+- **THEN** the budget is marked inactive and its job items remain stored
+
+#### Scenario: Clear invoice source when budget is deleted
+- **WHEN** a budget referenced by invoices is soft-deleted
+- **THEN** every referencing invoice has `source_budget_id` cleared while the invoices remain intact
+
+#### Scenario: Delete budget from list or detail view
+- **WHEN** the user confirms deletion from a budget list or detail view
+- **THEN** the budget is soft-deleted and a detail-view deletion returns the user to the budgets list
