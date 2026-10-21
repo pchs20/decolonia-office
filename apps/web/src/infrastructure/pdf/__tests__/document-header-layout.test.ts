@@ -19,6 +19,14 @@ const worker = {
   billingAddress: { street: "C/ Joan Prim", city: "Premia de Mar", postalCode: "08320" }
 };
 
+const client = {
+  ...worker,
+  id: "client-1",
+  name: "Fundació Privada Casa Pairal",
+  phone: "600000001",
+  email: "client@example.com"
+};
+
 const testGlobal = globalThis as typeof globalThis & {
   __non_webpack_require__: typeof require;
 };
@@ -29,6 +37,7 @@ function renderHeader(title: string): string {
   return renderToStaticMarkup(
     React.createElement(DocumentHeader, {
       worker,
+      client,
       title,
       number: "30",
       date: "3/10/2026",
@@ -51,7 +60,12 @@ describe("DocumentHeader title layout", () => {
     const markup = renderHeader(title);
 
     expect(markup).toContain(`>${title}<`);
+    expect(markup).toContain(">Fundació Privada Casa Pairal<");
+    expect(markup).not.toContain(">Cliente<");
+    expect(markup).toContain(">600000001<");
+    expect(markup).toContain(">client@example.com<");
     expect(markup).toContain('font-size:14px');
+    expect(markup).toContain('font-size:11px');
     expect(markup).toContain(">30<");
     expect(markup).toContain(">3/10/2026<");
   });

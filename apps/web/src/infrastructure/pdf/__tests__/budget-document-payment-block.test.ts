@@ -92,6 +92,21 @@ function renderBudget(bankAccount: string | null, pdfLabels = labels): string {
   );
 }
 
+function renderBudgetWithClientContacts(phone: string | null, email: string | null): string {
+  const budget = createBudget(null);
+  budget.client.phone = phone;
+  budget.client.email = email;
+
+  return renderToStaticMarkup(
+    React.createElement(BudgetDocument, {
+      budget,
+      items: [],
+      labels,
+      imageSource: "image-source"
+    })
+  );
+}
+
 function renderInvoice(pdfLabels = labels): string {
   const budget = createBudget("ES1234567890");
 
@@ -110,6 +125,13 @@ function renderedText(value: string): string {
 }
 
 describe("BudgetDocument payment block", () => {
+  test("omits absent client contact values", () => {
+    const markup = renderBudgetWithClientContacts(null, null);
+
+    expect(markup).not.toContain("600000001");
+    expect(markup).not.toContain("client@example.com");
+  });
+
   test("renders the invoice-style payment block when a bank account is configured", () => {
     const markup = renderBudget("ES1234567890");
 
@@ -118,7 +140,7 @@ describe("BudgetDocument payment block", () => {
     expect(markup).toContain("Transferencia bancaria");
     expect(markup).toContain("ES1234567890");
     expect(markup).toContain(labels.disclaimer);
-    expect(markup.indexOf(labels.disclaimer)).toBeLessThan(markup.indexOf("Forma de pago"));
+    expect(markup.indexOf("Forma de pago")).toBeLessThan(markup.indexOf(labels.disclaimer));
   });
 
   test("omits the payment block when no bank account is configured", () => {
@@ -127,6 +149,16 @@ describe("BudgetDocument payment block", () => {
     expect(markup).not.toContain("Forma de pago");
     expect(markup).not.toContain("Transferencia bancaria");
     expect(markup).toContain(labels.disclaimer);
+  });
+
+  test("places payment information before the totals area", () => {
+    const markup = renderBudget("ES1234567890");
+
+    expect(markup.indexOf(labels.paymentMethod)).toBeLessThan(markup.indexOf(labels.subtotal));
+    expect(markup.indexOf("ES1234567890")).toBeLessThan(markup.indexOf(labels.total));
+    expect(markup).toContain("align-items:flex-start");
+    expect(markup).toContain("padding-top:3px");
+    expect(markup).toContain("margin-bottom:0");
   });
 
   test.each(localizedLabels)("renders the localized disclaimer in a budget PDF", pdfLabels => {
