@@ -3,10 +3,8 @@ import { Document, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
 import { BudgetResponse } from "@/api/schemas/budget-schemas";
 import { JobItemResponse } from "@/api/schemas/job-item-schemas";
 import { DocumentHeader } from "@/presentation/components/pdf/DocumentHeader";
-import { ClientBlock } from "@/presentation/components/pdf/ClientBlock";
 import { JobItemsTable } from "@/presentation/components/pdf/JobItemsTable";
-import { TotalsBlock } from "@/presentation/components/pdf/TotalsBlock";
-import { PaymentBlock } from "@/presentation/components/pdf/PaymentBlock";
+import { DocumentSummary } from "@/presentation/components/pdf/DocumentSummary";
 import { PdfLabels } from "@/presentation/i18n/pdf-translations";
 import { brandColors } from "@/lib/brand-colors";
 
@@ -58,6 +56,7 @@ export function BudgetDocument({ budget, items, labels, imageSource }: BudgetDoc
         <View style={styles.accentBar} />
         <DocumentHeader
           worker={budget.worker}
+          client={budget.client}
           title={labels.budget.toUpperCase()}
           number={budget.number}
           date={formatDate(budget.deliveredAt ?? budget.createdAt)}
@@ -68,13 +67,10 @@ export function BudgetDocument({ budget, items, labels, imageSource }: BudgetDoc
 
         <View style={styles.divider} />
 
-        <ClientBlock client={budget.client} labels={labels} />
-
-        <View style={styles.divider} />
-
         <JobItemsTable items={items} labels={labels} />
 
-        <TotalsBlock
+        <DocumentSummary
+          bankAccount={budget.worker.bankAccount}
           subtotalAmount={budget.subtotalAmount}
           taxAmount={budget.taxAmount}
           totalAmount={budget.totalAmount}
@@ -84,9 +80,6 @@ export function BudgetDocument({ budget, items, labels, imageSource }: BudgetDoc
 
         <Text style={styles.disclaimer}>{labels.disclaimer}</Text>
 
-        {budget.worker.bankAccount ? (
-          <PaymentBlock bankAccount={budget.worker.bankAccount} labels={labels} />
-        ) : null}
       </Page>
     </Document>
   );

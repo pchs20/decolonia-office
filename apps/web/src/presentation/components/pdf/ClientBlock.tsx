@@ -1,17 +1,10 @@
 /** @jsxImportSource . */
 import { StyleSheet, Text, View } from "@react-pdf/renderer";
 import { DocumentPartySchema } from "@/api/schemas/commercial-document-schema";
-import { PdfLabels } from "@/presentation/i18n/pdf-translations";
 
 const styles = StyleSheet.create({
   block: {
     marginBottom: 16
-  },
-  label: {
-    fontSize: 9,
-    color: "#888",
-    textTransform: "uppercase",
-    marginBottom: 2
   },
   name: {
     fontSize: 11,
@@ -26,13 +19,11 @@ const styles = StyleSheet.create({
 
 interface ClientBlockProps {
   client: DocumentPartySchema & { id: string };
-  labels: Pick<PdfLabels, "client">;
 }
 
-export function ClientBlock({ client, labels }: ClientBlockProps) {
+export function ClientBlock({ client }: ClientBlockProps) {
   return (
     <View style={styles.block}>
-      <Text style={styles.label}>{labels.client}</Text>
       <Text style={styles.name}>{client.name}</Text>
       {client.taxId ? <Text style={styles.line}>{client.taxId}</Text> : null}
       {client.billingAddress ? (
@@ -43,6 +34,8 @@ export function ClientBlock({ client, labels }: ClientBlockProps) {
           </Text>
         </View>
       ) : null}
+      {client.phone ? <Text style={styles.line}>{client.phone}</Text> : null}
+      {client.email ? <Text style={styles.line}>{client.email}</Text> : null}
     </View>
   );
 }

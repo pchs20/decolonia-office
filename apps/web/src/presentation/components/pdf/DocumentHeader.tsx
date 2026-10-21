@@ -1,6 +1,7 @@
 /** @jsxImportSource . */
 import { Image, StyleSheet, Text, View } from "@react-pdf/renderer";
 import { DocumentPartySchema } from "@/api/schemas/commercial-document-schema";
+import { ClientBlock } from "@/presentation/components/pdf/ClientBlock";
 import { IssuerBlock } from "@/presentation/components/pdf/IssuerBlock";
 
 const styles = StyleSheet.create({
@@ -9,10 +10,16 @@ const styles = StyleSheet.create({
     marginBottom: 24
   },
   issuer: {
-    flex: 1
+    flex: 1,
+    paddingRight: 12
+  },
+  client: {
+    flex: 1,
+    paddingHorizontal: 6
   },
   document: {
     width: 150,
+    paddingLeft: 12,
     alignItems: "flex-end"
   },
   documentContent: {
@@ -49,6 +56,7 @@ const styles = StyleSheet.create({
 
 interface DocumentHeaderProps {
   worker: DocumentPartySchema & { id: string };
+  client: DocumentPartySchema & { id: string };
   title: string;
   number: string;
   date: string;
@@ -59,6 +67,7 @@ interface DocumentHeaderProps {
 
 export function DocumentHeader({
   worker,
+  client,
   title,
   number,
   date,
@@ -70,6 +79,9 @@ export function DocumentHeader({
     <View style={styles.header}>
       <View style={styles.issuer}>
         <IssuerBlock worker={worker} />
+      </View>
+      <View style={styles.client}>
+        <ClientBlock client={client} />
       </View>
       <View style={styles.document}>
         <View style={styles.documentContent}>

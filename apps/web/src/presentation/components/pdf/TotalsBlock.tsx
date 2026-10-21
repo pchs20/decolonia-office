@@ -5,9 +5,7 @@ import { PdfLabels } from "@/presentation/i18n/pdf-translations";
 
 const styles = StyleSheet.create({
   totals: {
-    marginLeft: "auto",
-    width: "50%",
-    marginBottom: 16
+    marginBottom: 0
   },
   row: {
     flexDirection: "row",

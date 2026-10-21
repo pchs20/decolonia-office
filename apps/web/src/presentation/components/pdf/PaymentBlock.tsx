@@ -4,10 +4,7 @@ import { PdfLabels } from "@/presentation/i18n/pdf-translations";
 
 const styles = StyleSheet.create({
   block: {
-    marginTop: 16,
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: "#ddd"
+    marginBottom: 0
   },
   label: {
     fontSize: 9,
