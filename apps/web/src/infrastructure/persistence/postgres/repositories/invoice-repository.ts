@@ -41,7 +41,7 @@ export async function createInvoiceRecord(invoice: Invoice): Promise<Invoice> {
            subtotal_amount, tax_amount, total_amount, created_at, updated_at
         )
         VALUES (
-           $1, true, $2, $38, $3, $4, $5, $6, $7,
+           $1, true, $2, $39, $3, $4, $5, $6, $7,
           $8, $9, $10, $11,
           $12, $13, $14,
           $15, $16, $17,
@@ -51,7 +51,7 @@ export async function createInvoiceRecord(invoice: Invoice): Promise<Invoice> {
           $28,
           $29, $30, $31,
           $32, $33,
-           $34, $35, $36, $37
+           $34, $35, $36, $37, $38
         )
         RETURNING id, is_active, number, identifier_source, client_id, worker_id, notes, issued_at, source_budget_id,
           client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,

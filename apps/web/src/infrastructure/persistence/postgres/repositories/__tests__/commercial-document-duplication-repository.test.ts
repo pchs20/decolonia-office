@@ -1,5 +1,9 @@
 import { deleteBudgetRecord, duplicateBudgetRecord } from "@/infrastructure/persistence/postgres/repositories/budget-repository";
-import { deleteInvoiceRecord, duplicateInvoiceRecord } from "@/infrastructure/persistence/postgres/repositories/invoice-repository";
+import {
+  createInvoiceRecord,
+  deleteInvoiceRecord,
+  duplicateInvoiceRecord
+} from "@/infrastructure/persistence/postgres/repositories/invoice-repository";
 
 const query = jest.fn();
 const release = jest.fn();
@@ -64,11 +68,70 @@ function invoiceRow() {
   };
 }
 
+function invoiceAggregate() {
+  return {
+    id: "invoice-new",
+    number: "4/2026",
+    identifierSource: "custom" as const,
+    clientId: "client-1",
+    workerId: "worker-1",
+    notes: "Notes",
+    issuedAt: null,
+    sourceBudgetId: null,
+    clientSnapshot: {
+      name: "Client",
+      taxId: "TAX",
+      phone: null,
+      email: null,
+      workAddress: { street: "Street", city: "City", postalCode: "123" },
+      billingAddress: { street: "Billing", city: "City", postalCode: "123" }
+    },
+    workerSnapshot: {
+      name: "Worker",
+      taxId: "WTAX",
+      phone: null,
+      email: null,
+      bankAccount: null,
+      workAddress: { street: "Worker Street", city: "City", postalCode: "123" },
+      billingAddress: { street: "Worker Billing", city: "City", postalCode: "123" }
+    },
+    taxSnapshot: null,
+    pricingMode: "computed" as const,
+    manualSubtotalAmount: null,
+    subtotalAmount: 100,
+    taxAmount: 0,
+    totalAmount: 100,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+}
+
 describe("commercial document duplication repositories", () => {
   beforeEach(() => {
     query.mockReset();
     release.mockReset();
     poolQuery.mockReset();
+  });
+
+  it("creates an invoice with aligned INSERT values and identifier source binding", async () => {
+    poolQuery
+      .mockResolvedValueOnce({ rows: [] })
+      .mockResolvedValueOnce({ rows: [invoiceRow()] })
+      .mockResolvedValueOnce({ rows: [] });
+
+    const result = await createInvoiceRecord(invoiceAggregate());
+
+    expect(result.identifierSource).toBe("custom");
+    const insertCall = poolQuery.mock.calls.find(([sql]) => String(sql).includes("INSERT INTO invoices"));
+    const sql = String(insertCall?.[0]);
+    const params = insertCall?.[1] as unknown[];
+
+    expect(sql).toContain("$1, true, $2, $39, $3, $4, $5, $6, $7");
+    expect(sql).toContain("$34, $35, $36, $37, $38");
+    expect(params).toHaveLength(39);
+    expect(params[37]).toEqual(expect.any(Date));
+    expect(params[38]).toBe("custom");
+    expect(poolQuery).toHaveBeenLastCalledWith("COMMIT");
   });
 
   it("duplicates a budget and its line items in one transaction", async () => {
