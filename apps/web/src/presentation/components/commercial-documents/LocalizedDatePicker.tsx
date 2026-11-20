@@ -44,7 +44,7 @@ export function LocalizedDatePicker({ id, name, value, onChange, required, class
       required={required}
       isClearable={false}
       className={className ?? "w-full px-3 py-2 border rounded"}
-      wrapperClassName="w-full"
+      wrapperClassName="localized-date-picker-wrapper"
       popperClassName="z-50"
       showPopperArrow={false}
       autoComplete="off"

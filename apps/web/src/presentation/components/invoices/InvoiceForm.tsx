@@ -603,7 +603,7 @@ export function InvoiceForm({ invoice, initialClientId, initialItems = [], onSuc
         {isEditing ? t("invoices.form.editTitle") : t("invoices.form.newTitle")}
       </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_auto] gap-4 md:gap-8">
         <div className="flex items-end gap-2">
           <div className="flex-1">
             <label className="block text-sm font-medium mb-1">{t("commercialDocuments.fields.number")}</label>
@@ -618,7 +618,7 @@ export function InvoiceForm({ invoice, initialClientId, initialItems = [], onSuc
         <div>
           <label htmlFor="invoice-issued-at" className="block text-sm font-medium mb-1">{t("invoices.fields.issuedAt")} *</label>
           <div className="flex gap-2">
-            <LocalizedDatePicker id="invoice-issued-at" name="issuedAt" value={formData.issuedAt} onChange={value => setFormData(prev => ({ ...prev, issuedAt: value }))} required className="flex-1 px-3 py-2 border rounded" />
+            <LocalizedDatePicker id="invoice-issued-at" name="issuedAt" value={formData.issuedAt} onChange={value => setFormData(prev => ({ ...prev, issuedAt: value }))} required className="w-48 px-3 py-2 border rounded" />
             <button type="button" onClick={() => setFormData(prev => ({ ...prev, issuedAt: formatLocalDateInput() }))} className="px-3 py-2 border rounded text-sm whitespace-nowrap">
               {t("common.setToday")}
             </button>

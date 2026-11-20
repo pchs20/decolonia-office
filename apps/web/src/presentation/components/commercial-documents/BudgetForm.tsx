@@ -570,7 +570,7 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
         {isEditing ? t("budgets.form.editTitle") : t("budgets.form.newTitle")}
       </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_auto] gap-4 md:gap-8">
         <div className="flex items-end gap-2">
           <div className="flex-1">
             <label className="block text-sm font-medium mb-1">{t("commercialDocuments.fields.number")}</label>
@@ -585,7 +585,7 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
         <div>
           <label htmlFor="budget-delivered-at" className="block text-sm font-medium mb-1">{t("budgets.fields.deliveredAt")} *</label>
           <div className="flex gap-2">
-            <LocalizedDatePicker id="budget-delivered-at" name="deliveredAt" value={formData.deliveredAt} onChange={value => setFormData(prev => ({ ...prev, deliveredAt: value }))} required className="flex-1 px-3 py-2 border rounded" />
+            <LocalizedDatePicker id="budget-delivered-at" name="deliveredAt" value={formData.deliveredAt} onChange={value => setFormData(prev => ({ ...prev, deliveredAt: value }))} required className="w-48 px-3 py-2 border rounded" />
             <button type="button" onClick={() => setFormData(prev => ({ ...prev, deliveredAt: formatLocalDateInput() }))} className="px-3 py-2 border rounded text-sm whitespace-nowrap">
               {t("common.setToday")}
             </button>
