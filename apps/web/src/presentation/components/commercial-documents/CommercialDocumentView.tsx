@@ -76,21 +76,23 @@ export function CommercialDocumentView({
     <div className="space-y-6 p-4 bg-white rounded-lg border">
       {/* Header */}
       <div className="border-b pb-4">
-        <div>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="text-3xl font-bold">{formatDocumentNumber(number, documentType, t)}{identifierSource === "custom" ? " *" : ""}</div>
+          <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm sm:text-right">
+            <div>
+              <div className="text-gray-600 font-medium">{t(`${documentType}s.fields.createdAt`)}</div>
+              <div>{new Date(createdAt).toLocaleDateString(dateLocale)}</div>
+            </div>
+            <div>
+              <div className="text-gray-600 font-medium">{documentType === "budget" ? t("budgets.fields.deliveredAt") : t("invoices.fields.issuedAt")}</div>
+              <div>{new Date(deliveredAt || issuedAt || "").toLocaleDateString(dateLocale)}</div>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Dates and metadata */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-        <div>
-          <div className="text-gray-600 font-medium">{t(`${documentType}s.fields.createdAt`)}</div>
-          <div>{new Date(createdAt).toLocaleDateString(dateLocale)}</div>
-        </div>
-        <div>
-          <div className="text-gray-600 font-medium">{documentType === "budget" ? t("budgets.fields.deliveredAt") : t("invoices.fields.issuedAt")}</div>
-          <div>{new Date(deliveredAt || issuedAt || "").toLocaleDateString(dateLocale)}</div>
-        </div>
         {sourceBudgetId && (
           <div>
             <div className="text-gray-600 font-medium">{t("invoices.fields.sourceBudget")}</div>
