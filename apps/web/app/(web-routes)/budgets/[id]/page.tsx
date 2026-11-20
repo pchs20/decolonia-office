@@ -237,8 +237,9 @@ export default function BudgetDetailPage({ params }: BudgetDetailPageProps) {
             email: budget.worker.email ?? undefined
           }}
           tax={budget.tax ?? undefined}
-          notes={budget.notes ?? undefined}
-          deliveredAt={budget.deliveredAt ? new Date(budget.deliveredAt).toISOString() : undefined}
+           notes={budget.notes ?? undefined}
+           createdAt={new Date(budget.createdAt).toISOString()}
+           deliveredAt={new Date(budget.deliveredAt).toISOString()}
           subtotalAmount={budget.subtotalAmount}
           taxAmount={budget.taxAmount}
           totalAmount={budget.totalAmount}

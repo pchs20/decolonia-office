@@ -119,13 +119,17 @@ describe("invoice use-cases", () => {
       settingsRepo,
       clientRepo,
       workerRepo,
-      taxRepo
+      taxRepo,
+      "automatic",
+      null,
+      new Date("2026-11-20T00:00:00.000Z")
     );
 
     expect(settingsRepo.allocateNumber).toHaveBeenCalled();
     expect(created.number).toContain("7/");
     expect(created.sourceBudgetId).toBe("b-1");
     expect(created.identifierSource).toBe("automatic");
+    expect(created.issuedAt).toEqual(new Date("2026-11-20T00:00:00.000Z"));
   });
 
   it("creates a custom invoice without allocating a sequence number", async () => {
@@ -133,7 +137,7 @@ describe("invoice use-cases", () => {
     workerRepo.getById.mockResolvedValueOnce({} as never);
     invoiceRepo.create.mockImplementation(async invoice => invoice);
 
-    const created = await createInvoice("c-1", "w-1", null, null, "computed", null, null, null, null, invoiceRepo, settingsRepo, clientRepo, workerRepo, taxRepo, "custom", "EXT-42");
+    const created = await createInvoice("c-1", "w-1", null, null, "computed", null, null, null, null, invoiceRepo, settingsRepo, clientRepo, workerRepo, taxRepo, "custom", "EXT-42", new Date("2026-10-04T00:00:00.000Z"));
 
     expect(created.number).toBe("EXT-42");
     expect(created.identifierSource).toBe("custom");
@@ -170,7 +174,7 @@ describe("invoice use-cases", () => {
       subtotalAmount: 0,
       taxAmount: 0,
       totalAmount: 0,
-      issuedAt: null,
+      issuedAt: new Date("2026-01-01T00:00:00.000Z"),
       sourceBudgetId: null,
       createdAt: new Date(),
       updatedAt: new Date()

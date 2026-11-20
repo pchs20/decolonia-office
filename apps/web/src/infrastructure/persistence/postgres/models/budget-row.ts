@@ -6,7 +6,7 @@ export interface BudgetRow {
   client_id: string;
   worker_id: string;
   notes: string | null;
-  delivered_at: Date | null;
+  delivered_at: Date;
   client_snapshot_name: string;
   client_snapshot_tax_id: string;
   client_snapshot_phone: string | null;

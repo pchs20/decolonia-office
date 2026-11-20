@@ -25,6 +25,8 @@ import {
   toDocumentPartySnapshotPayload
 } from "@/presentation/components/commercial-documents/document-party-snapshot";
 import { DocumentSequenceService } from "@/presentation/api-clients/document-sequence.service";
+import { dateInputToUtcIso, formatDateInputFromUtcValue, formatLocalDateInput, isValidDateInput } from "@/presentation/utils/date-input";
+import { LocalizedDatePicker } from "@/presentation/components/commercial-documents/LocalizedDatePicker";
 
 interface BudgetFormProps {
   budget?: BudgetResponse;
@@ -61,7 +63,8 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
       ? String(budget.manualSubtotalAmount)
       : "",
     number: budget?.number || "",
-    identifierSource: budget?.identifierSource || "automatic"
+    identifierSource: budget?.identifierSource || "automatic",
+    deliveredAt: isEditing ? formatDateInputFromUtcValue(budget!.deliveredAt) : formatLocalDateInput()
   });
 
   const [error, setError] = useState<string | null>(null);
@@ -308,6 +311,11 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
       return;
     }
 
+    if (!isValidDateInput(formData.deliveredAt)) {
+      setError(t("budgets.errors.deliveredAtRequired"));
+      return;
+    }
+
     if (!isEditing && !primaryWorker) {
       setError("No primary worker configured. Please configure a worker in Settings first.");
       return;
@@ -324,9 +332,10 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
             taxId: formData.taxId || null,
             pricingMode: formData.pricingMode,
              manualSubtotalAmount: formData.pricingMode === "manual-subtotal"
-               ? (formData.manualSubtotalAmount.trim() ? Number(formData.manualSubtotalAmount) : null)
-               : null,
-             confirmDuplicateNumber
+                ? (formData.manualSubtotalAmount.trim() ? Number(formData.manualSubtotalAmount) : null)
+                : null,
+              deliveredAt: dateInputToUtcIso(formData.deliveredAt),
+              confirmDuplicateNumber
           })
          : await createBudget({
              number: formData.identifierSource === "custom" ? formData.number : undefined,
@@ -339,9 +348,10 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
             taxId: formData.taxId || undefined,
             pricingMode: formData.pricingMode,
              manualSubtotalAmount: formData.pricingMode === "manual-subtotal"
-               ? (formData.manualSubtotalAmount.trim() ? Number(formData.manualSubtotalAmount) : null)
-               : null,
-             confirmDuplicateNumber
+                ? (formData.manualSubtotalAmount.trim() ? Number(formData.manualSubtotalAmount) : null)
+                : null,
+             deliveredAt: dateInputToUtcIso(formData.deliveredAt),
+              confirmDuplicateNumber
           });
 
       if (isEditing) {
@@ -560,16 +570,27 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
         {isEditing ? t("budgets.form.editTitle") : t("budgets.form.newTitle")}
       </h2>
 
-      <div className="flex items-end gap-2">
-        <div className="flex-1">
-          <label className="block text-sm font-medium mb-1">{t("commercialDocuments.fields.number")}</label>
-          <input name="number" value={formData.number} onChange={e => setFormData(prev => ({ ...prev, number: e.target.value, identifierSource: "custom" }))} className="w-full px-3 py-2 border rounded" />
+      <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_auto] gap-4 md:gap-8">
+        <div className="flex items-end gap-2">
+          <div className="flex-1">
+            <label className="block text-sm font-medium mb-1">{t("commercialDocuments.fields.number")}</label>
+            <input name="number" value={formData.number} onChange={e => setFormData(prev => ({ ...prev, number: e.target.value, identifierSource: "custom" }))} className="w-full px-3 py-2 border rounded" />
+          </div>
+          {!isEditing && (
+            <button type="button" onClick={() => setFormData(prev => ({ ...prev, number: automaticNumber, identifierSource: "automatic" }))} className="px-3 py-2 border rounded text-sm">
+              {automaticNumber ? `${t("commercialDocuments.identifier.resetAutomatic")} (${automaticNumber})` : t("commercialDocuments.identifier.resetAutomatic")}
+            </button>
+          )}
         </div>
-        {!isEditing && (
-          <button type="button" onClick={() => setFormData(prev => ({ ...prev, number: automaticNumber, identifierSource: "automatic" }))} className="px-3 py-2 border rounded text-sm">
-            {automaticNumber ? `${t("commercialDocuments.identifier.resetAutomatic")} (${automaticNumber})` : t("commercialDocuments.identifier.resetAutomatic")}
-          </button>
-        )}
+        <div>
+          <label htmlFor="budget-delivered-at" className="block text-sm font-medium mb-1">{t("budgets.fields.deliveredAt")} *</label>
+          <div className="flex gap-2">
+            <LocalizedDatePicker id="budget-delivered-at" name="deliveredAt" value={formData.deliveredAt} onChange={value => setFormData(prev => ({ ...prev, deliveredAt: value }))} required className="w-48 px-3 py-2 border rounded" />
+            <button type="button" onClick={() => setFormData(prev => ({ ...prev, deliveredAt: formatLocalDateInput() }))} className="px-3 py-2 border rounded text-sm whitespace-nowrap">
+              {t("common.setToday")}
+            </button>
+          </div>
+        </div>
       </div>
 
       {error && (
@@ -601,7 +622,7 @@ export function BudgetForm({ budget, initialClientId, initialItems = [], onSucce
       )}
 
       {/* Client Selection */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
         <div>
           <label className="block text-sm font-medium mb-1">{t("budgets.fields.client")}</label>
           {isEditing ? (

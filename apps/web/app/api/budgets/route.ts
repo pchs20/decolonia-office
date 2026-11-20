@@ -31,6 +31,24 @@ function parseManualSubtotalAmount(value: unknown): number | null | undefined {
   return parsed;
 }
 
+function parseOptionalDate(value: unknown, fieldName: string): Date | null | undefined {
+  if (value === undefined) return undefined;
+  if (value === null || value === "") return null;
+  const date = new Date(String(value));
+  if (Number.isNaN(date.getTime())) {
+    throw new ApiError(400, `${fieldName} must be a valid date`);
+  }
+  return date;
+}
+
+function parseRequiredDate(value: unknown, fieldName: string): Date {
+  const date = parseOptionalDate(value, fieldName);
+  if (!date) {
+    throw new ApiError(400, `${fieldName} is required`);
+  }
+  return date;
+}
+
 function parseSnapshotAddress(value: unknown, fieldName: string) {
   if (!value || typeof value !== "object") {
     throw new ApiError(400, `${fieldName} is required`);
@@ -150,6 +168,7 @@ export async function POST(request: NextRequest) {
     const workerSnapshot = parseWorkerSnapshot(payload.workerSnapshot);
     const identifierSource = payload.identifierSource === "custom" ? "custom" : "automatic";
     const number = typeof payload.number === "string" ? payload.number : undefined;
+    const deliveredAt = parseRequiredDate(payload.deliveredAt, "deliveredAt");
 
     if (!clientId) {
       throw new ApiError(400, "clientId is required");
@@ -169,8 +188,9 @@ export async function POST(request: NextRequest) {
       pricingMode,
       manualSubtotalAmount,
       number,
-      identifierSource,
-      confirmDuplicateNumber: payload.confirmDuplicateNumber === true
+       identifierSource,
+       confirmDuplicateNumber: payload.confirmDuplicateNumber === true,
+       deliveredAt
     });
 
     return NextResponse.json(mapBudgetToResponse(budget), { status: 201 });

@@ -2,7 +2,7 @@ import { CommercialDocumentResponse, DocumentPartyInput } from "@/api/schemas/co
 
 // Budget schemas
 export interface BudgetResponse extends CommercialDocumentResponse {
-  deliveredAt: Date | null;
+  deliveredAt: Date;
 }
 
 export interface BudgetCreateRequest {
@@ -14,6 +14,7 @@ export interface BudgetCreateRequest {
   workerSnapshot?: DocumentPartyInput;
   notes?: string | null;
   taxId?: string | null;
+  deliveredAt: string;
   number?: string;
   identifierSource?: "automatic" | "custom";
   confirmDuplicateNumber?: boolean;
@@ -25,7 +26,7 @@ export interface BudgetUpdateRequest {
   clientSnapshot?: DocumentPartyInput;
   workerSnapshot?: DocumentPartyInput;
   notes?: string | null;
-  deliveredAt?: Date | null;
+  deliveredAt?: string;
   taxId?: string | null;
   number?: string;
   identifierSource?: "custom";

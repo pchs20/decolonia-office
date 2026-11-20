@@ -12,6 +12,7 @@
     "add": "Afegir",
     "cancel": "Cancel·lar",
     "save": "Desar",
+    "setToday": "Establir avui",
     "saving": "Desant...",
     "previous": "Anterior",
     "next": "Següent",
@@ -185,6 +186,7 @@
     "errors": {
       "clientRequired": "El client és obligatori",
       "workerRequired": "El treballador és obligatori",
+      "deliveredAtRequired": "La data d'entrega és obligatòria",
       "fetchFailed": "Error en carregar els pressupostos",
       "createFailed": "Error en crear el pressupost",
       "duplicateConfirm": "Voleu duplicar aquest pressupost? Es crearà un número de pressupost nou.",
@@ -234,6 +236,7 @@
     "errors": {
       "clientRequired": "El client és obligatori",
       "workerRequired": "El treballador és obligatori",
+      "issuedAtRequired": "La data d'expedició és obligatòria",
       "fetchFailed": "Error en carregar les factures",
       "createFailed": "Error en crear la factura",
       "duplicateConfirm": "Voleu duplicar aquesta factura? Es crearà un número de factura nou.",

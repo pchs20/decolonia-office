@@ -55,9 +55,10 @@ export function createCommercialDocumentsUseCases(deps: CommercialDocumentDeps) 
       taxId: string | null;
       pricingMode?: PricingMode;
         manualSubtotalAmount?: number | null;
-        identifierSource?: DocumentIdentifierSource;
-        number?: string;
-        confirmDuplicateNumber?: boolean;
+         identifierSource?: DocumentIdentifierSource;
+         number?: string;
+         confirmDuplicateNumber?: boolean;
+         deliveredAt: Date;
       }): Promise<Budget> {
         const defaultPricingModes = await deps.settingsRepository.getDefaultPricingModes();
         const identifierSource = params.identifierSource ?? "automatic";
@@ -81,9 +82,10 @@ export function createCommercialDocumentsUseCases(deps: CommercialDocumentDeps) 
         deps.settingsRepository,
         deps.clientRepository,
         deps.workerRepository,
-          deps.taxRepository,
-          identifierSource,
-          number
+           deps.taxRepository,
+           identifierSource,
+           number,
+           params.deliveredAt
       );
     },
 
@@ -107,7 +109,7 @@ export function createCommercialDocumentsUseCases(deps: CommercialDocumentDeps) 
       id: string,
       params: {
         notes?: string | null;
-        deliveredAt?: Date | null;
+         deliveredAt?: Date;
         taxId?: string | null;
         pricingMode?: PricingMode;
         manualSubtotalAmount?: number | null;
@@ -215,6 +217,7 @@ export function createCommercialDocumentsUseCases(deps: CommercialDocumentDeps) 
         identifierSource?: DocumentIdentifierSource;
         number?: string;
         confirmDuplicateNumber?: boolean;
+        issuedAt: Date;
       }): Promise<Invoice> {
         const defaultPricingModes = await deps.settingsRepository.getDefaultPricingModes();
         const identifierSource = params.identifierSource ?? "automatic";
@@ -241,7 +244,8 @@ export function createCommercialDocumentsUseCases(deps: CommercialDocumentDeps) 
         deps.workerRepository,
           deps.taxRepository,
           identifierSource,
-          number
+          number,
+          params.issuedAt
       );
     },
 
@@ -265,7 +269,7 @@ export function createCommercialDocumentsUseCases(deps: CommercialDocumentDeps) 
       id: string,
       params: {
         notes?: string | null;
-        issuedAt?: Date | null;
+         issuedAt?: Date;
         taxId?: string | null;
         pricingMode?: PricingMode;
         manualSubtotalAmount?: number | null;

@@ -27,7 +27,8 @@ export async function createInvoice(
   workerRepo: WorkerRepository,
   taxRepo: TaxRepository,
   identifierSource: DocumentIdentifierSource = "automatic",
-  customNumber: string | null = null
+  customNumber: string | null = null,
+  issuedAt: Date
 ): Promise<Invoice> {
   const client = await clientRepo.getById(clientId);
   const worker = await workerRepo.getById(workerId);
@@ -79,7 +80,7 @@ export async function createInvoice(
     subtotalAmount: 0,
     taxAmount: 0,
     totalAmount: 0,
-    issuedAt: null,
+    issuedAt,
     sourceBudgetId,
     createdAt: now,
     updatedAt: now

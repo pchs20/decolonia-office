@@ -6,7 +6,7 @@ export interface InvoiceRow {
   client_id: string;
   worker_id: string;
   notes: string | null;
-  issued_at: Date | null;
+  issued_at: Date;
   source_budget_id: string | null;
   client_snapshot_name: string;
   client_snapshot_tax_id: string;

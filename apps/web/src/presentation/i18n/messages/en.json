@@ -12,6 +12,7 @@
     "add": "Add",
     "cancel": "Cancel",
     "save": "Save",
+    "setToday": "Set today",
     "saving": "Saving...",
     "previous": "Previous",
     "next": "Next",
@@ -189,6 +190,7 @@
     "errors": {
       "clientRequired": "Client is required",
       "workerRequired": "Worker is required",
+      "deliveredAtRequired": "Delivered date is required",
       "fetchFailed": "Failed to fetch budgets",
       "createFailed": "Failed to create budget",
       "duplicateConfirm": "Duplicate this budget? A new budget number will be created.",
@@ -238,6 +240,7 @@
     "errors": {
       "clientRequired": "Client is required",
       "workerRequired": "Worker is required",
+      "issuedAtRequired": "Issued date is required",
       "fetchFailed": "Failed to fetch invoices",
       "createFailed": "Failed to create invoice",
       "duplicateConfirm": "Duplicate this invoice? A new invoice number will be created.",

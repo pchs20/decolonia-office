@@ -32,8 +32,7 @@ const styles = StyleSheet.create({
   }
 });
 
-function formatDate(date: Date | null | undefined): string {
-  if (!date) return "";
+function formatDate(date: Date): string {
   return new Date(date).toLocaleDateString("es-ES");
 }
 
@@ -54,7 +53,7 @@ export function InvoiceDocument({ invoice, items, labels, imageSource }: Invoice
           client={invoice.client}
           title={labels.invoice}
           number={invoice.number}
-          date={formatDate(invoice.issuedAt ?? invoice.createdAt)}
+           date={formatDate(invoice.issuedAt)}
           numberLabel={labels.number}
           dateLabel={labels.date}
           imageSource={imageSource}

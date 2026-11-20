@@ -26,7 +26,8 @@ export async function createBudget(
   workerRepo: WorkerRepository,
   taxRepo: TaxRepository,
   identifierSource: DocumentIdentifierSource = "automatic",
-  customNumber: string | null = null
+  customNumber: string | null = null,
+  deliveredAt: Date
 ): Promise<Budget> {
   const client = await clientRepo.getById(clientId);
   const worker = await workerRepo.getById(workerId);
@@ -77,7 +78,7 @@ export async function createBudget(
     subtotalAmount: 0,
     taxAmount: 0,
     totalAmount: 0,
-    deliveredAt: null,
+    deliveredAt,
     createdAt: now,
     updatedAt: now
   };
