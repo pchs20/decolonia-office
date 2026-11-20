@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 
 jest.mock("react-i18next", () => ({
   useTranslation: () => ({
+    i18n: { language: "es" },
     t: (key: string) => ({
       "budgets.fields.createdAt": "Created",
       "budgets.fields.deliveredAt": "Delivered",
@@ -42,8 +43,8 @@ describe("CommercialDocumentView dates", () => {
     const markup = renderView("2026-11-22T00:00:00.000Z");
     expect(markup).toContain("Created");
     expect(markup).toContain("Delivered");
-    expect(markup).toContain("11/20/2026");
-    expect(markup).toContain("11/22/2026");
+    expect(markup).toContain("20/11/2026");
+    expect(markup).toContain("22/11/2026");
   });
 
 });

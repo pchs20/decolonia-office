@@ -29,6 +29,7 @@ import {
 import { DocumentSequenceService } from "@/presentation/api-clients/document-sequence.service";
 import { formatDocumentNumber } from "@/presentation/utils/document-number";
 import { dateInputToUtcIso, formatDateInputFromUtcValue, formatLocalDateInput, isValidDateInput } from "@/presentation/utils/date-input";
+import { LocalizedDatePicker } from "@/presentation/components/commercial-documents/LocalizedDatePicker";
 
 interface InvoiceFormProps {
   invoice?: InvoiceResponse;
@@ -602,16 +603,27 @@ export function InvoiceForm({ invoice, initialClientId, initialItems = [], onSuc
         {isEditing ? t("invoices.form.editTitle") : t("invoices.form.newTitle")}
       </h2>
 
-      <div className="flex items-end gap-2">
-        <div className="flex-1">
-          <label className="block text-sm font-medium mb-1">{t("commercialDocuments.fields.number")}</label>
-          <input name="number" value={formData.number} onChange={e => setFormData(prev => ({ ...prev, number: e.target.value, identifierSource: "custom" }))} className="w-full px-3 py-2 border rounded" />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="flex items-end gap-2">
+          <div className="flex-1">
+            <label className="block text-sm font-medium mb-1">{t("commercialDocuments.fields.number")}</label>
+            <input name="number" value={formData.number} onChange={e => setFormData(prev => ({ ...prev, number: e.target.value, identifierSource: "custom" }))} className="w-full px-3 py-2 border rounded" />
+          </div>
+          {!isEditing && (
+            <button type="button" onClick={() => setFormData(prev => ({ ...prev, identifierSource: "automatic" }))} className="px-3 py-2 border rounded text-sm">
+              {automaticNumber ? `${t("commercialDocuments.identifier.resetAutomatic")} (${automaticNumber})` : t("commercialDocuments.identifier.resetAutomatic")}
+            </button>
+          )}
         </div>
-        {!isEditing && (
-          <button type="button" onClick={() => setFormData(prev => ({ ...prev, identifierSource: "automatic" }))} className="px-3 py-2 border rounded text-sm">
-            {automaticNumber ? `${t("commercialDocuments.identifier.resetAutomatic")} (${automaticNumber})` : t("commercialDocuments.identifier.resetAutomatic")}
-          </button>
-        )}
+        <div>
+          <label htmlFor="invoice-issued-at" className="block text-sm font-medium mb-1">{t("invoices.fields.issuedAt")} *</label>
+          <div className="flex gap-2">
+            <LocalizedDatePicker id="invoice-issued-at" name="issuedAt" value={formData.issuedAt} onChange={value => setFormData(prev => ({ ...prev, issuedAt: value }))} required className="flex-1 px-3 py-2 border rounded" />
+            <button type="button" onClick={() => setFormData(prev => ({ ...prev, issuedAt: formatLocalDateInput() }))} className="px-3 py-2 border rounded text-sm whitespace-nowrap">
+              {t("common.setToday")}
+            </button>
+          </div>
+        </div>
       </div>
 
       {error && (
@@ -643,24 +655,7 @@ export function InvoiceForm({ invoice, initialClientId, initialItems = [], onSuc
       )}
 
       {/* Client Selection */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label htmlFor="invoice-issued-at" className="block text-sm font-medium mb-1">{t("invoices.fields.issuedAt")} *</label>
-          <div className="flex gap-2">
-            <input
-              id="invoice-issued-at"
-              name="issuedAt"
-              type="date"
-              value={formData.issuedAt}
-              onChange={handleChange}
-              required
-              className="flex-1 px-3 py-2 border rounded"
-            />
-            <button type="button" onClick={() => setFormData(prev => ({ ...prev, issuedAt: formatLocalDateInput() }))} className="px-3 py-2 border rounded text-sm whitespace-nowrap">
-              {t("common.setToday")}
-            </button>
-          </div>
-        </div>
+      <div>
         <div>
           <label className="block text-sm font-medium mb-1">{t("invoices.fields.client")}</label>
           {isEditing ? (

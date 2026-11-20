@@ -47,6 +47,7 @@ The read-only view reads both `createdAt` and the relevant business date. The ho
 - No PDF null fallback or `Not set` visualization state.
 - No due-date, payment-date, timezone, or date-range feature.
 - No new date/time dependency.
+- The date-picker dependency is limited to the shared form control and does not alter API or database date representations.
 
 ## Decisions
 
@@ -55,6 +56,16 @@ The read-only view reads both `createdAt` and the relevant business date. The ho
 The forms will hold the value in the native `YYYY-MM-DD` representation used by `input[type="date"]`. The default will be generated from local year, month, and day components rather than `toISOString().slice(0, 10)`, which can shift the date near timezone boundaries. API mapping will convert the selected value only at the transport boundary using the repository's existing date handling conventions.
 
 **Alternative considered:** Store a JavaScript `Date` in form state. This is rejected because a business date has no time-of-day or timezone and would make off-by-one errors more likely.
+
+### Use a shared localized date picker
+
+Use `react-datepicker` with `date-fns` locale data for the budget and invoice forms. Configure `dateFormat` as `dd/MM/yyyy`, use the active application locale for labels, start weeks on Monday, and hide the library's clear action. The component will adapt the picker value to the existing date-only `YYYY-MM-DD` form state and retain the current UTC-midnight API serialization.
+
+**Alternative considered:** Continue using the native `input[type="date"]`. This is rejected because its visible format is controlled by the browser and cannot reliably be forced to `DD/MM/YYYY`, even though its calendar interaction is useful.
+
+### Reorder form controls for document workflow
+
+The number and business-date controls will share the first metadata row. Client selection will occupy a separate row beneath it in both forms, preserving the existing client control while making the document metadata easier to scan.
 
 ### Extend create contracts instead of creating then patching
 

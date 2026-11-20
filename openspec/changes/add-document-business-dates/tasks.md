@@ -18,6 +18,9 @@
 - [x] 3.3 Add localized labels, Set today text, required-date validation messages, and accessible form associations for both controls.
 - [x] 3.4 Submit the selected date during budget and invoice creation and update, block empty/invalid UI submissions, and ensure no clear-date action is exposed.
 - [x] 3.5 Add focused form/API tests for today defaults, date edits, Set today, and required validation.
+- [x] 3.6 Replace native date inputs with a shared localized date-picker component using `DD/MM/YYYY`, Monday week starts, active application locale, and no clear action.
+- [x] 3.7 Reorder budget and invoice form metadata so number/date share a row and client is on the following row.
+- [x] 3.8 Add date-picker and layout tests for both budget and invoice forms, including locale and Monday week-start configuration.
 
 ## 4. Read-only visualization and preserved consumers
 

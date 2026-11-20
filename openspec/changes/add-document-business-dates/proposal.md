@@ -12,6 +12,8 @@ Budgets and invoices currently store delivered and issued dates, but users canno
 - Require every application creation path, including duplication and import normalization, to provide a business date; no nullable compatibility path remains.
 - Display both the system creation date and the relevant business date in read-only budget and invoice views.
 - Always display both the creation date and the stored delivered/issued date; there is no “Not set” state after migration.
+- Use a shared localized date-picker control that displays dates as `DD/MM/YYYY`, starts weeks on Monday, and retains calendar-dropdown selection.
+- Place the document number and delivered/issued date on the same form row, with the client field on its own row below.
 - Preserve the home page's use of creation dates.
 - Render PDFs from the mandatory delivered/issued date without a null fallback.
 

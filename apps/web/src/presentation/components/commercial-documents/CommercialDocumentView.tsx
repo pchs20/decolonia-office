@@ -69,7 +69,8 @@ export function CommercialDocumentView({
   totalAmount = 0,
   items = []
 }: CommercialDocumentViewProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const dateLocale = i18n.language.startsWith("ca") ? "ca-ES" : i18n.language.startsWith("en") ? "en-GB" : "es-ES";
 
   return (
     <div className="space-y-6 p-4 bg-white rounded-lg border">
@@ -84,11 +85,11 @@ export function CommercialDocumentView({
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
         <div>
           <div className="text-gray-600 font-medium">{t(`${documentType}s.fields.createdAt`)}</div>
-          <div>{new Date(createdAt).toLocaleDateString()}</div>
+          <div>{new Date(createdAt).toLocaleDateString(dateLocale)}</div>
         </div>
         <div>
           <div className="text-gray-600 font-medium">{documentType === "budget" ? t("budgets.fields.deliveredAt") : t("invoices.fields.issuedAt")}</div>
-          <div>{new Date(deliveredAt || issuedAt || "").toLocaleDateString()}</div>
+          <div>{new Date(deliveredAt || issuedAt || "").toLocaleDateString(dateLocale)}</div>
         </div>
         {sourceBudgetId && (
           <div>

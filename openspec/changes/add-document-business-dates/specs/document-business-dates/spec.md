@@ -1,7 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: New budgets have an editable delivered date
-The budget creation form SHALL initialize the delivered date to the user's current calendar date, SHALL allow the user to change it, and SHALL require a valid date before submission.
+The budget creation form SHALL initialize the delivered date to the user's current calendar date, SHALL allow the user to change it through a localized calendar date picker, and SHALL require a valid date before submission. The picker SHALL display dates as `DD/MM/YYYY` and start weeks on Monday.
 
 #### Scenario: New budget defaults delivered date to today
 - **WHEN** a user opens the new budget form
@@ -20,7 +20,7 @@ The budget creation form SHALL initialize the delivered date to the user's curre
 - **THEN** the form prevents submission and displays a validation message
 
 ### Requirement: New invoices have an editable issued date
-The invoice creation form SHALL initialize the issued date to the user's current calendar date, SHALL allow the user to change it, and SHALL require a valid date before submission.
+The invoice creation form SHALL initialize the issued date to the user's current calendar date, SHALL allow the user to change it through a localized calendar date picker, and SHALL require a valid date before submission. The picker SHALL display dates as `DD/MM/YYYY` and start weeks on Monday.
 
 #### Scenario: New invoice defaults issued date to today
 - **WHEN** a user opens the new invoice form
@@ -48,6 +48,21 @@ The budget and invoice edit forms SHALL load the stored delivered or issued date
 #### Scenario: Existing business date is updated
 - **WHEN** a user changes the date and saves the document
 - **THEN** the new date is persisted without changing the document's creation date
+
+#### Scenario: Date picker uses the agreed calendar presentation
+- **WHEN** a user opens the delivered or issued date picker
+- **THEN** the control displays `DD/MM/YYYY`, shows localized calendar labels, and lays out weeks from Monday through Sunday
+
+### Requirement: Commercial document form layout separates client selection
+Budget and invoice forms SHALL place the document number and delivered/issued date controls in the same row and SHALL place the client field in a separate row below them.
+
+#### Scenario: Budget form date and client layout
+- **WHEN** a user opens a budget form
+- **THEN** the number and delivered date share a row and the client field appears on the following row
+
+#### Scenario: Invoice form date and client layout
+- **WHEN** a user opens an invoice form
+- **THEN** the number and issued date share a row and the client field appears on the following row
 
 ### Requirement: Business dates are persisted during document creation and update
 The document creation and update flows SHALL transmit selected business dates to the budget and invoice APIs and SHALL preserve them as calendar dates. Domain entities, API responses, and persisted records SHALL always contain a business date.
