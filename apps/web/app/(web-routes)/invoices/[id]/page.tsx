@@ -262,8 +262,9 @@ export default function InvoiceDetailPage({ params }: InvoiceDetailPageProps) {
             email: invoice.worker.email ?? undefined
           }}
           tax={invoice.tax ?? undefined}
-          notes={invoice.notes ?? undefined}
-          issuedAt={invoice.issuedAt ? new Date(invoice.issuedAt).toISOString() : undefined}
+           notes={invoice.notes ?? undefined}
+           createdAt={new Date(invoice.createdAt).toISOString()}
+           issuedAt={new Date(invoice.issuedAt).toISOString()}
           subtotalAmount={invoice.subtotalAmount}
           taxAmount={invoice.taxAmount}
           totalAmount={invoice.totalAmount}

@@ -12,6 +12,7 @@
     "add": "Añadir",
     "cancel": "Cancelar",
     "save": "Guardar",
+    "setToday": "Establecer hoy",
     "saving": "Guardando...",
     "previous": "Anterior",
     "next": "Siguiente",
@@ -189,6 +190,7 @@
     "errors": {
       "clientRequired": "El cliente es obligatorio",
       "workerRequired": "El trabajador es obligatorio",
+      "deliveredAtRequired": "La fecha de entrega es obligatoria",
       "fetchFailed": "Error al cargar los presupuestos",
       "createFailed": "Error al crear el presupuesto",
       "duplicateConfirm": "¿Duplicar este presupuesto? Se creará un nuevo número de presupuesto.",
@@ -238,6 +240,7 @@
     "errors": {
       "clientRequired": "El cliente es obligatorio",
       "workerRequired": "El trabajador es obligatorio",
+      "issuedAtRequired": "La fecha de emisión es obligatoria",
       "fetchFailed": "Error al cargar las facturas",
       "createFailed": "Error al crear la factura",
       "duplicateConfirm": "¿Duplicar esta factura? Se creará un nuevo número de factura.",

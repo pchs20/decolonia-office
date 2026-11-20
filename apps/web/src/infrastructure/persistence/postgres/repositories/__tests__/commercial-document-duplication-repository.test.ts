@@ -1,4 +1,4 @@
-import { deleteBudgetRecord, duplicateBudgetRecord } from "@/infrastructure/persistence/postgres/repositories/budget-repository";
+import { createBudgetRecord, deleteBudgetRecord, duplicateBudgetRecord } from "@/infrastructure/persistence/postgres/repositories/budget-repository";
 import {
   createInvoiceRecord,
   deleteInvoiceRecord,
@@ -23,7 +23,7 @@ function budgetRow() {
     client_id: "client-1",
     worker_id: "worker-1",
     notes: "Notes",
-    delivered_at: null,
+    delivered_at: new Date("2026-10-04T00:00:00.000Z"),
     client_snapshot_name: "Client",
     client_snapshot_tax_id: "TAX",
     client_snapshot_phone: null,
@@ -63,7 +63,7 @@ function invoiceRow() {
     ...budgetRow(),
     id: "invoice-new",
     number: "4/2026",
-    issued_at: null,
+    issued_at: new Date("2026-10-04T00:00:00.000Z"),
     source_budget_id: "budget-1"
   };
 }
@@ -76,8 +76,45 @@ function invoiceAggregate() {
     clientId: "client-1",
     workerId: "worker-1",
     notes: "Notes",
-    issuedAt: null,
+    issuedAt: new Date("2026-10-04T00:00:00.000Z"),
     sourceBudgetId: null,
+    clientSnapshot: {
+      name: "Client",
+      taxId: "TAX",
+      phone: null,
+      email: null,
+      workAddress: { street: "Street", city: "City", postalCode: "123" },
+      billingAddress: { street: "Billing", city: "City", postalCode: "123" }
+    },
+    workerSnapshot: {
+      name: "Worker",
+      taxId: "WTAX",
+      phone: null,
+      email: null,
+      bankAccount: null,
+      workAddress: { street: "Worker Street", city: "City", postalCode: "123" },
+      billingAddress: { street: "Worker Billing", city: "City", postalCode: "123" }
+    },
+    taxSnapshot: null,
+    pricingMode: "computed" as const,
+    manualSubtotalAmount: null,
+    subtotalAmount: 100,
+    taxAmount: 0,
+    totalAmount: 100,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+}
+
+function budgetAggregate() {
+  return {
+    id: "budget-new",
+    number: "8",
+    identifierSource: "custom" as const,
+    clientId: "client-1",
+    workerId: "worker-1",
+    notes: "Notes",
+    deliveredAt: new Date("2026-11-20T00:00:00.000Z"),
     clientSnapshot: {
       name: "Client",
       taxId: "TAX",
@@ -119,7 +156,9 @@ describe("commercial document duplication repositories", () => {
       .mockResolvedValueOnce({ rows: [invoiceRow()] })
       .mockResolvedValueOnce({ rows: [] });
 
-    const result = await createInvoiceRecord(invoiceAggregate());
+    const aggregate = invoiceAggregate();
+    aggregate.issuedAt = new Date("2026-11-20T00:00:00.000Z");
+    const result = await createInvoiceRecord(aggregate);
 
     expect(result.identifierSource).toBe("custom");
     const insertCall = poolQuery.mock.calls.find(([sql]) => String(sql).includes("INSERT INTO invoices"));
@@ -129,9 +168,22 @@ describe("commercial document duplication repositories", () => {
     expect(sql).toContain("$1, true, $2, $39, $3, $4, $5, $6, $7");
     expect(sql).toContain("$34, $35, $36, $37, $38");
     expect(params).toHaveLength(39);
-    expect(params[37]).toEqual(expect.any(Date));
+    expect(params[5]).toEqual(aggregate.issuedAt);
     expect(params[38]).toBe("custom");
     expect(poolQuery).toHaveBeenLastCalledWith("COMMIT");
+  });
+
+  it("persists a budget delivered date in its INSERT values", async () => {
+    poolQuery
+      .mockResolvedValueOnce({ rows: [] })
+      .mockResolvedValueOnce({ rows: [budgetRow()] });
+
+    const aggregate = budgetAggregate();
+    await createBudgetRecord(aggregate, {} as never);
+
+    const insertCall = poolQuery.mock.calls.find(([sql]) => String(sql).includes("INSERT INTO budgets"));
+    const params = insertCall?.[1] as unknown[];
+    expect(params[5]).toEqual(aggregate.deliveredAt);
   });
 
   it("duplicates a budget and its line items in one transaction", async () => {
@@ -171,7 +223,7 @@ describe("commercial document duplication repositories", () => {
 
     expect(result.number).toBe("4/2026");
     expect(result.sourceBudgetId).toBe("budget-1");
-    expect(result.issuedAt).toBeNull();
+    expect(result.issuedAt).toEqual(expect.any(Date));
     const invoiceInsert = query.mock.calls.find(([sql]) => String(sql).includes("INSERT INTO invoices"));
     expect(invoiceInsert?.[0]).toContain("SELECT $1, $2, identifier_source, client_id");
     expect(query).toHaveBeenLastCalledWith("COMMIT");

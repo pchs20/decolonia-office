@@ -25,4 +25,10 @@ describe("OpenAPI document", () => {
     expect(doc.paths["/api/workers/{id}"].patch.responses["200"]).toBeDefined();
     expect(doc.paths["/api/workers/{id}"].delete.responses["204"]).toBeDefined();
   });
+
+  it("documents required business dates on commercial documents", () => {
+    const doc = getOpenApiDocument();
+    expect((doc.components.schemas.Budget.properties.deliveredAt as { nullable?: boolean }).nullable).not.toBe(true);
+    expect((doc.components.schemas.Invoice.properties.issuedAt as { nullable?: boolean }).nullable).not.toBe(true);
+  });
 });

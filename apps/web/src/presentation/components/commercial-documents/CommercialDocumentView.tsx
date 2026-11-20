@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { CommercialDocumentType, formatDocumentNumber } from "@/presentation/utils/document-number";
 import { JobItemDisplay, JobItemsTable } from "@/presentation/components/commercial-documents/JobItemsTable";
@@ -41,6 +42,7 @@ interface CommercialDocumentViewProps {
   };
   tax?: TaxInfo;
   notes?: string;
+  createdAt: string;
   deliveredAt?: string;
   issuedAt?: string;
   sourceBudgetId?: string;
@@ -58,6 +60,7 @@ export function CommercialDocumentView({
   worker,
   tax,
   notes,
+  createdAt,
   deliveredAt,
   issuedAt,
   sourceBudgetId,
@@ -79,18 +82,14 @@ export function CommercialDocumentView({
 
       {/* Dates and metadata */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-        {deliveredAt && (
-          <div>
-            <div className="text-gray-600 font-medium">{t("budgets.fields.deliveredAt")}</div>
-            <div>{new Date(deliveredAt).toLocaleDateString()}</div>
-          </div>
-        )}
-        {issuedAt && (
-          <div>
-            <div className="text-gray-600 font-medium">{t("invoices.fields.issuedAt")}</div>
-            <div>{new Date(issuedAt).toLocaleDateString()}</div>
-          </div>
-        )}
+        <div>
+          <div className="text-gray-600 font-medium">{t(`${documentType}s.fields.createdAt`)}</div>
+          <div>{new Date(createdAt).toLocaleDateString()}</div>
+        </div>
+        <div>
+          <div className="text-gray-600 font-medium">{documentType === "budget" ? t("budgets.fields.deliveredAt") : t("invoices.fields.issuedAt")}</div>
+          <div>{new Date(deliveredAt || issuedAt || "").toLocaleDateString()}</div>
+        </div>
         {sourceBudgetId && (
           <div>
             <div className="text-gray-600 font-medium">{t("invoices.fields.sourceBudget")}</div>

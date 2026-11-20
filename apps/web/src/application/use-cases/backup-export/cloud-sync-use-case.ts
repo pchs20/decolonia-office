@@ -171,8 +171,8 @@ export async function synchronizeCloudBatch(
         ? await dependencies.pdfRenderer.renderBudgetPdf(documentId)
         : await dependencies.pdfRenderer.renderInvoicePdf(documentId);
       const date = document.type === "budget"
-        ? asDate(document.record, "deliveredAt", "delivered_at", "createdAt", "created_at")
-        : asDate(document.record, "issuedAt", "issued_at", "createdAt", "created_at");
+        ? asDate(document.record, "deliveredAt", "delivered_at")
+        : asDate(document.record, "issuedAt", "issued_at");
       const parentFolderReference = await ensurePeriodFolder(
         dependencies.destination.filePort,
         document.type === "budget"

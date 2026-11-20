@@ -118,7 +118,10 @@ describe("budget use-cases", () => {
       settingsRepo,
       clientRepo,
       workerRepo,
-      taxRepo
+      taxRepo,
+      "automatic",
+      null,
+      new Date("2026-11-20T00:00:00.000Z")
     );
 
     expect(settingsRepo.allocateNumber).toHaveBeenCalledWith("budget", null);
@@ -127,6 +130,7 @@ describe("budget use-cases", () => {
     expect(created.workerSnapshot.name).toBe("Worker A");
     expect(created.taxSnapshot?.rate).toBe(21);
     expect(created.identifierSource).toBe("automatic");
+    expect(created.deliveredAt).toEqual(new Date("2026-11-20T00:00:00.000Z"));
   });
 
   it("creates a custom budget without allocating a sequence number", async () => {
@@ -134,7 +138,7 @@ describe("budget use-cases", () => {
     workerRepo.getById.mockResolvedValueOnce({} as never);
     budgetRepo.create.mockImplementation(async budget => budget);
 
-    const created = await createBudget("c-1", "w-1", null, null, "computed", null, null, null, budgetRepo, settingsRepo, clientRepo, workerRepo, taxRepo, "custom", " EXT-42 ");
+    const created = await createBudget("c-1", "w-1", null, null, "computed", null, null, null, budgetRepo, settingsRepo, clientRepo, workerRepo, taxRepo, "custom", " EXT-42 ", new Date("2026-10-04T00:00:00.000Z"));
 
     expect(created.number).toBe("EXT-42");
     expect(created.identifierSource).toBe("custom");
@@ -171,7 +175,7 @@ describe("budget use-cases", () => {
       subtotalAmount: 0,
       taxAmount: 0,
       totalAmount: 0,
-      deliveredAt: null,
+      deliveredAt: new Date("2026-01-01T00:00:00.000Z"),
       createdAt: new Date(),
       updatedAt: new Date()
     });

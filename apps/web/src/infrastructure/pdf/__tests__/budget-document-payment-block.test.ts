@@ -54,8 +54,8 @@ function createBudget(bankAccount: string | null) {
       id: "client-1",
       name: "Client",
       taxId: "12345678A",
-      phone: null,
-      email: null,
+      phone: null as string | null,
+      email: null as string | null,
       bankAccount: null,
       workAddress: { street: "Client Street", city: "Barcelona", postalCode: "08001" },
       billingAddress: { street: "Client Street", city: "Barcelona", postalCode: "08001" }
@@ -75,7 +75,7 @@ function createBudget(bankAccount: string | null) {
     subtotalAmount: 100,
     taxAmount: 0,
     totalAmount: 100,
-    deliveredAt: null,
+    deliveredAt: new Date("2026-10-04T00:00:00.000Z"),
     createdAt: new Date("2026-10-04T00:00:00.000Z"),
     updatedAt: new Date("2026-10-04T00:00:00.000Z")
   };
@@ -112,7 +112,7 @@ function renderInvoice(pdfLabels = labels): string {
 
   return renderToStaticMarkup(
     React.createElement(InvoiceDocument, {
-      invoice: { ...budget, issuedAt: null, sourceBudgetId: null },
+      invoice: { ...budget, issuedAt: new Date("2026-10-04T00:00:00.000Z"), sourceBudgetId: null },
       items: [],
       labels: pdfLabels,
       imageSource: "image-source"

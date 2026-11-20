@@ -2,7 +2,7 @@ import { CommercialDocumentResponse, DocumentPartyInput } from "@/api/schemas/co
 
 // Invoice schemas
 export interface InvoiceResponse extends CommercialDocumentResponse {
-  issuedAt: Date | null;
+  issuedAt: Date;
   sourceBudgetId: string | null;
 }
 
@@ -15,6 +15,7 @@ export interface InvoiceCreateRequest {
   workerSnapshot?: DocumentPartyInput;
   notes?: string | null;
   taxId?: string | null;
+  issuedAt: string;
   sourceBudgetId?: string | null;
   number?: string;
   identifierSource?: "automatic" | "custom";
@@ -27,7 +28,7 @@ export interface InvoiceUpdateRequest {
   clientSnapshot?: DocumentPartyInput;
   workerSnapshot?: DocumentPartyInput;
   notes?: string | null;
-  issuedAt?: Date | null;
+  issuedAt?: string;
   taxId?: string | null;
   sourceBudgetId?: string | null;
   number?: string;

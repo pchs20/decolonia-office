@@ -139,7 +139,7 @@ const budgetSchema = {
     notes: { type: "string" },
     pricingMode: { type: "string", enum: ["computed", "manual-subtotal"] },
     manualSubtotalAmount: { type: "number", nullable: true },
-    deliveredAt: { type: "string", format: "date-time", nullable: true },
+     deliveredAt: { type: "string", format: "date-time" },
     subtotal: { type: "number" },
     tax: { type: "number" },
     total: { type: "number" },
@@ -163,7 +163,7 @@ const invoiceSchema = {
     notes: { type: "string" },
     pricingMode: { type: "string", enum: ["computed", "manual-subtotal"] },
     manualSubtotalAmount: { type: "number", nullable: true },
-    issuedAt: { type: "string", format: "date-time" },
+     issuedAt: { type: "string", format: "date-time" },
     sourceBudgetId: { type: "string", format: "uuid", nullable: true },
     subtotal: { type: "number" },
     tax: { type: "number" },
@@ -835,7 +835,7 @@ export function getOpenApiDocument() {
                     taxId: { type: "string", format: "uuid", nullable: true },
                     pricingMode: { type: "string", enum: ["computed", "manual-subtotal"] },
                     manualSubtotalAmount: { type: "number", nullable: true },
-                    deliveredAt: { type: "string", format: "date-time" }
+                     deliveredAt: { type: "string", format: "date-time" }
                   }
                 }
               }
@@ -895,7 +895,7 @@ export function getOpenApiDocument() {
                   type: "object",
                   properties: {
                     notes: { type: "string" },
-                    deliveredAt: { type: "string", format: "date-time" },
+                     deliveredAt: { type: "string", format: "date-time" },
                     taxId: { type: "string", format: "uuid", nullable: true },
                     pricingMode: { type: "string", enum: ["computed", "manual-subtotal"] },
                     manualSubtotalAmount: { type: "number", nullable: true }
@@ -1161,7 +1161,7 @@ export function getOpenApiDocument() {
                     taxId: { type: "string", format: "uuid", nullable: true },
                     pricingMode: { type: "string", enum: ["computed", "manual-subtotal"] },
                     manualSubtotalAmount: { type: "number", nullable: true },
-                    issuedAt: { type: "string", format: "date-time" },
+                     issuedAt: { type: "string", format: "date-time" },
                     sourceBudgetId: { type: "string", format: "uuid", nullable: true }
                   }
                 }
@@ -1222,7 +1222,7 @@ export function getOpenApiDocument() {
                   type: "object",
                   properties: {
                     notes: { type: "string" },
-                    issuedAt: { type: "string", format: "date-time" },
+                     issuedAt: { type: "string", format: "date-time" },
                     taxId: { type: "string", format: "uuid", nullable: true },
                     pricingMode: { type: "string", enum: ["computed", "manual-subtotal"] },
                     manualSubtotalAmount: { type: "number", nullable: true },

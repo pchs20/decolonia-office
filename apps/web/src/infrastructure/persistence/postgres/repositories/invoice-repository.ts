@@ -324,7 +324,8 @@ export async function duplicateInvoiceRecord(id: string): Promise<Invoice> {
   await ensureDatabaseReady();
   const client = await getDbPool().connect();
   const newId = randomUUID();
-  const year = new Date().getFullYear();
+  const now = new Date();
+  const year = now.getFullYear();
 
   try {
     await client.query("BEGIN");
@@ -371,7 +372,7 @@ export async function duplicateInvoiceRecord(id: string): Promise<Invoice> {
          pricing_mode, manual_subtotal_amount, subtotal_amount, tax_amount, total_amount,
          created_at, updated_at, is_active
        )
-       SELECT $1, $2, identifier_source, client_id, worker_id, notes, NULL, source_budget_id,
+        SELECT $1, $2, identifier_source, client_id, worker_id, notes, $4, source_budget_id,
         client_snapshot_name, client_snapshot_tax_id, client_snapshot_phone, client_snapshot_email,
         client_snapshot_work_street, client_snapshot_work_city, client_snapshot_work_postal_code,
         client_snapshot_billing_street, client_snapshot_billing_city, client_snapshot_billing_postal_code,
@@ -392,7 +393,7 @@ export async function duplicateInvoiceRecord(id: string): Promise<Invoice> {
         worker_snapshot_bank_account, tax_snapshot_name, tax_snapshot_rate, tax_snapshot_behavior,
         pricing_mode, manual_subtotal_amount, subtotal_amount, tax_amount, total_amount,
         created_at, updated_at`,
-      [newId, `${number}/${year}`, id]
+       [newId, `${number}/${year}`, id, now]
     );
     const invoiceRow = result.rows[0];
     if (!invoiceRow) {

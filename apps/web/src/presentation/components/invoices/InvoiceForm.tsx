@@ -28,6 +28,7 @@ import {
 } from "@/presentation/components/commercial-documents/document-party-snapshot";
 import { DocumentSequenceService } from "@/presentation/api-clients/document-sequence.service";
 import { formatDocumentNumber } from "@/presentation/utils/document-number";
+import { dateInputToUtcIso, formatDateInputFromUtcValue, formatLocalDateInput, isValidDateInput } from "@/presentation/utils/date-input";
 
 interface InvoiceFormProps {
   invoice?: InvoiceResponse;
@@ -64,7 +65,8 @@ export function InvoiceForm({ invoice, initialClientId, initialItems = [], onSuc
       ? String(invoice.manualSubtotalAmount)
       : "",
     number: invoice?.number || "",
-    identifierSource: invoice?.identifierSource || "automatic"
+    identifierSource: invoice?.identifierSource || "automatic",
+    issuedAt: isEditing ? formatDateInputFromUtcValue(invoice!.issuedAt) : formatLocalDateInput()
   });
 
   const [error, setError] = useState<string | null>(null);
@@ -339,6 +341,11 @@ export function InvoiceForm({ invoice, initialClientId, initialItems = [], onSuc
       return;
     }
 
+    if (!isValidDateInput(formData.issuedAt)) {
+      setError(t("invoices.errors.issuedAtRequired"));
+      return;
+    }
+
     if (!isEditing && !primaryWorker) {
       setError("No primary worker configured. Please configure a worker in Settings first.");
       return;
@@ -356,8 +363,9 @@ export function InvoiceForm({ invoice, initialClientId, initialItems = [], onSuc
             sourceBudgetId: formData.sourceBudgetId || null,
             pricingMode: formData.pricingMode,
              manualSubtotalAmount: formData.pricingMode === "manual-subtotal"
-               ? (formData.manualSubtotalAmount.trim() ? Number(formData.manualSubtotalAmount) : null)
-               : null,
+                ? (formData.manualSubtotalAmount.trim() ? Number(formData.manualSubtotalAmount) : null)
+                : null,
+             issuedAt: dateInputToUtcIso(formData.issuedAt),
              confirmDuplicateNumber
           })
         : await createInvoice({
@@ -372,8 +380,9 @@ export function InvoiceForm({ invoice, initialClientId, initialItems = [], onSuc
             sourceBudgetId: formData.sourceBudgetId || undefined,
             pricingMode: formData.pricingMode,
              manualSubtotalAmount: formData.pricingMode === "manual-subtotal"
-               ? (formData.manualSubtotalAmount.trim() ? Number(formData.manualSubtotalAmount) : null)
-               : null,
+                ? (formData.manualSubtotalAmount.trim() ? Number(formData.manualSubtotalAmount) : null)
+                : null,
+             issuedAt: dateInputToUtcIso(formData.issuedAt),
              confirmDuplicateNumber
           });
 
@@ -635,6 +644,23 @@ export function InvoiceForm({ invoice, initialClientId, initialItems = [], onSuc
 
       {/* Client Selection */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="invoice-issued-at" className="block text-sm font-medium mb-1">{t("invoices.fields.issuedAt")} *</label>
+          <div className="flex gap-2">
+            <input
+              id="invoice-issued-at"
+              name="issuedAt"
+              type="date"
+              value={formData.issuedAt}
+              onChange={handleChange}
+              required
+              className="flex-1 px-3 py-2 border rounded"
+            />
+            <button type="button" onClick={() => setFormData(prev => ({ ...prev, issuedAt: formatLocalDateInput() }))} className="px-3 py-2 border rounded text-sm whitespace-nowrap">
+              {t("common.setToday")}
+            </button>
+          </div>
+        </div>
         <div>
           <label className="block text-sm font-medium mb-1">{t("invoices.fields.client")}</label>
           {isEditing ? (

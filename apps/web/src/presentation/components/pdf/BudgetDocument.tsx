@@ -37,8 +37,7 @@ const styles = StyleSheet.create({
   }
 });
 
-function formatDate(date: Date | null | undefined): string {
-  if (!date) return "";
+function formatDate(date: Date): string {
   return new Date(date).toLocaleDateString("es-ES");
 }
 
@@ -59,7 +58,7 @@ export function BudgetDocument({ budget, items, labels, imageSource }: BudgetDoc
           client={budget.client}
           title={labels.budget.toUpperCase()}
           number={budget.number}
-          date={formatDate(budget.deliveredAt ?? budget.createdAt)}
+           date={formatDate(budget.deliveredAt)}
           numberLabel={labels.number}
           dateLabel={labels.date}
           imageSource={imageSource}

@@ -46,8 +46,11 @@ async function renderDocumentFiles(
   return Promise.all(
     records.map(async (record) => {
       const documentId = getRecordId(record);
-      const dateValue = getRecordValue(record, "issuedAt", "issued_at", "deliveredAt", "delivered_at", "createdAt", "created_at");
-      const date = typeof dateValue === "string" ? dateValue : null;
+       const dateValue = getRecordValue(record, documentType === "invoice" ? "issuedAt" : "deliveredAt");
+       if (typeof dateValue !== "string" || !dateValue) {
+         throw new Error(`Missing ${documentType} business date for ${documentId}`);
+       }
+       const date = dateValue;
       const { year, period } = getDatePath(date);
        const fileName = exportFileName(documentType, getRecordValue(record, "number"), documentId);
       const content = await render(documentId);

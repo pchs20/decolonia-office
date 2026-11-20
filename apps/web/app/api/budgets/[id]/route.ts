@@ -31,6 +31,22 @@ function parseManualSubtotalAmount(value: unknown): number | null | undefined {
   return parsed;
 }
 
+function parseOptionalDate(value: unknown, fieldName: string): Date | null | undefined {
+  if (value === undefined) return undefined;
+  if (value === null || value === "") return null;
+  const date = new Date(String(value));
+  if (Number.isNaN(date.getTime())) {
+    throw new ApiError(400, `${fieldName} must be a valid date`);
+  }
+  return date;
+}
+
+function parseRequiredDate(value: unknown, fieldName: string): Date {
+  const date = parseOptionalDate(value, fieldName);
+  if (!date) throw new ApiError(400, `${fieldName} is required`);
+  return date;
+}
+
 function parseSnapshotAddress(value: unknown, fieldName: string) {
   if (!value || typeof value !== "object") {
     throw new ApiError(400, `${fieldName} is required`);
@@ -132,7 +148,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 
     const recalculated = await updateBudget(id, {
       notes: payload.notes !== undefined ? (typeof payload.notes === "string" ? payload.notes : null) : undefined,
-      deliveredAt: payload.deliveredAt !== undefined ? (payload.deliveredAt ? new Date(payload.deliveredAt) : null) : undefined,
+      deliveredAt: payload.deliveredAt === undefined ? undefined : parseRequiredDate(payload.deliveredAt, "deliveredAt"),
       taxId: payload.taxId !== undefined
         ? (typeof payload.taxId === "string" && payload.taxId.trim() ? payload.taxId.trim() : null)
         : undefined,

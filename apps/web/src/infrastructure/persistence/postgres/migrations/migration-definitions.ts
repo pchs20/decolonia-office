@@ -21,6 +21,7 @@ import dropWorkTemplatesTable from "./2026090300000-DropWorkTemplatesTable.sql";
 import allowCustomDocumentIdentifiers from "./2026100300000-AllowCustomDocumentIdentifiers.sql";
 import allowUnrestrictedJobItemTitles from "./2026100600000-AllowUnrestrictedJobItemTitles.sql";
 import addSoftDeleteToCommercialDocuments from "./2026100700000-AddSoftDeleteToCommercialDocuments.sql";
+import makeCommercialDocumentBusinessDatesRequired from "./2026112000000-MakeCommercialDocumentBusinessDatesRequired.sql";
 
 export type SqlMigration = {
   id: string;
@@ -143,5 +144,10 @@ export const SQL_MIGRATIONS: SqlMigration[] = [
     id: "2026100700000",
     name: "AddSoftDeleteToCommercialDocuments",
     sql: addSoftDeleteToCommercialDocuments
+  },
+  {
+    id: "2026112000000",
+    name: "MakeCommercialDocumentBusinessDatesRequired",
+    sql: makeCommercialDocumentBusinessDatesRequired
   }
 ];
