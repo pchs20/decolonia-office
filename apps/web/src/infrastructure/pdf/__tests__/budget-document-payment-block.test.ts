@@ -25,6 +25,7 @@ const labels = {
   number: "Número",
   date: "Fecha",
   client: "Cliente",
+  phone: "Tel.",
   description: "Descripción",
   quantity: "Cant.",
   unitPrice: "Precio unit.",

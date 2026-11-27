@@ -385,6 +385,7 @@
     "number": "Number",
     "date": "Date",
     "client": "Client",
+    "phone": "Tel.",
     "description": "Description",
     "quantity": "Qty.",
     "unitPrice": "Unit Price",

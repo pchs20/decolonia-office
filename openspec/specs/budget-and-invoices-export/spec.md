@@ -5,11 +5,19 @@
 Define PDF export capabilities for budgets and invoices, including server-side PDF generation via `@react-pdf/renderer`, shared template components, and the API endpoints that return PDF binaries.
 ## Requirements
 ### Requirement: Export budget as PDF
-The system SHALL generate a PDF representation of a budget using a server-side template that includes issuer data, client data, job items, totals, the required localized construction liability insurance disclaimer, and optionally a payment block. The disclaimer is informational, is rendered after the totals block and before payment details, and does not affect document amounts.
+The system SHALL generate a PDF representation of a budget using a server-side template that includes issuer data, client data, job items, totals, the required localized construction liability insurance disclaimer, and optionally a payment block. The disclaimer is informational, is rendered after the totals block and before payment details, and does not affect document amounts. When issuer or client phone data is present, the PDF SHALL render it with the localized PDF phone label before the number.
 
 #### Scenario: Budget PDF contains issuer block
 - **WHEN** a budget PDF is generated
 - **THEN** the PDF includes the issuer's name, tax identifier, phone, email, and billing address from the materialized `WorkerSnapshot`
+
+#### Scenario: Budget PDF labels available phone numbers
+- **WHEN** a budget PDF is generated with an issuer or client phone number
+- **THEN** each rendered phone number is prefixed by the localized PDF phone label, such as `Tel.`
+
+#### Scenario: Budget PDF omits unavailable phone labels
+- **WHEN** a budget PDF is generated without an issuer or client phone number
+- **THEN** the corresponding phone line is omitted and no standalone phone label is rendered
 
 #### Scenario: Budget PDF contains the budget issuer image
 - **WHEN** a budget PDF is generated
@@ -48,11 +56,19 @@ The system SHALL generate a PDF representation of a budget using a server-side t
 - **THEN** the `Content-Disposition` header sets the filename to `presupuesto-{number}.pdf`
 
 ### Requirement: Export invoice as PDF
-The system SHALL generate a PDF representation of an invoice using a server-side template that includes issuer data, client data, job items, totals, and optionally a payment block.
+The system SHALL generate a PDF representation of an invoice using a server-side template that includes issuer data, client data, job items, totals, and optionally a payment block. When issuer or client phone data is present, the PDF SHALL render it with the localized PDF phone label before the number.
 
 #### Scenario: Invoice PDF contains issuer block
 - **WHEN** an invoice PDF is generated
 - **THEN** the PDF includes the issuer's name, tax identifier, phone, email, and billing address from the materialized `WorkerSnapshot`
+
+#### Scenario: Invoice PDF labels available phone numbers
+- **WHEN** an invoice PDF is generated with an issuer or client phone number
+- **THEN** each rendered phone number is prefixed by the localized PDF phone label, such as `Tel.`
+
+#### Scenario: Invoice PDF omits unavailable phone labels
+- **WHEN** an invoice PDF is generated without an issuer or client phone number
+- **THEN** the corresponding phone line is omitted and no standalone phone label is rendered
 
 #### Scenario: Invoice PDF contains the invoice issuer image
 - **WHEN** an invoice PDF is generated
@@ -89,6 +105,13 @@ The system SHALL generate a PDF representation of an invoice using a server-side
 #### Scenario: Invoice PDF filename uses document number
 - **WHEN** the PDF response is returned
 - **THEN** the `Content-Disposition` header sets the filename to `factura-{number}.pdf`
+
+### Requirement: PDF phone label is localized
+The PDF translation catalog SHALL provide a phone label for every supported locale. The Spanish, Catalan, and English catalogs SHALL initially use `Tel.` as the value.
+
+#### Scenario: Supported locales provide a phone label
+- **WHEN** a budget or invoice PDF is rendered in Spanish, Catalan, or English
+- **THEN** the renderer receives the corresponding locale's PDF phone label and uses it for available issuer and client phone numbers
 
 ### Requirement: PDF generation API endpoints
 The system SHALL expose read-only API endpoints that generate and return PDF binaries for a given budget or invoice. Client actions that invoke these endpoints SHALL communicate pending, success, and failure states without changing the PDF response contract.

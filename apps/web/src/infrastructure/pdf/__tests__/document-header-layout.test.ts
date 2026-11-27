@@ -27,6 +27,12 @@ const client = {
   email: "client@example.com"
 };
 
+const phoneLabels = {
+  es: "Tel.",
+  ca: "Tel.",
+  en: "Tel."
+} as const;
+
 const testGlobal = globalThis as typeof globalThis & {
   __non_webpack_require__: typeof require;
 };
@@ -43,6 +49,7 @@ function renderHeader(title: string): string {
       date: "3/10/2026",
       numberLabel: "Número",
       dateLabel: "Fecha",
+      phoneLabel: phoneLabels.es,
       imageSource: "image-source"
     })
   );
@@ -62,11 +69,50 @@ describe("DocumentHeader title layout", () => {
     expect(markup).toContain(`>${title}<`);
     expect(markup).toContain(">Fundació Privada Casa Pairal<");
     expect(markup).not.toContain(">Cliente<");
-    expect(markup).toContain(">600000001<");
+    expect(markup).toContain(">Tel. 618181818<");
+    expect(markup).toContain(">Tel. 600000001<");
     expect(markup).toContain(">client@example.com<");
     expect(markup).toContain('font-size:14px');
     expect(markup).toContain('font-size:11px');
     expect(markup).toContain(">30<");
     expect(markup).toContain(">3/10/2026<");
+  });
+
+  test.each(Object.entries(phoneLabels))("renders the localized phone label for %s", (_locale, phoneLabel) => {
+    const markup = renderToStaticMarkup(
+      React.createElement(DocumentHeader, {
+        worker,
+        client,
+        title: "INVOICE",
+        number: "30",
+        date: "3/10/2026",
+        numberLabel: "Number",
+        dateLabel: "Date",
+        phoneLabel,
+        imageSource: "image-source"
+      })
+    );
+
+    expect(markup).toContain(`>${phoneLabel} 618181818<`);
+    expect(markup).toContain(`>${phoneLabel} 600000001<`);
+  });
+
+  test("omits phone labels when phone numbers are absent", () => {
+    const markup = renderToStaticMarkup(
+      React.createElement(DocumentHeader, {
+        worker: { ...worker, phone: null },
+        client: { ...client, phone: null },
+        title: "INVOICE",
+        number: "30",
+        date: "3/10/2026",
+        numberLabel: "Number",
+        dateLabel: "Date",
+        phoneLabel: phoneLabels.en,
+        imageSource: "image-source"
+      })
+    );
+
+    expect(markup).not.toContain("Tel.");
+    expect(markup).toContain(">client@example.com<");
   });
 });
