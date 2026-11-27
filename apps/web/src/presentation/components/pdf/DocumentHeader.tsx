@@ -62,6 +62,7 @@ interface DocumentHeaderProps {
   date: string;
   numberLabel: string;
   dateLabel: string;
+  phoneLabel: string;
   imageSource: string;
 }
 
@@ -73,15 +74,16 @@ export function DocumentHeader({
   date,
   numberLabel,
   dateLabel,
+  phoneLabel,
   imageSource
 }: DocumentHeaderProps) {
   return (
     <View style={styles.header}>
       <View style={styles.issuer}>
-        <IssuerBlock worker={worker} />
+        <IssuerBlock worker={worker} phoneLabel={phoneLabel} />
       </View>
       <View style={styles.client}>
-        <ClientBlock client={client} />
+        <ClientBlock client={client} phoneLabel={phoneLabel} />
       </View>
       <View style={styles.document}>
         <View style={styles.documentContent}>

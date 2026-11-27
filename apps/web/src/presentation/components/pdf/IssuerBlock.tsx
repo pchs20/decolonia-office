@@ -19,9 +19,10 @@ const styles = StyleSheet.create({
 
 interface IssuerBlockProps {
   worker: DocumentPartySchema & { id: string };
+  phoneLabel: string;
 }
 
-export function IssuerBlock({ worker }: IssuerBlockProps) {
+export function IssuerBlock({ worker, phoneLabel }: IssuerBlockProps) {
   return (
     <View style={styles.block}>
       <Text style={styles.name}>{worker.name}</Text>
@@ -34,7 +35,7 @@ export function IssuerBlock({ worker }: IssuerBlockProps) {
           </Text>
         </View>
       ) : null}
-      {worker.phone ? <Text style={styles.line}>{worker.phone}</Text> : null}
+      {worker.phone ? <Text style={styles.line}>{phoneLabel} {worker.phone}</Text> : null}
       {worker.email ? <Text style={styles.line}>{worker.email}</Text> : null}
     </View>
   );

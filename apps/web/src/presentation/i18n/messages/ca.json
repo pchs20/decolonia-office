@@ -375,6 +375,7 @@
     "number": "Número",
     "date": "Data",
     "client": "Client",
+    "phone": "Tel.",
     "description": "Descripció",
     "quantity": "Quant.",
     "unitPrice": "Preu unit.",

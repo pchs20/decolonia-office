@@ -53,9 +53,10 @@ export function InvoiceDocument({ invoice, items, labels, imageSource }: Invoice
           client={invoice.client}
           title={labels.invoice}
           number={invoice.number}
-           date={formatDate(invoice.issuedAt)}
+          date={formatDate(invoice.issuedAt)}
           numberLabel={labels.number}
           dateLabel={labels.date}
+          phoneLabel={labels.phone}
           imageSource={imageSource}
         />
 

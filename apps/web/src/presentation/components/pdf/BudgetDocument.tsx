@@ -58,9 +58,10 @@ export function BudgetDocument({ budget, items, labels, imageSource }: BudgetDoc
           client={budget.client}
           title={labels.budget.toUpperCase()}
           number={budget.number}
-           date={formatDate(budget.deliveredAt)}
+          date={formatDate(budget.deliveredAt)}
           numberLabel={labels.number}
           dateLabel={labels.date}
+          phoneLabel={labels.phone}
           imageSource={imageSource}
         />
 

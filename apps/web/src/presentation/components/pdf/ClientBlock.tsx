@@ -19,9 +19,10 @@ const styles = StyleSheet.create({
 
 interface ClientBlockProps {
   client: DocumentPartySchema & { id: string };
+  phoneLabel: string;
 }
 
-export function ClientBlock({ client }: ClientBlockProps) {
+export function ClientBlock({ client, phoneLabel }: ClientBlockProps) {
   return (
     <View style={styles.block}>
       <Text style={styles.name}>{client.name}</Text>
@@ -34,7 +35,7 @@ export function ClientBlock({ client }: ClientBlockProps) {
           </Text>
         </View>
       ) : null}
-      {client.phone ? <Text style={styles.line}>{client.phone}</Text> : null}
+      {client.phone ? <Text style={styles.line}>{phoneLabel} {client.phone}</Text> : null}
       {client.email ? <Text style={styles.line}>{client.email}</Text> : null}
     </View>
   );
